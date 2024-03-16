@@ -1,0 +1,776 @@
+//Mar 16 2024
+
+881 Boats to Save People
+
+For the problem you want to sort the arr. You'll most likely run into the case where there is 1 boat per person because of the limit. You want to check if people[i] and people[i+1] <= limit. If yes, we move the pointer to +2, else + 1 and we increment the number of boats by one.
+
+reversed(people.sorted())
+
+Actually the order of the sort does not matter that much. 
+
+i, boats = 0, 0
+people.sort()
+while i < len(people) - 2
+	if people[i] + people[i + 1] <= limit:
+		boats += 1
+		i += 2
+	else:
+		boat += 1 
+		i += 1
+return boats
+
+Refined code: 
+        boats, i = 0, 0
+        people.sort()
+        while i < len(people):
+            if i + 1 < len(people) and people[i] + people[i + 1] <= limit:
+                boats += 1
+                i += 2
+            else:
+                boats += 1
+                i += 1
+        return boats
+
+#1,2,4,5
+
+The code fails at the test case above. So we need two pointers L and R that converge towards the center. Recall even with the L and R pointer there is a case of += 2 boat and += 1 boat. If people [L] + people[R] < target. boats += 1, R += 1. If smaller than target boat += 2 L+= 1, R -=1
+
+boats, L, R = 0, 0, len(people)
+while L < R:
+	if people[L] + people[R] < target:
+		boat += 2
+		L += 1
+		R -= 1
+	else:
+		boat += 1
+		R -= 1
+return boats
+
+We can simplify the expression more:
+	if people[L] + people[R] <= limit:
+		L += 1
+	R -= 1
+	boats +=1
+return boats
+
+This way we do not have to manually handle the +1 or +2 boat cases.
+	
+//Mar 6 2024
+Answers:
+1) The two different (parts?) of graphs are the vertices (nodes or values) and the edges (connect different nodes).
+
+2) The most efficient way to represent a graph where the nodes are connected to a lot of other nodes is through adjacency lists. You can represent another node val by simply adding another char to the list.
+
+3) Between DFS and BFS to find the shortest path of a unweighted graph, I would imagine you would want to use DFS. DFS, goes all the way to the end before trying again. The probability that you find a shortest path that way vs traversing slowing and equally in all directions is a lot higher sooner.
+
+4) For depth first search you either use recursion or simulate the call stack using a stack.
+
+Iterative:
+stack = [first node]
+while stack:
+	for every node connected to first node:
+		stack.append(connected nodes)
+	cur = stack.pop()
+	do something with cur
+
+Recursive:
+dfs(node):
+	if node = null:
+		return
+	for every node connected to first node:
+		cur = dfs(cur)
+
+5) Shortest path finding for a map app? 
+
+Correct Answers:
+1) Directed vs undirected graphs
+2) Dense graphs should use [?] if its unweighted, use a 2D boolean array. Why? Complexity = O(V^2)
+3) For shortest path, BFS is more useful - Why? It guarantees the first time a node is reached
+
+//Mar 7 2024
+Q1: How would you iterate over each cell in the grind?
+A1: In a grind there are rows(r) and columns (c). To traverse through the grid, [col][row]. The ways you can move are left ([c][r-1]), right ([c][r+1]), up ([c-1][r]), down ([c+1][r]).
+
+GPT4 method to iterate:
+
+for r in range(len(gird)):
+	for c in range(len(grid[0])):
+		#process cell grid[r][col]
+
+Q2: Given a cell, how do you check if its land and start DFS from it?
+A2: Oh I think I understand where this is going. Loop through the grid at O(n^2) till you find and island (1). Then you do DFS to mark all of the 1s in that insland as visited (maybe by changing 1 -> 0). And you have some external counter var for the # of islands. To answer your Q2:
+
+if grid[r][c] == 1:
+	dfs(grid[r + 1][c])
+	dfs(grid[r - 1][c])
+	dfs(grid[r][c + 1])
+	dfs(grid[r][c - 1])
+
+GPT4: The base case for DFS is 1) the bounds check 2) the land check. To check for bounds you do: 
+
+1. if r < 0, r > len(gird), c < 0 or c > len(grid)
+2. or grid[r][c] = '0'
+
+Then you set the island to 0. 
+
+Q3: How would you now describe handling the recursive DFS calls to ensure we fully explore each island?
+A3: This recusrive call allows the function to navigate through the entire island by checking if there is any other peice of island around it in all directions. This applies to all the connected grid[r][c]. The only way for the recursion to end is if the call stack completes by hitting grid[r][c] == 0 or its out of bound, both meaning that the island ended.
+
+Implement the DFS Function:
+
+dfs(grid, r, c):
+	if r < 0 or c < 0 or r > len(grid) or c > len(grid[r]) or grid[r][c] == 0:
+		return
+
+	islands += 1
+	grid[r][c] = 0
+
+	dfs(grid, r + 1, c)
+	dfs(grid, r - 1, c)
+	dfs(grid, r, c + 1)
+	dfs(grid, r, c - 1)
+
+Q4: Can you think of any optimizations or edge cases? 
+A4: If the grind is all zero or 1, you can either return 0 or 1. However that will be O(n^2) no? I wonder if there is a more efficent way to handle these edge cases. 
+
+1st attempt at writing func: 
+
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        islands = 0
+
+        for r in range(len(grid)):
+            for c in len(grid[r]):
+                if grid[r][c] == 1:
+                    dfs(grid, r, c)
+                    islands += 1
+
+        def dfs(grid, r, c):
+            if r < 0 or c < 0 or r > len(grid) or c > len(grid[r]) or grid[r][c] == 0:
+                return
+            grid[r][c] = 0
+            dfs(grid, r + 1, c)
+            dfs(grid, r - 1, c)
+            dfs(grid, r, c + 1)
+            dfs(grid, r, c - 1)
+
+        return islands
+
+Problem #463
+
+def islandPerimeter(self, grid: List[List[int]]) -> int:
+	def dfs(grid, r, c, calls):
+		if r < 0 or c < 0 or r > len(grid) or c > len(grid[r]) or grid[r][c] == 0:
+			return calls += 1
+		dfs(grid, r + 1, c, calls)
+            	dfs(grid, r - 1, c, calls)
+            	dfs(grid, r, c + 1, calls)
+            	dfs(grid, r, c - 1, calls)
+	
+	for r in range(len(grid)):
+		for c in len(grid[r]):
+			if grid[r][c] == 1:
+				dfs(r, c, 0)
+
+#The key thing to realize is that the number of times that the island is touching water is simply the number of calls on the call stack
+
+Max Area of Island: 
+class Solution:
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        ROWS, COLS = len(grid), len(grid[0])
+        def dfs(r, c):
+            if r<0 or c<0 or r>=ROWS or c>=COLS or grid[r][c] == 0:
+                return 0
+            grid[r][c] = 0
+            area = 1
+            area += dfs(r+1, c)
+            area += dfs(r-1, c)
+            area += dfs(r, c+1)
+            area += dfs(r, c-1)
+            return area
+
+        maxArea = 0
+        for r in range(ROWS):
+            for c in range(COLS):
+                if grid[r][c] == 1:
+                    maxArea = max(maxArea,dfs(r, c))
+        return maxArea      
+
+Problem 994. Rotting Oranges:
+def orangesRotting(self, grid: List[List[int]]) -> int:
+	ROWS, COLS = len(grid), len(grid[0])
+	def dfs(grid, r, c):
+	if r < 0 or c < 0 or r >= ROWS or c >= COLS or grid[r][c] == 0 or grid[r][c] == 2:
+		return
+	grid[r][c] = 2
+	dfs(r+1, c)
+        dfs(r-1, c)
+        dfs(r, c+1)
+        dfs(r, c-1)
+
+	for r in range(ROWS): 
+		for c in len(COLS):
+			if grid[r][c] == 2:
+				dfs(grid, r, c)
+
+DFS does not work for rotting oranges as the uniform spread alone with the time tracking makes it easier to do BFS. 
+
+To visit the next cell, add to queue, you loop through its neighbors, by [r+1][c], [r-1][c], [r][c+1], [r][c-1] and cur is simply queue.pop() checking if its == 0, 1, or 2. If its 2, spread the rot. += 1 to level. You set the 1s you visited to 2 to ensure you don't revisit. You keep repeating this while stack to ensure that all the oranges are rotten. The only conditions in which the stack is empty is 1) you reached every part of the grid 2) all the surroundings are either 2 or 0, meaning that there is no more oranges to rot.
+
+form collections import deque
+def prepareInitialQueue(grid):
+	ROWS, COLS = len(grid), len(grid[0])
+	rottenOrangesQueue = deque()
+
+	for r in range(ROWS):
+   		for c in range(COLS):
+        		if grid[r][c] == 2:
+				rottenOrangesQueue.append((r, c), 0)
+
+	return rottenOrangesQueue
+
+
+Mon Mar 11 2024
+
+392. Is subsequence [SOLVED ON PLANE]
+
+s_set, tmp = set(s), ''
+for i in range(len(t)):
+	if i in range(len):
+		if t[i] in s_set:
+			tmp += t[i]
+if tmp == s:
+	return True
+else:
+	return False
+
+#Q, what if there are repeated letters in the subset - don't have to worry about it as it is a subsequence problem
+
+334. Increasing Triplet Subsequence
+
+#Recall that a greedy algo works for a problem where you can solve it by just solving
+#the local optimum
+#The first part to the problem is that you solve the sub problem of [i, j] and nums[i] #< nums[j]
+
+#Q: what is the starting condition?
+
+i, j, k = 0, 1, 2
+while i < len(nums) - 2 and j < len(nums) -1 and k < len(nums):
+	if nums[i] < nums[j] < nums[k]:
+		return True
+	elif nums[i] > nums[j]
+		#iterate till you solve it
+
+
+		i += 1
+	elif nums[i] < nums[j] > nums[k]:
+		j += 1
+	else:
+		k += 1
+return False
+
+Q what is the logic to iterate?
+
+[1, 2, 3, 4, 5]
+ i  j  k
+
+In this example we return true
+
+[2, 1, 5, 0, 4, 6]
+ i
+       j
+
+                k
+
+#The index condition will be taken care of the i, j, k loop
+#you want to return False unless triplet found
+
+#Another way to solve it- solve for the i j case first with a loop.
+#Start another loop with k where 
+
+i, j = 0, 1
+while i < len(nums) - 2 and j < len(nums) - 1:
+	if nums[i] > nums[j]:
+		j += 1
+
+Save vals
+
+From now you can only iterate k 
+
+We can actually rewrite that as
+
+i, j = 0, 1
+while j < len(nums) - 1:
+	if nums[i] > nums[j]:
+		j += 1
+	else:
+		break
+
+k = j
+while k < len(nums) - 1:
+	if nums[j] > nums[k]
+		k += 1
+	else:
+		return True
+return True
+
+Ok now lets try to break this. Imagine the test case: [5,4,3,1,2,3] -> this should return true @ for 1, 2, 3. However we're not moving i. So this fails. 
+
+Q: how do you increment i? 
+
+[5,4,3,1,2,2,8,1] -> This should return True
+ i
+     j
+
+q: would it work if you save the min val that j has passed for i to index to?
+if nums[i] > j_min:
+	move i to j_min position
+
+[5,4,3,1,2,2,8,1]
+       i
+         j
+
+
+j_min = 1
+
+
+1ST HALF CODE
+
+i, j, j_min = 0, 1, nums[1]
+while j < len(nums) - 1:
+	if nums[i] > nums[j]
+		j += 1
+		j_min = min(j_min, nums[i])
+		if nums[i] > j_min:
+			i = j
+	else:
+		return True
+return False
+
+Now add the k index
+
+-TODO...
+
+March 12 2024
+
+1171. Remove Zero Sum Consecutive Nodes from Linked List
+
+You could use a while loop, although recursion is the most elegant solution. 
+
+The first sub problem to solve: How to remove the consecutive elements:
+
+if cur.val == cur.next.val: delete
+
+Q: How do you delete two nodes at once?
+
+[1, 2, -3, 3, 1]
+
+Mar 13 2024
+
+Ok let me walk you through what I am thinking. You have the vars i, j, k to track which indexes are able to return True. The starting condition has to be i, j, k = 0, 1, 2. The min possible val for nums[1] 
+
+Next, the while loop of while j < len(nums) - 2 and k < len(nums) - 1: works because if j > len(nums)-2, or k = len(nums)-1, that means nums[i] < nums[j] < nums[k] and i < j < k would not be possible so we break it. Otherwise its fair game. 
+
+Ok look at the line if nums[i] > nums[j]: That means we have to move j up to search for a j value that might fulfil nums[i] < nums[j] < nums[k]. We have to ensure that k > j. The mistake I made was j += 1 and k += 1 right away where I should've done if j = k, then k += 1. 
+
+Now we need to keep j_min = min(j_min, nums[i]) because lets say in the example [5,4,3,1,2,2,8,1] we don't want to keep incrementing j till the end while i stays @5. Therefore if the j_min or a passed j value is smaller than i, we would want to move i there. Thus the code: 
+
+                j_min = min(j_min, nums[i])
+                if nums[i] > j_min:
+                    i = j
+                    j += 1
+
+
+The problem with that is that you end up storing the lowest possible value. What you have to do instead is reset j_min and k_min at every cycle of the loop to the possible vals instead of the global min.
+
+        while j < len(nums) - 2 and k < len(nums) - 1:
+            j_min = nums[i]
+            k_min = nums[j]
+
+Ok now we add the k elem. Now we can repeat the logic for nums[j] > nums[k]. At the start of every loop, we set k_min = nums[j]. And then: 
+
+            if nums[j] > nums[k]:
+                k += 1
+                k_min = min(k_min, nums[j])
+                if nums[j] > k_min:
+                    j = k
+                    k += 1
+
+
+Easy proof: if not nums[i] > nums[j] and not nums[j] > nums[k], that means nums[i] < nums[j] < nums[k] no? How can nums[i] be bigger than nums[k] if nums[i] < nums[j] and nums[j] < nums[k] for example? 
+
+class Solution:
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        i, j, k = 0, 1, 2
+        while j < len(nums) - 2 and k < len(nums) - 1:
+            j_min = nums[i]
+            k_min = nums[j]
+            if nums[i] > nums[j]:
+                j += 1
+                if j == k:
+                    k += 1
+                j_min = min(j_min, nums[i])
+                if nums[i] > j_min:
+                    i = j
+                    j += 1
+            if nums[j] > nums[k]:
+                k += 1
+                k_min = min(k_min, nums[j])
+                if nums[j] > k_min:
+                    j = k
+                    k += 1
+            else:
+                return True
+        return False
+
+[] TODO: FIGURE OUT WHAT IS WRONG WITH THIS ********
+
+Q: to self-> why does this code not work? According to GPT:
+
+To counter the dumb ass shit it said: 
+
+1) j_min and k_min 
+
+200 Number of Islands:
+Do DFS on all the islands, set them to 0. # of islands += 1. Return # of islands
+
+=> Input: Grid
+
+ROW, COL = len(grid) - 1, len(grid[0]) - 1
+
+#loop through the arry to find islan
+
+num = 0
+
+for r in ROW:
+	for c in COL:
+		if grid[r][c] == 1:
+			dfs(grid, r, c)
+			num += 1
+
+dfs(grid, r, c):
+	if r < ROW and c < COL and r >= 0 and c >= 0 and not grid[r][c]:
+		return
+	grid[r][c] = 0
+	dfs(grid, r + 1, c)
+	dfs(grid, r - 1, c)
+	dfs(grid, r, c + 1)
+	dfs(grid, r, c - 1)
+
+return num
+
+605 Can Place Flowers
+
+input: flowerbed [], n int
+
+#What you do is simply find the max number of flowers you should be able to plant
+
+for i in range(len(flowerbed) - 1):
+	if flowerbed[i] == 0 and flowerbead[i-1] == 0 and flowerbead[i+1] == 0
+		count += 1
+
+There are a few edge cases for first and last elem = 0 
+
+[0, 0, 1, 0 , 0, 0, 1]
+We can solve this by if flowerbed[0] and flowerbed[1] both == 0, += 1. Start on the 3rd index. 
+For range(3, len(flowerbed) - 3)
+
+Q; How about [...1, 0, 0] we can handle that case by only iterating till the 2nd last elem
+
+Putting this all together:
+
+count = 0
+
+if flowerbead[0] == 0 and flowerbed[1] == 0:
+	count += 1
+
+if flowerbed[-1] == 0 and flowerbed[-2] == 0: 
+	count += 1
+
+for i in range(4, len(flowerbed) - 4):
+	if flowerbed[i] == 0 and flowerbed[i-1] == 0 and flowerbed[i+1] == 0
+		count += 1
+
+return count >= n
+
+Ok. For the edge cases, what you could do is just set the vals to 1. Edge case of len(1)?
+
+Solved by having a case of len(flowerbed) == 0
+
+238. Product of Array Except Self
+
+[1,2,3,4] -> [24,12,8,6]
+
+Try mutiplicative prefix sum:
+
+[1, 2, 6, 24]   
+[24,24,12,4 ]
+
+Val * last val
+[1,2,6,12]
+[2,6,12,4]
+
+The problem I ran into above is the fact that I did in inclusive
+
+left_arr, right_arr, res = len(nums) * [1], len(nums) * [1], []
+
+for i in range(1, len(nums)): 
+	left_arr[i] = nums[i-1] * left[i-1]
+
+for i in range(len(nums) - 2, -1, -1)
+	right_arr[i] = nums[i+1] * left[i+1]
+
+for i in range(len(nums)):
+	res.append(left_arr[i] * right_arr[i])
+
+930. Binary Subarrays With Sum
+
+This is a sliding window problem with a binary sum. Lets pretend its not binary. How would you generally solve a sliding
+window problem? 
+
+LOL I thought it would be legit binary calculation. No we just counting the numbers of ones. We can do that with a prefix sum easily.
+
+nums = [1,0,1,0,1], goal = 2
+In this example the prefix sum
+[1,1,2,2,3] if R - L + 1 = goal
+
+Ok now that we figured out how to efficently calculate the sum of window elems lets make the sliding window
+
+prefix = [num[0]]
+for i in range(1, len(nums)):
+	prefix.append(prefix[-1] + nums[i])
+
+L, R, solutions = 0, 0, 0
+while R < len(nums):
+	if L == 0:
+		if goal == prefix[R]:
+			solutions += 1
+			R += 1
+	elif prefix[R] - prefix[L - 1] == goal:
+		solutions += 1
+		R += 1
+	elif prefix[R] - prefix[L] + 1 < goal:
+		R += 1
+	else:
+		L += 1
+
+return solutions
+
+The correct method to calcualte the prefix sum is actually [R] - [L-1]
+
+Corrected version of the code according to GPT4: 
+
+prefix = [0]
+for nums in nums:
+	prefix.append(prefix[-1] + num)
+
+L, R, solutions = 0, 0, 0
+while R < len(prefix) - 1: 
+	cur_sum = prefix[R + 1] - prefix[L]
+	
+	if cur_sum == goal:
+		solutions += 1
+		R += 1
+	elif cur_sum < goal:
+		R += 1
+	else: 
+		L += 1
+
+return solutions
+
+This is a repeat of 930. Binary Subarrays With Sum
+
+Q1: A sub array is a smaller portion of an array defined by a left and right bound. 
+Q2: The naive way is to brute force at O(n^2). Have an i and j pointer. Iterate i by one and every time iterate j from i -> len(nums). 
+Q3: Sliding window can be applied for this problem because we know that if a previous sub array overshot the target, ex [1,1,1,0] where target = 2, we know that we can skip over a portion of the arrays thus turning this to O(n^2).
+Q4: Basic Sliding Window:
+
+solutions == 0
+l, r = 0, 0
+while l < len(nums) - 1:
+	if nums[l] + nums[r] == target:
+		solutions += 1
+		r += 1 #try to increase r, if its a 0, we can continue adding solutions
+	elif nums[l] + nums[r] < target:
+		r += 1 
+	else:
+		l += 1
+
+One thing I'm thinking with this code is if we might be overshooting with R. Would we ever have l += 1 and then set r = l?
+
+Q5: In the above code, you would increase l += 1 if sum nums[l] nums[r] > target to shrink the window 
+Q6: If the sum of l and r == target, we can increase a counter.
+Q7: One edge case that my code previously failed at is: [0,0,0,0,1,0,0,0,0] target == 0. I remeber failing a test case similar where the return val was 1 larger than it should've been. 
+
+Ok. What is wrong with the current sliding window implementaion?
+
+Q: how to we handle the case of sum == target? Brainstorming: 
+1) Move right foward
+2) mark l and r val as visited solution in set
+3) try l -= 1, r += 1
+
+The key is that we have to check if nums[l] + nums[r] == target repeat
+
+while nums[l] + nums[r] == target:
+	solutions += 1
+	r += 1
+
+Still not refined enough. Lets try to traverse through a prefix sum? Its not the most efficent
+
+For the sliding window, if you're not using the prefix sum, you can +- the number 1s in the window by doing a check to see if nums[l], nums[r] == 0 or 1. You can keep a sum count this way at O(1) space and O(n) time complexity
+
+pesudo code: 
+solutions, window_sum = 0, 0
+while l < len(nums)
+	if wind_sum == target:
+		solutions += 1
+		r += 1
+		window_sum += nums[r]
+	elif window_sum < target:
+		r += 1
+		window_sum += nums[r]
+	else:
+		window_sum -= nums[l]
+		l += 1
+
+Refined version
+l, r = 0, 0
+window_sum = 0
+solutions = 0
+
+while r < len(nums): 
+	window_sum += nums[r]
+	
+	while window_sum > target < 1 <= r:
+		window_sum -= nums[l]
+		l += 1
+
+	if window_sum == target:
+		solutions += 1
+		tmp_l = 1
+		while temp_l < r and nums[tmp_l] == 0:
+			solutions += 1
+			temp_1 += 1
+
+735. Asteroid Collision
+
+Pop from the stack twice. That will be the collisions. If same direction, append both to stack. If oppsite dir, append only the bigger one to the new stack. Q: do you continue till no more collisons? It seems like it. 
+
+First step lets add to the stack:
+
+stack = []
+while asteroids:
+	a1 = asteroids.pop()
+	a2 = asteroids.pop()
+	if (a1 > 0 and a2 > 0) or (a1 < 0 and a2 < 0):
+		stack.append(a1)
+		stack.append(a2)
+	elif a1 > a2: 
+		stack.append(a1)
+	else:
+		stack.append(a2)
+
+Cool, now that we have this, how do we keep crashing them till? A: We should create a def func that we call till 1) empty 2) all > 0 3) all < 0
+
+neg, pos = False, False
+while stack or (not neg and pos) or (not pos and neg):
+	for i in range(len(asteroids)):
+		if neg and pos:
+			neg, pos = False, False
+			collide(asteroids)
+		elif asteroids[i] > 0:
+			pos = True
+		else:
+			neg = True
+
+def collide(asteroids):
+	stack = []
+	while asteroids:
+		a1 = asteroids.pop()
+		a2 = asteroids.pop()
+		if (a1 > 0 and a2 > 0) or (a1 < 0 and a2 < 0):
+			stack.append(a1)
+			stack.append(a2)
+		elif a1 > a2: 
+			stack.append(a1)
+		else:
+			stack.append(a2)
+	return stack
+
+Question: why do we not need another def function for this problem
+Few assumptions: The collision logic is not complex enough to need to be abstracted out into its own function- it can all be handles in a while loop
+
+stack = []
+for asteriod in asteriods:
+	collison = False
+	while stack and asteriod < 0 < stack[-1]:
+	
+Ok so with         while stack and asteroid < 0 < stack[-1]: you're appending all of the neg val asteroid
+
+Think about the base case. By default, there is no collision, you stack.append. Then there is the collision case: 
+If we face an asteriod and the stack is not empty we check which one is bigger. The key here is to mark collision as True and break that while loop so we don't hit the case of if not collision, stack.append.
+
+2126. Destroying Asteroids
+The key to this problem is that you can sort the asteroids. That gives the planet the best chance because that max the size of the planet at every interval. Don't need stack. 
+
+sorted(asteroids)
+
+for asteroid in asteroids: 
+	if mass > asteroid: 
+		mass += asteroid
+	else:
+		return False
+return True
+
+739. Daily Temperatures
+
+Use a stack. We're trying to map:
+[73,74,75,71,69,72,76,73]  -> 
+[1,1,4,2,1,1,0,0]
+
+pop from the tempatures stack. Add to another tmp stack. I think the trick is how many times you have to pop from the tmp stack till you get a val that is larger.
+
+stack = [tempatures.pop()]
+res = []
+
+while tempatures:
+	count = 0
+	tempature = tempatures.pop()
+	while tempature > stack[-1]:
+		stack.pop()
+		count += 1
+	res.append(count)
+	stack.append(tempature)
+
+Lets manually go through an interation: 
+
+[73,74,75,71,69,72,76,73]
+tempature =
+count =
+Stack =
+Res =
+
+This approach is not correct. Apprently you track the index of each day in the stack. 
+
+If given a specific day's tmp, the most simple method is to iterative till next warmer tmp and count # of iterations. However, you could the index of the last highest tmp into the stack. And then to find number of days, you can do last higher index - cur index to find the number of days. 
+
+You want to store the index val of the date.
+Q: When do you add to stack?
+Q: When do you pop from the stack?
+
+Wait wtf is a monotonic stack?
+
+Mar 15 2024
+
+For a problem where you need to find the next greater element in array, why would you not want a regular stack? To be fair, I'm not sure how you would solve it efficiently with a regular stack. The brute force method to solve this is to iterate through i and make a comparsion to j every time which is O(n^2). Another way I wrote the other day for a similar question is to count the number of times a tmp stack gets popped(). This still seems O(n^2) as you would have to pop n elem, and add it again for the next iteration. What I'm thinking about is if there is a O(n) way to just count the number of pops. Perhapes making a set of the index + vals?
+
+When you encounter an element greater than stacks top elem, I would guess that you keep popping until the last elem of the stack is larger? no idea lol. on 5 hours of sleep too tired to work it out myself (is that bad that I'm this lazy?)
+
+Q: How does this provide O(n) run time? Recall for a monotonic stack, you only add the largest elem, and you keep popping from the stack till you 1) find an elem 2) there is no more elems in the arry. My knee jerk response is to count the number of pops. My but I recall that a problem stored the index elems. When you come upon the largest elem you find the diff between the index vals to find out how far they are apart from another. 
+
+
+
+
+
+
+
