@@ -1,3 +1,178 @@
+//Mar 21 2024
+**Find All Numbers Disappeared in an Array
+There is a few edge cases to consider 1) if the skip num 
+
+//Mar 20 2024
+**Third Maximum Number
+O(n) solution means that we would not be able to sort. What if you maintain a res arr. For example res = [3rd largest, 2nd largest, largest]. Also we do not need a set.
+
+for num in nums:
+	if num > 3rd < 2nd, replace 3rd
+	if nums > all, replace largest
+	if nums > 2nd < largest, replace 3rd. 
+	Else do nothing
+
+res = [float('-inf')] * 3
+for num in nums:
+    if num > res[0] and num < res[2]:
+        res[0] = num
+    elif num > res[1] and num < res[2]:
+        res[1] = num
+    elif num > res[2]:
+        res[2] = num
+if len(res) >= 3:
+    return res[0]
+else:
+    return res[-1]
+
+The problem we face with this solution is that when comparing num < res[2] to neg inf, its always true. Therefore, you have to swap. Lets convience ourselves with an example: 
+
+With [3,2,1], you get a res of [3, inf, inf]. Therefore you have to perform a swap everytime you add. Shift everything to the right in the new arr: 
+
+res[0], res[1], res[2] = num, res[0], res[1]
+
+//Mar 19 2024
+**Move Zeros
+You have a read and write pointer.
+
+[0,1,0,3,12]
+   r
+ w 
+
+If == 0, move r up and r, w = r, w, swapping the elems
+
+[1,0,0,3,12]
+   r
+ w
+
+Lets start with w = 0, r = 1
+
+[0,1,0,3,12]
+ w
+   r
+
+If nums[w] == 0, nums[r], nums[w] = nums[r], nums[w], w += 1, r += 1
+
+[1,0,0,3,12]
+   w
+     r
+
+[1,0,0,3,12]
+     w
+       r
+
+swap
+
+[1,0,3,0,12] -> This fails
+
+The trick is to do it swap if its not 0. And if you do the swap, increment l. 
+
+
+**Replace Elements with Greatest Element on Right Side
+For these replace elem questions, you normally want to iterate from R -> L. Why? So you don't have to look foward and backtrack. The array is not sorted. for i in range(len(arr) - 1, - 1, -1). set num[-1] = -1. next val == max(cur, cur[i+1]
+
+2nd last elem == max(cur, -1). Why not manually set arr[-2] = arr[-1], arr[-1] = -1
+
+arr[-1] = -1
+for i in range(len(arr)-2, -1, -1):
+	arr[i] = max(arr[i+1], arr[i])
+return arr
+
+Input: [17,18,5,4,6,1]
+Answer: [18,18,5,4,1,-1]
+Expected: [18,6,6,6,1,-1]
+
+Ok, you can't manually set arr[-2]. What if you just set arr[-1]? 
+[17,18,5,4,6,-1]
+
+for i in range(len(arr) -2, -1, -1):
+	arr[i] = max(arr[i+1], arr[i])
+arr[-1] = -1
+return arr
+
+It seems like they are shifting everything to the left by +1. I'm too brain dead - the new solution suggested by GPT is as follows. You set max_val = -1. And for i in range(len(arr)-1,...) tmp = cur val, set cur to max_val, and max_val is now = max(max_val, temp).
+
+Q: Just for practice, can you solve this problem via swapping? #todo
+
+**Valid Mountain Array
+if cur always larger than prev (increse). Second there is decrease, only allow decrease. If increase again return false.
+
+1) while increase, always increase
+
+increase = True
+for i in range(1, len(arr)):
+	if arr[i] < arr[i+1] and increase: #this is the peak of the mountain
+		increase = False
+	if not increase and arr[i] > arr[i+1]:
+		return False
+return True
+
+Try again while a while loop
+
+i, downhill = 1, False
+while arr[i] > arr[i-1]:
+	i += 1
+downhill = True
+while arr[i] < arr[i-1]:
+	i += 1
+return i == len(arr)
+
+**Check if N and Its Double Exist
+
+It seems like you have to iterate two pointers i and j. Return true if: 1) i != j 2) i and j within arry bounds 3) the val of i == 2x that of j.
+
+Make a set. If new val, add to set. If the val you see // 2 is in set with no reminders. Return true. Else return false.
+
+dup = set()
+for num in arr:
+	if num % 2 == 0 and num // 2 in dup:
+		return True
+	elif num not in dup:
+		dup.add(num)
+return False
+
+This code breaks here because it can only make a comparison to j after its's been added. A cheecky fix is to dup = set(arr). if num%2 == 0 and num // 2 in dup, return True. 
+
+It broke with the following test case: [-2,0,10,-19,4,6,-8]. This fails because 0//2 and %2 == 0. Don't add 0 to set. One way is to never all 0s to the set. res_set = {x for x in arr if x! = 0}. You also have a if case for 0 zeros. Jank as hell. 
+
+Visit the proper way to do it via deletions. 1) sort the reversed(sorted(arr)). Have i, j pointer. Move j by default. Move i if arr[j] * 2 < arr[i] i+= 1.
+
+arr = reversed(sorted(arr))
+while j < len(arr) - 1:
+	if arr[j] * 2 == arr[i]:
+		return True
+	elif arr[j] * 2 < arr[i]:
+		i += 1
+	j += 1
+return False
+
+
+//Mar 18 2024
+
+Count the # of zeros. Iterate backwords. This way you don't have to worry about shifting vals in the indexes.
+
+[1,0,2,3,0,4,5,0]
+               ^
+You have a zero count which is 3 in this case. You hit the case of if i + zeros < n: which it fails. arr[i] == 0, so you -= 0. zeros = 2. You also go into the case of i + zeros < n which it fails. Do nothing.
+
+[1,0,2,3,0,4,5,0]
+             ^
+zeros = 2... you keep moving left till arr[i+zeros] < len(arr). What about the case of case of zeros at the back of the index that we would not duplicate? Why are we counting those? I would assume that we would push elements out of the array. But we solve this problem by decrementing everytime we see an 0. For the array [1,2,0,3,0,4,0]
+				  ^
+i + zeros = 6 + 3 = 9 > len(arr). We then hit the case of arr[i] == 0: zero -= 1. i + zeros > n. Continue loop.
+
+Merge Sorted Array
+
+The cheating way to do it is to use extra space. declare nums3 = []. Loop through nums1 and nums2. Sort it. And for every i-th elem in num you set as nums1[i].
+
+tmp = []
+for num in nums1:
+    tmp.append(num)
+for num in nums2:
+    tmp.append(num)
+for i, num in enumerate(sorted(tmp)):
+    nums1[i] = num
+
 //Mar 16 2024
 
 881 Boats to Save People
@@ -767,10 +942,3 @@ For a problem where you need to find the next greater element in array, why woul
 When you encounter an element greater than stacks top elem, I would guess that you keep popping until the last elem of the stack is larger? no idea lol. on 5 hours of sleep too tired to work it out myself (is that bad that I'm this lazy?)
 
 Q: How does this provide O(n) run time? Recall for a monotonic stack, you only add the largest elem, and you keep popping from the stack till you 1) find an elem 2) there is no more elems in the arry. My knee jerk response is to count the number of pops. My but I recall that a problem stored the index elems. When you come upon the largest elem you find the diff between the index vals to find out how far they are apart from another. 
-
-
-
-
-
-
-
