@@ -1,6 +1,843 @@
+//Mar 27 2024
+**Flatten a Mutilevel Doubly Linked List
+It seems like you're just putting the child list right after cur node. This is an insertion problem.
+
+Loop through the linked list. If child, insert child and everything in the child layer between cur, and the next node. We can do this iterativly or recursivly. Lets try both methods.
+
+With the iterative method:
+cur = head
+while cur:
+	if cur.child:
+		tmp_layer = cur.next
+		cur = cur.child
+		while cur.next:
+			Q: what if there is another nested child?
+	cur = cur.next
+
+I'm pretty sure you NEED recursion to solve this. Because there could be up to n levels no?
+
+For the iterative solution you need a 1) helper function 2) a maunal call stack to maintain. Seems pretty dumb to solve this problem this way.
+
+Recursive solution:
+
+What is the base case? If cur.next = None, return
+
+if head is None:
+	return
+if head.child = None
+	flatten(head.next)
+else:
+	flatten(head.next)
+
+You have to relink to the next node @ the same level of cur before iterating through all the child though.
+
+Base case + recursive step: The true base case is when cur.next and cur.child all == None. After you find a node with a child, you want to explore it completely. Recursively call on this function on the child node. flatten(cur.child). 
+
+Relinking Nodes: You want to save cur.next somehow in the call stack before traversing the child. Seems like BFS with a queue like structure? Everytime you hit a child, you want to add to queue, and everytime that the call stack is complete, you dequeue the top layer (cur.next) and continue traversing cur.next.
+
+Why is it that you don't have to check for a termination condition? I thought when solving linked lists problems recursively, you always have to return None or something if base case is hit. As for relinking nodes cur = cur.child.
+
+if cur is None:
+	return None
+
+OK, I had to cheat for this portion. As I've guessed, you have a temp storage for cur.next. You need that to relink everything after you've traversed through all of the child nodes one layer down. Then you call flatten(cur.child). Ok the one thing I didn't think of is that you need to find the last child - that is the one you have to link back up with the higher level.
+
+The process of relinking the nodes are 1) lastchild.next = tmp, tmp.prev = lastchild. That is if tmp though.
+
+
+
+
+
+
+**Add Two Numbers (Iterative)
+Ok so it turns out that I did not need to reverse the nodes.
+
+Correct code: You should initialize a dummy node. set cur as dummy so you can iterate over it. Also, you forgot to iterate prev1 and prev 2. Other than that its correct and you just return dummy.next.
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def addTwoNumbers(l1: ListNode, l2: ListNode) -> ListNode:
+    c1, c2, prev1, prev2 = l1, l2, None, None
+    while c1:
+        c1.next, prev1, c1 = prev1, c1, c1.next
+    while c2:
+        c2.next, prev2, c2 = prev2, c2, c2.next
+
+    dummy = ListNode(0)
+    cur = dummy
+    carry = 0
+    while prev1 or prev2 or carry:
+        val1 = prev1.val if prev1 else 0
+        val2 = prev2.val if prev2 else 0
+        total = val1 + val2 + carry
+        carry = total // 10
+        cur.next = ListNode(total % 10)
+        cur = cur.next
+
+        if prev1:
+            prev1 = prev1.next
+        if prev2:
+            prev2 = prev2.next
+
+    return dummy.next
+
+Draft code:
+
+c1, c2, prev1, prev2 = l1, l2, None, None
+while c1:
+    c1.next, prev1, c1 = prev1, c1, c1.next
+while c2:
+    c2.next, prev2, c2 = prev2, c2, c2.next
+
+carry = 0
+while prev1 or prev2:
+	val1 = prev1.val if prev1 else 0
+	val2 = prev2.val if prev2 else 0
+	sum = val1 + val2 + carry
+	carry = sum // 10 
+	val = sum % 10
+	cur = ListNode(val) 
+	cur = cur.next
+
+
+//Mar 26 2024
+**Add Two Numbers (Iterative)
+The tricky thing about the iterative solution is that you have to look from R -> L and its a singly linked list. Is there a way to solve it in O(n) time and O(1) space. Is there a way to solve this problem without having to reverse the linked list?
+
+1) Reverse the linked Lists
+
+prev1, prev2, c1, c2 = None, None, l1.head, l2.head
+while l1 or l2:
+	c1.next, c2 = prev1, prev2
+	prev1, prev2 = c1, c2
+	c1, c2 = c1.next, c2.next
+
+The problem with this code is that it does not handle the edge cases where the lists are shorter.
+
+The proper method is:
+
+c1, c2, prev1, prev2 = l1, l2, None, None
+
+while c1 or c2:
+	if c1:
+		c1.next, prev1, c1 = prev1, c1, c1.next
+	elif c2:
+		c2.next, prev2, c2 = prev2, c2, c2.next
+	elif not c1 and c2:
+		c1.val, c1 = 0, c1.next
+	else:
+		c2.val, c1 = 0, c2.next
+
+Ok, we'll handle the edge cases during the addition phase where sum = val1 + val2 + carry. 
+
+c1, c2, prev1, prev2 = l1, l2, None, None
+while c1:
+    c1.next, prev1, c1 = prev1, c1, c1.next
+while c2:
+    c2.next, prev2, c2 = prev2, c2, c2.next
+
+1) calculate sum
+2) calculate carry
+3) create and link new node from val
+4) reverse nodes
+
+while c1 or c2:
+
+**Add Two Numbers (Recursive)
+According to GPT, you need:
+
+def addTwoNumbers(l1, l2, carry=0): The base case is if carry == 0 and not l1 and not l2. Then you return.
+
+To handle the cases of if there is a val for diff len of linked lists, if l1 = 0 or if l2 = 0.
+
+val1 = l1.val if l1 else 0
+same with val2
+sum = val1 + val2
+
+carry = sum // 10
+cur_val = sum % 10
+cur_node = ListNode(cur.val)
+
+recursive case:
+next1 = l1.next if l1 else None
+same w/ next2
+cur_node.next = addTwoNumbers(nex1, next2, carry)
+
+
+This questions suits recursion pretty well. The base case is if l1 and l2 = None. The recursive case, you want to pas l1, l2 and carry. 
+
+if l1.val + l2.val > 10:
+	addTwoNumbers(l1.val + l2.val - 10 ,1) #(sum, carry)
+else:
+	addTwoNumbers(l1.val + l2.val, 0)
+
+Ok. What do yo make equal to addTwoNumbers? cur.next = addTwoNumbers? How do you handle the carry from a previous recursion?
+
+The trivial solution is wrong - you did not read the questions properly- you're doing addition. The algo for the carry: either 1 or 0. num1 + num2, if > 10, -10 and carry = 1, else carry = 0. Since I'm lazy, I'm going to convert array to int, add, and convert to list again.
+
+arr1, arr2 = [], []
+while l1 or l2:
+	if l1:
+		arr1.append(l1.val)
+		l1 = l1.next
+	if l2:
+		arr2.append(l2.val)
+		l2 = l2.next
+
+num1 = int("".join(str(n) for n in arr1))
+num2 = int("".join(str(n) for n in arr2))
+
+res = num1 + num2 
+return [int(digit) for digit in str(num)]
+
+The return expects a linked list, so just build one and return that
+
+Trivial Solution
+
+arr1, arr2 = [], []
+while l1 or l2:
+	if l1:
+		arr1.append(l1.val)
+		l1 = l1.next
+	if l2:
+		arr2.append(l2.val)
+		l2 = l2.next
+
+res = [0] * len(arr1)
+
+for i in range(len(arr1)-1, -1 ,-1):
+	res[-i-1] = arr1[i] + arr2[i]
+
+return res
+
+Ok. Did not read the problem correctly. There is a carry term.
+
+
+**Merge Two Sorted Lists
+Ok, lets try to use recursion to solve this. What is the base case? If not l1 or l2. What is the minimizing case? if l1 smaller, l2 = mergeTwoList(l1.next), else l1 = mergeTwoList(l2.next).
+
+if l2 = None: 
+	return l1
+if l1 = None:
+	return l2
+
+if l1.val < l2.val:
+	l2 = mergeTowLists(l1.next)
+else:
+	l1 = mergeTwoLists(l2.next)
+
+First step is to create a dummy prehead node. Q: why is that helpful? This way we don't have to deal with the edge cases of 0 or 1 node in l1 or l2. The condition to decide whether the node from l1 or l2 should be attached to cur node is which is smaller. Compare l1.val to l2.val. Append the smaller one. cur.next = l1, l1 = l1.next. cur = cur.next to iterate. Once all the nodes are attached, you have two cases, where l1 = None or l2 = None. Take the one that is not None, and cur = l2/l1.next. Return head. 
+
+dummy = newNode(None, next = head)
+cur = dummy
+while l1 and l2:
+	if l1.val < l2.val:
+		cur.next = l1
+		l1 = l1.next
+	else:
+		cur.next = l2
+		l2 = l2.next
+	cur = cur.next
+
+if l1 is not None:
+	cur.next = l1
+if l2 is not None: 
+	cur.next = l2 
+
+return dummy.next
+
+The case that you missed is that you also have to return l1 and return l2 inside the case of l1.val <> l2.val. Why is that 
+
+//Mar 25 2024
+**Merge Two Sorted Lists
+I remeber that there was a way to do it recursively and iterivly. Lets try solving it with a while loop first.
+
+while l1 and l2, if l1 smaller, add that first, else add l2. when adding the flow looks something like (when comparing next vals). 
+
+**Palindrome Linked List
+Q: How do we do it in O(n) time and O(1) space? It seems like we would have to move 2 pointers at different speeds. The tricky part here is that its a uni-directional linked list.
+
+1 -> 2 -> 3 -> 3 -> 2 -> 1
+
+So using the fast and slow pointers you can find the midpoint. The tricky thing is how we do the comparisions.
+
+1) you cant have a set, hash, or any other external storage 2) you can't create prev pointer (counts as extra storage) 
+
+But you can reverse the linked list before the midpoint. Recall reversing a linked list:
+
+cur.next = prev
+prev = cur
+cur = cur.next
+
+count, cur, cur2, prev, f = 0, head, head, None, head
+while f and f.next:
+	count += 1
+	cur = cur.next
+	f = f.next.next
+
+for _ in range(count//2):
+	cur2.next = prev
+	prev = cur2
+	cur2 = cur.next
+
+for _ in range(count//2):
+	if cur2.val != cur.val:
+		return False
+	cur, cur2 = cur.next, cur2.next
+
+return True
+
+Few things to observe 1) Count is not needed. 2) You didn't handle the case of if not head or head.next.
+
+if not head or not head.next:
+	return True
+
+s = f = head
+prev = None
+
+while f and f.next:
+	f, s.next, prev, s = f.next.next, prev, s, s.next
+
+if f:
+	s = s.next
+
+while prev and s:
+	if prev.val != slow.val:
+		return False
+	prev, s = prev.next, s.next
+
+return True
+
+The most trivial method to do this is to traverse through the linked list and append each elem onto an array. Then you perform is Palindrome on the arry. for i in range(len(arr) // 2) and for j in range(len(arr)//2) is the same.
+
+res, cur = [], head
+while cur:
+	res.append(cur.val)
+	cur = cur.next
+
+for i in range(len(res)//2):
+	if res[i] != res[-i-1]:
+		return False
+
+return True
+
+**Odd Even Linked List
+
+You offset odd and even. Store where even started. Iterate while even and even.next. The key is you are not just iterating through via .next.next but rather you have to update the nodes with odd.next = odd.next.next, then move odd.
+
+Ok, my main mistake is the fact that I traversed the linked list twice. No need for that. First and foremost, if there is no head, I should return None - that is the edge case. Set odd = head and even to be one offset. while there is even and even.next (since thats the longest node). Holy smokes, the idea of setting an evenHead is pretty smart. evenHead = even. 
+
+Store all the odd vals and even vals. Then combine the linked list.
+
+cur, odd = even = head
+e, o = 0, 0
+while odd.next:
+	odd = odd.next.next
+	o += 1
+while even.next:
+	even = even.next.next
+	e += 1
+for _ in range(e+o):
+	cur = odd.next
+	if odd.next == None:
+		cur = even.next
+return cur
+
+Ok, you can't do odd.next.next. You have to start them offset by eachother.
+
+**Remove Linked List Elements
+Loop through the linked list. If val cur.val == val remove. Keep going till head == null.
+
+You can look to see if cur.next.val == val. Since this is a singly linked list. we only really have to move one pointer.
+
+cur.next = cur.next.next. We don't have to worry about two pointers. 
+
+cur = head
+while cur.next:
+	if cur.next.val == val:
+		cur.next = cur.next.next
+	cur = cur.next
+return head
+
+Q1: My code would return 1 -> 2 -> 6 -> 4 -> 5 -> None? 
+Q2: For Q2 you can check and modify the head pointer before the while loop, or easier yet, use a tmp dummy node
+
+For the edge cases of these linked list, its good to have a dummy node:
+
+dummy = ListNode(next=head)
+cur = dummy
+while cur.next:
+	if cur.next.val == val:
+		cur.next = cur.next.next
+	else:
+		cur = cur.next
+	return dummy.next
+
+//Mar 24 2024
+**Reverse a linked
+while loop. You have a tmp store. 
+
+tmp = cur.next
+cur.next = cur.prev
+cur.prev = cur.next
+cur = tmp
+
+The elegent way to implement is cur, prev = head, None
+while there is a cur, cur.next = prev, prev = cur, cur = cur.next. So what you wrote above was wrong.
+
+**Intersection of Two LinkedLists
+Most elegent version of the solution does not require counting. If any of the list elems are empty, return None. You set a and b to their respective heads. while a != b, you keep looping. 
+
+a = a.next if a else headB
+b = b.next if b else headA
+
+Followup: write solution that is O(m+n) time and O(1) mem. So I cheated a bit and looked at the solution for O(1) space. You calculate the len of both arr and offset the len of the longer one by starting at len(long) - len(short).
+
+a, b, len_a, len_b = headA, headB, 0, 0
+while a:
+	a = a.next
+	len_a += 1
+while b:
+	b = b.next
+	len_b += 1
+
+if len_a > len_b:
+	diff = len_a - len_b
+	for _ in range(diff):
+		a = a.next
+	while a and b:
+		a, b = a.next, b.next
+		if a == b:
+			return a
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        a, b = headA, headB
+        len_a, len_b = 0, 0
+
+        # Calculate the length of list A
+        while a:
+            len_a += 1
+            a = a.next
+
+        # Calculate the length of list B
+        while b:
+            len_b += 1
+            b = b.next
+
+        # Reset pointers to the start of each list
+        a, b = headA, headB
+
+        # Adjust the starting point for the longer list
+        if len_a > len_b:
+            for _ in range(len_a - len_b):
+                a = a.next
+        else:
+            for _ in range(len_b - len_a):
+                b = b.next
+
+        # Find the intersection
+        while a != b:
+            a = a.next
+            b = b.next
+
+        # Either both are None (no intersection) or both are at the intersection point
+        return a
+
+Can we not store the vals of a1 and b1 in a hash? If val in hash, return. 
+
+a = headA
+b = headB
+a_list = set() 
+
+while a.next:
+	a_list.add(a)
+	a = a.next
+
+while b.next:
+	if b in a_list:
+		return b
+	b = b.next 
+
+return None
+
+Corrected code: 
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
+        a_nodes = set()
+
+        # Traverse the first list and add all nodes to the set
+        a = headA
+        while a:
+            a_nodes.add(a)
+            a = a.next
+
+        # Traverse the second list and check each node against the set
+        b = headB
+        while b:
+            if b in a_nodes:
+                return b  # Intersection found
+            b = b.next
+
+        return None  # No intersection
+
+**Linked List Cyle II
+Shortened version according to GPT. Cycle detection is still the same. The diff starts to happen while you're in the outer loop. if s == f. while head != s, you move head. 
+
+s = f = head
+while f and f.next:
+	s, f = s.next, f.next.next
+
+Code:
+s = f = head
+while f and f.next:
+	f, s = f.next.next, s.next
+	if s == f:
+		break
+
+cycle, ptr = 1, ptr.next
+while ptr != s:
+	ptr = ptr.next
+	cycle += 1
+
+ptr1 = ptr2 = head
+for _ in range(cycle-1):
+	ptr1, ptr2 = ptr1.next, ptr2.next
+return ptr1
+
+peudo code I:
+
+step 1
+c1, c2 = 0, -1
+s = f = head
+while f and f.next:
+	f = f.next.next
+	s = s.next
+	c1 += 1
+	if f == s:
+		break
+#observation, we don't even have to track c1 here
+
+step 2
+ptr = s.next
+while ptr != s:
+	ptr = ptr.next
+	c2 += 1
+
+step 3
+ptr1 = ptr2 = head
+while c2 >= 0:
+	ptr2 = ptr2.next
+	c2 -= 1
+res = 0
+while ptr1 != ptr2:
+	ptr1 = ptr1.next
+	ptr2 = ptr2.next
+	res += 1
+return res
+
+The first thing we want to establish is that f can cross s at an 'arbitrary' location dependent on 1) where the cycle starts 2) the size of the cycle (number of nodes). This means if we can find 2) the size of the cycle, we can reverse engineer to where the cycle starts based on where they cross. 
+
+Step 1:
+To solve this, there is a couple of questions we have to answer 1) To detect if there is a cycle, we start both s and f at head, moving f 2x as fast as s. If s == f, there is a cycle. 
+
+Step 2: 
+To determine the size of the cycle you take the point where s == f. And s = s.next, fast = fast.next.next. Doing it with a cycle len of 4, (1,2,3,4 nodes) it seems like s moves 2x the length of the list before f catches up. So would the equation just be count s moved since s==f // 2?
+
+step 3:
+You just do count s==f location - size of cycle? 
+
+Ok for step 2, you can just keep looping f till s == fast again and track the count. Ok, now the giga brain move is set up another ptr1 and ptr2. You move ptr1 by len of cycle at a time. ptr2 1 step at a time? '
+
+You initalize ptr1 to be n steps ahead and iterate 1 @ a time. Q: why does this work? Since you know that one point is exactly n len further ahead, you know that pt1 will == pt2 in which its the start of the linked list.
+
+Just to clearify for step 2 you start @ s == f, and you only iterate 1 ptr till you hit s==f again. And you simply count the number of increments?
+
+Its the same as normal cycle detection, but you simply add an index counter no? There is the base case:
+
+if not head or not head.next:
+	return -1
+
+f = s = head
+p = 0
+while f and fast.next:
+	p += 1
+	f = fast.next.next
+	s = slow.next
+	if f == s:
+		return p
+return -1
+
+This does not work because the point in which f and s meet does not mean its where the cycle starts
+
+Read into Two Pointer in LinkedList: To determine if cycle, you can use hash table or f and s pointer. 
+
+Q: How would you do cycle detection and find the start of a cycle?
+
+**Linked List Cycle
+Pretty much, you move fast twice fast as slow. If fast == slow, return true, else return false. Q: what is the while condition? While fast.next.next and slow.next. 
+
+**Design Linked List
+def deleteAtIndex(self, index):
+	if index == 0:
+		self.head = self.head.next
+		self.size -= 1
+	elif index == self.size:
+		self.tail = self.tail.prev
+		self.size -= 1
+	elif index > size:
+		return -1
+	else:
+		cur = self.head
+		while cur.next and index < size:
+			cur = cur.next
+			index -= 1
+		cur.next.prev = cur.prev
+		cur.prev.next = cur.next
+
+Lets compare how my code is diff from GPTs. If index < 0 or index >= self.size return -1. Valid, this is a more general case. If index == 0, self.head = self.head.next. If self.head you also have to remove the tail that pointed back to the prev head. The other case is if there is no more head, then you set self.tail = None. If its at the end, there are two cases as well. -> wait no the other case where the list = empty just activates the condition above to remove head. self.tail = self.tail.prev, self.tail.next = None. You dont have to do while cur.next since its already managed by index. The key is that you do cur.prev.next = cur.next before cur.next.prev = cur.prev. 
+
+The correct code: 
+
+def deleteAtIndex(self, index):
+    if index < 0 or index >= self.size:
+        return -1
+    elif index == 0:
+        self.head = self.head.next
+        if self.head:
+            self.head.prev = None
+        else:
+            self.tail = None
+    elif index == self.size - 1:
+        self.tail = self.tail.prev
+        self.tail.next = None
+    else:
+        cur = self.head
+        while index > 0:
+            cur = cur.next
+            index -= 1
+        cur.prev.next = cur.next
+        cur.next.prev = cur.prev
+    self.size -= 1
+    return 0
+
+//Mar 22 2024
+**Design Linked List
+Ok, lets first make a class called ListNode which should contain the def for node, and node val. I forgot the def. But I think you need something along the lines of 1) new node 2) node vals: 
+
+class ListNode:
+	def __init__(self, val):
+		self.val = val
+		self.prev = None
+		self.next = None
+
+For the above, its the inital initialization. For the MyLinkedList class, you want to define that the self.left. 
+
+For the def of myLinkedList, it can vary a lot by if its a singly, or doublely linked list. Generally, for the node class you want to declare the val, prev and next. For the init for the MyLinkedList you would want to set the head, tail vals. 
+
+One intresting thing you can also add is the size of the linked list. For example, if you constantly need to know the length of the list, instead of having to iterate through the list at O(n) time, you can look at the size attribute which is O(1). 
+
+class MyListNode:
+	def __init__(self):
+		self.head = None
+		self.tail = None
+		self.size = 0
+
+Ok, now for the def of add at head. There are two possible scenarios 1) its an empty linked list 2) its not a empty list.
+
+1) If list, head = ListNode(val), tail = head, size = 1
+2) Else head.prev = ListNode(val), head = head.prev, size += 1
+
+def addAtHead(self, val):
+	if not head:
+		head = ListNode(val)
+		tail = head
+		size = 1
+	else:
+		tmp = head
+		head.prev = ListNode(val)
+		head = head.prev
+		head.next = tmp
+		size += 1
+
+There is a few issues with how I wrote addAtHead. I mainly forgot to had self. Ok self = making changes to instance in python class. 
+
+if not self.head:
+	self.head = ListNode(val)
+	self.tail = self.head
+	self.size = 1
+else:
+     tmp = self.head
+     self.head = ListNode(val)
+     self.head.next = tmp
+     tmp.prev = self.head
+     self.size += 1
+
+What I fogot was to make tmp.prev = self.head. I feel like there is a better name for tmp. maybe old_head.
+
+Try to shorten:
+self.head = ListNode(val) if not self.head else (self.head.prev = ListNode(val, self.head, None)
+
+For the case of adding at tail, similar to adding at head, there are two cases: 1) adding tail to an empty arr 2) adding tail to an non empty arr. Question: how to add to the tail of an arr?
+
+def addAtTail(self, val):
+	if not self.tail:
+		self.head = ListNode(val)
+		self.tail = self.head 
+		self.size = 1
+	else:
+        	self.tail.next = ListNode(val)
+        	self.tail.next.prev = self.tail
+        	self.tail = self.tail.next
+        	self.size += 1
+
+Another way to write the else case of addaAtHead:
+
+else: 
+	self.head.prev = ListNode(val)
+	self.head.prev.next = self.head
+	self.head = self.head.prev
+	self.size += 1
+
+  val <-> 1 <-> 2 <-> 3
+   ^   
+   h
+
+def get(self, index):
+	if index > self.size or index < 0:
+		return -1
+	cur = self.head
+	while index > 0:
+		cur = cur.next
+		index -= 1
+	return cur.val
+
+def addAtIndex(self, index, val):
+	if index > self.size or index < 0:
+		return -1 
+	elif index == size:
+		addAtTail(val)
+	elif index == 0:
+		addAtHead(val)
+	else:
+		new_node = ListNode(val)
+		cur = self.head
+		while index > 0:
+			cur = cur.next
+			index -= 1
+		new_node.next = cur.next
+		new_node.prev = cur
+		cur.next.prev = new_node
+		cur.next = new_node
+		self.size += 1
+
+def deleteAtIndex
+	
+There are 4 links that you have to break. 
+
 //Mar 21 2024
+Started studying recursion
+**Reverse String
+Base case. When the string is empty, return res. Else keep returning reverseString(s[-1])
+
+if not s:
+	return res
+res.append(reverseString(s[-1)])
+
+The problem is that you have to declare res outside. And you need to create a helper function.
+
+2nd try
+res = [] 
+def helper(s):
+	if not s:
+		return res
+	helper(s.pop())
+
+The problem with this helper code is that its simplying the index I want to remove. 
+
+The solution that takes advantage of the call stack uses the following approach: The base case is if the index reaches len(s) // 2. That means you made every swap possible from the l and r side. The recursive case is s[i], s[-i-1] = s[-i-1], s[i]. Then you simply call the function iterating index + 1
+
+def reverseString(s, i=0):
+	if i >= len(s) // 2:
+		return
+	s[i], s[-i-1] = s[-i-1], s[i]
+	reverseString(s, i+1)
+
+**Squares of a Sorted Array
+We are not allowed to 1) sort 2) square the elem. Take everything < 0, abs val it. reverse. nums1. nums2 = other half. loop through nums1 and nums2. Append to res in that order.
+
+nums1, res = [], []
+i = 0
+while nums[i] < 0:
+	nums1.append(nums[i]
+	i += 1
+nums1 = reversed(nums1)
+
+k = 0
+for j in range(i, len(nums)):
+	while num[j] > nums1[k]:
+		res.append(nums1[k])
+		k+=1
+	res.append(nums[j]
+return res
+
+Clean up mistakes:
+
+def sortedSquares(nums):
+    nums1, res = [], []
+    i = 0
+    while i < len(nums) and nums[i] < 0:
+        nums1.append(abs(nums[i])**2)
+        i += 1
+    nums1 = list(reversed(nums1))
+
+    k = 0
+    for j in range(i, len(nums)):
+        while k < len(nums1) and nums1[k] < nums[j]**2:
+            res.append(nums1[k])
+            k += 1
+        res.append(nums[j]**2)
+
+    while k < len(nums1):
+        res.append(nums1[k])
+        k += 1
+
+    return res
+
 **Find All Numbers Disappeared in an Array
-There is a few edge cases to consider 1) if the skip num 
+There is a few edge cases to consider 1) if the skip num is at the start 2) if the skip num is at the end, 3) if there are repeats (not really a edge case to worry about). The question is if we can do it in O(n) time. Lets try the leetcode cheat sheet: https://leetcode.com/explore/interview/card/cheatsheets/720/resources/4725/
+
+Arr is not sorted and its asking to find specific elems. The solution therefore uses a hashmap. Remeber you can only do O(n), but that does not mean you have to do only one pass.
+
+Q: Does 1-n include numbers bigger than n in the input? Assume no.
+
+Find len(nums). Turn that into a set. Loop through nums. If not in set, append to solution.
+
+arr, res = set(), []
+for i in range(len(nums)):
+	arr.add(i)
+
+for num in nums:
+	if num not in arr:
+		res.append(num)
+
+return res
+
+Ok that was pretty poo poo brained of you. You make nums a set, and check if its not in arr!
+
+n = len(nums)
+nums = set(nums)
+res = []
+for i in range(n):
+	if i not in nums:
+		res.append(i)
+return res
+
+Problem: You have to one index the arr. We fixed that by simply doing n+1 and not appending the 0th i elem.
 
 //Mar 20 2024
 **Third Maximum Number
