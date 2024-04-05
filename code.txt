@@ -1,7 +1,89 @@
 //Apr 4 2024
-Practicing traversals using
+Practicing traversals using adjacency lists. To initalize, you want a source and destination. 
+
+class GraphNode: 
+	def __init__(self, val):
+		self.val = val
+		self.neighbors = [] 
+
+You could also use a hashmap:
+
+adList = {'a':[], 'b':[]}. Example, given edges:
+edges = [["A", "B"], ["B", "C"], ["B", "E"], ["C", "E"], ["E", "D"]]
+
+build and adList:
+
+for src, dst in edges:
+	if src not in adList:
+		adList[src] = []
+	if dst not in adList:
+		adList[dst] = []
+	adjList[src].append(dst)
+
+DFS to count paths to a target using back tracking:
+
+visit = ()
+def dfs(node, target, adList, visit):
+	if node in visit:
+		return 0
+	if node == target:
+		return 1
+
+	count = 0
+	vist.add(node)
+	for neighbors in adList[node]:
+		conut += dfs(node, target, adList, visit)
+	vist.remove(node)
+
+	return count
+
+BFS to find shortest path to target:
+
+def BFS(node, target, adjList):
+	length = 0
+	visit = set()
+	visit.add(node)
+	queue = deque()
+	queue.append(node)
+
+	while queue:
+		for i in range(len(queue)):
+			cur = queue.popleft()
+			if cur == target:
+				return length
+			
+			for neighbors in adjList[cur]:
+				if neighbot not in vist:
+					vist.add(neighbor)
+					queue.append(neighbor)
+			length +=1
+	return length		
 
 
+Try again:
+
+adList = {'a':[], 'b':[]}
+cur = 'a':[]
+
+def BFS(node, target, adjList):
+	queue = deque()
+	queue.add(node)
+	visit = set()
+	visit.add(node)
+	length = 0
+
+	while queue:
+		for i in range(len(queue))
+			cur = queue.popleft()
+			if cur.val == target:
+				return length
+			for neighbor in adjList[cur]:
+				if neighbor not in visit:
+					visit.add(neighbor)
+					queue.append(neighbor)
+		length += 1
+	return length
+			
 **Unique Number of Occurrences
 Given a arr of int. Return true if # of occurrences of each val is unique. Create a hash map: key = num -> val = # of num occurence. Loop through the vals, add to set, if in set, return False, else return True.
 
