@@ -1,5 +1,621 @@
+//Apr 4 2024
+Practicing traversals using
+
+
+**Unique Number of Occurrences
+Given a arr of int. Return true if # of occurrences of each val is unique. Create a hash map: key = num -> val = # of num occurence. Loop through the vals, add to set, if in set, return False, else return True.
+
+numCount, occurance = {}, set()
+for num in range(len(arr)):
+	if num not in numCount:
+		numCount[num] = 1
+	else:
+		numCount[num] += 1
+
+for val in numCount.values():
+	if in occurance:
+		return False
+	else:
+		occurance.add(val)
+
+return True
+
+**Max Consecutive Ones III
+You are able to flip k bits. Find the total number of consq ones you can make. Q: where would the prefix sum be useful here? 
+
+You do prefix sum. You have to make sure that index R - L + k == sum(r) - sum(l). You keep a running total of the max (R - L + k).
+
+0,1,1,0,1
+0,1,2,2,3
+
+1st lets create a prefix sum. 
+
+prefixSum = nums[1]
+for i in range(1, len(nums)):
+	prefixSum.append(num[i-1] + prefixSum[-1])
+
+L, R = 0, 1
+
+R you move by default. You only move L if you cannot create a consecutive one. You cant do L += 1 since it will be O(n^2). Can you move L -> R?
+
+[1,1,1,0,0,0,1,1,1,1,0]
+ l     r       
+
+Had to search to to move l pointer to shrink the window in this sliding window q. We have to move l += 1 i think. And we don't have to calculate the sum of in between L <-> R @ O(n) time each time. So in total the time complexity is O(N).
+
+If condition meet, r += 1, else while condition not meet l += 1. Track largestConsecutive. 
+
+while R < len(nums):
+	if R - L < prefixSum[R] - prefixSum[L] + k:
+		largestConsecutive = max(largestConsecutive, prefixSum[R] - prefixSum[L] + k)
+		R += 1
+	else:
+		L += 1
+
+return largestConsecutive
+
+Ok. Remeber, we only use prefix sum when we need to calculate the sum of elems in a range. We're not doing that here. 
+
+onesUsed = k
+while R < len(nums):
+	if nums[R] == 0:
+		oneUsed -= 1
+		if oneUsed == 0: #shrink window
+	R += 1
+
+Ok, you need to practice your boiler plate code for sliding window problems:
+There are two types of sliding windows 1) fixed size:
+
+for r in range(len(nums)):
+	if r - l + 1 > k:
+		window.remove(nums[L])
+		L += 1
+	else nums[R] in window:
+		return True
+	window.add(nums[R])
+return False
+
+And then, there is var size:
+
+for R in range(len(nums)):
+	total += nums[R]
+	while total >= target:
+		length = min(R-L+1, length)
+		total -= nums[L]
+		L += 1
+return 0 if length == float('inf') else length
+
+So this is a sliding window problem. How would you solve it?
+
+L, total = 0, 0
+length = -float('inf')
+
+for R in range(len(nums)):
+	total += nums[R]
+	while length < total + k:
+		
+#how do we shrink the window? while sums not consecutive. total += nums[R]. while total + k > R - L:
+	length = max(R - L + 1, length)
+	length -= nums[L]
+	L += 1
+
+L, total, length = 0, 0, 0
+for R in range(len(nums)):
+	total += nums[R]
+
+	while R - L + 1 > total + k:
+		total -= nums[L]
+		L += 1
+
+	length = max(R - L + 1, length)
+return length
+
+
+**Delete the Middle Node of a Linked List
+Have a f and s pointer. Where f moves 2x s. delete @ s once f reaches end. For the base case of n = 1, delete first node. 
+
+s = f = head
+if not s.next:
+	return None
+
+if not s.next.next:
+	return head.next
+
+while f and f.next:
+	s, f = s.next, f.next.next
+
+return head
+
+Proper solution: Handle 0 or 1 case: 
+
+if not head or not head.next:
+	return None
+
+if not head.next.next: 
+	head.next = None
+	return Head
+
+s = f = head
+while f and f.next
+	s, f = s.next, f.next.next
+s.next = s.next.next
+
+return head
+
+1 3 4 7 1 2 6
+      s
+            f
+
+You have to stop at s.prev
+
+prev = s.next
+
+if not head or not head.next:
+	return None
+
+s = f = head
+prev = None
+
+while f and f.next:
+	prev, s, f = s, s.next, f.next.next
+
+prev.next = slow.next
+return head
+
+//Apr 3 2024
+**Longest Common Prefix
+Sort. The prefix starts out as the shortest val. For each elem in inputs, compare to prefix. If val !=, reduce prefix size. Return prefix size or ''. We don't have to have a case for that.
+
+strs.sorted()
+pre = strs[0]
+reduce = 0
+for i in range(len(strs)):
+	for j in range(len(pre - reduce)):
+		if pre[j] != strs[j]:
+			reduce += 1
+return pre[:j]
+
+Corrected code:
+
+return '' if not strs
+
+strs.sort()
+pre, red = strs[0], 0
+
+for i in range(1, len(strs)):
+	for j in range(len(
+
+**Implement strStr()
+Learning about the KMP algo: The naive approach restarts the comparsion from next char of text everytime there is a mis match (this the m*n runtime). You want to build a prefix table (LPS Array). This also stands for longest proper prefix. You build it by setting an empty lsp == len of needle. 
+
+Example for Prefix Table:
+Pattern: "ABCDABD"
+LPS Array: [0, 0, 0, 0, 1, 2, 0]
+
+if set(needle) in set(haystack) return indexof(needle[0]). The problem with the set solution is that we do not perserve the order of the elems.
+
+We'll use two pointers. L, R. Loop through with L. If left == first index of needle, save, the index. Then while needle, iterate through both needle and haystack. If same, return index, else, index -1, set L = R. 
+
+for i in range(len(haystack)): 
+	if haystack[i] == needle[0]:
+		index = i
+		for j in len(needle):
+			if haystack[j] != needle[j]:
+				i, index = j, -1
+				break
+return index
+
+if not needle:
+	return 0
+for i in range(len(haystack) - len(needle) + 1): #we do this because we do not need to iterate through the entire len of the haystack if the elem left is < than len needle
+
+        if not needle:
+            return 0
+        for i in range(len(haystack) - len(needle) + 1):
+            if haystack[i] == needle[0]:
+                match = True
+                for j in range(1, len(needle)):
+                    if haystack[i + j] != needle[j]:
+                        match = False
+                        break
+                if match:
+                    return i
+        return -1
+
+This code looks kind of messy. But its O(n) time and O(1) space. There is actually an algo that we could use called the KMP algo that: 
+
+1) You create a prefix table for the needle. This stores the len of the longest proper prefix for each prefix of the needle. 
+
+**Rewrite of Rotten oranges
+R, C = len(grid), len(grid[0])
+rotten = deque()
+oranges += 1
+dir = [[1,0],[-1,0],[0,1],[0,-1]]
+
+for r in R:
+	for c in C:
+		if grid[r][c] == 2:
+			rotten.append(r,c)
+		if grid[r][c] == 1:
+			oranges += 1
+
+while rotten:
+	for nr, nc in dir: 
+		if not (0<= nr < R or 0<= nc < C) or grid[nr][nc] == 0 or grid[nr][nc] == 2:
+			continue
+
+	grid[nr][nc] == 2
+	rotten.append(nr,nc)
+	oranges -= 1
+	
+	if rotten:
+		time += 1
+
+return time if oranges == 0 else -1
+
+The cracked version using python list comprehension:
+	R, C, time 
+
+//Apr 2 2024
+**Rotton Oranges
+You want to define R and C. Then you want to create a queue using deque(). The rotton oranges get popped. You also have to iterate through the entire grid to count the total number of oranges. If you hit a time where no oranges get rotten and there is more less rotten than total oranges, return -1, else return time.
+
+R, C = len(grid)-1, len(grid[0])-1
+rotten = deque()
+oranges = 0
+
+for r in range(R):
+	for c in range(C):
+		if grid[r][c] == 2:
+			rotten.append((r,c), 0)
+		elif grid[r][c] == 1
+			fresh += 1
+#Q: do we even need:
+if fresh_oranges == 0:
+	return 0
+
+dir = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+
+while rotten: 
+	r, c = rotten.popleft()
+
+	for dr, dc in dir:
+		nr, nc = r + dr, c + dc
+
+		if not (0<= nr < R and 0 <= nc < C):
+			continue
+		if grid[nr][nc] == 0 or grid[nr][nc] == 2:
+			continue
+		
+		grid[nr][nc] = 2
+		oranges -= 1
+		queue.append((nr,nc))
+
+	if queue: 
+		time += 1
+
+return time if oranges == 0 else -1 
+
+//Apr 1 2024
+**Rotton Oranges
+For rotten oranges, we use a queue. Since we're counting the amount of time it takes for all the oranges to rot.
+
+**Add Binary
+Covert two strings into int, add, and convert to binary again. How do convert to int? Loop from the back, first val += 2^(i + 2). Do the same for other int. val1 + val2. To convert to binary:
+
+val1, val2 = 0, 0
+for i in range(len(a))-1, -1,-1):
+	val1 += 2 ^ (i + 1)
+
+How to turn into binary? Gave up on this. 
+
+while num > 0:
+	r = num % 2
+	bin = str(r) + bin
+	n // = 2
+
+Do the loop again. 
+
+Full code:
+
+val1, val2, bin = 0, 0, ''
+for i in range(len(a))-1, -1,-1):
+	val1 += 2 ^ (i + 1)
+for i in range(len(b))-1, -1,-1):
+	val2 += 2 ^ (i + 1)
+num = val1 + num2
+while num > 0:
+	r = num % 2
+	bin = str(r) + bin
+	n // = 2
+return bin
+
+another method = return bin(int(a,2) + int(b,2))
+[2:]
+
+for i in range(len(a) -1, -1, -1):
+	if a[i] == 1:
+		val1 += 2 ** (i + 1)
+
+**Number of Islands
+To find the number of islands in a grid, you want to loop through the grid and check for 1s. We can't just count the number of ones since mutiple ones can come together to form an island. Once you reach a 1, 1) mark it as visited 2) recursivly spread to other ones. Return count.
+
+For the dfs, you have to check bounds. 
+
+if not grid:
+	return 0
+
+R, C = len(grid)-1, len(grid[0])-1 
+count = 0
+
+dfs(r,c,grid):
+	if r < 0 or r > R or c < 0 or c > C or grid[r][c] == 0:
+		return
+	else:
+		grid[r][c] = '0'
+		dfs(r + 1, c , grid)
+		dfs(r - 1, c , grid)
+		dfs(r, c + 1 , grid)
+		dfs(r, c - 1 , grid)
+
+for r in range(R):
+	for c in range(C):
+		if grid[r][c] == 1:
+			count += 1
+			dfs(r, c, grid)
+
+return count
+
+Q: How do we shorten this code. We can use list comprehensions: 
+
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        def dfs(r, c):
+            if 0 <= r < len(grid) and 0 <= c < len(grid[0]) and grid[r][c] == '1':
+                grid[r][c] = '0'
+                list(map(dfs, (r + 1, r - 1, r, r), (c, c, c + 1, c - 1)))
+
+        return sum(dfs(r, c) or 1 for r in range(len(grid)) for c in range(len(grid[0])) if grid[r][c] == '1')
+
+
+//Mar 31 2024
+Find pivot index 1) find the max sum. Then keep a prefix sum of the left sum. And when sum - left sum = left sum, return index, else return false if reached end of the loop. One thing that you messed up it the bounds. If you ls to be at the bottom before the compare. And ls = total sum - left sum - n. Why the -n? 
+
+Review of diagonal traverse:
+Notice how that sum of every diagnoal row index is the same [0], [1,0],[0,1]. So we can add these to a hash map where the key is the sum of the index. We create this map using a O(n)^2 traversal looping with i and j. This way we have all the coordinates of the diagnoal traversal mapped out. Notice that the traversal occurs in alternating directions. We can append diagnal row and diagnal row reversed if % 2 != 0. Now loop through apended index elem and return res. 
+
+Spiral Matrix:
+For this question you have to figure out a method to 1) shrink the top, left, right, bottom bounds 2) change traversal directions. 
+
+Todo: Number of Islands
+Todo: Rotting Oranges
+
+//Mar 29 2024
+**Pascal's Triangle
+Solved
+
+//Mar 28 2024
+**Pascal's Triangle
+
+[1] a)       0
+[1,1] b)     1
+[1,2,1]      2 
+[1,3,3,1]    3 
+[1,4,6,4,1]  4
+
+You're doing a len2 scan from l -> r. edges are always 1. Edge case a) b). Rest follows the two scan patt.
+
+**Spiral Matrix
+Q: How do you determine directions: right, down, left, up
+
+Instead of subtracting row, and col, you can make sure top < bottom and left < right:
+
+top, bottom, left, right = 0, len(matrix) - 1, 0, len(matrix[0]) - 1
+res = []
+
+while top <= bottom and left <= right:
+	#move right
+	while j <= right:
+		res.append(matrix[i][j])
+		j += 1
+	top += 1
+	i += 1
+	j -= 1
+
+You define r, c = len(matrix), len(matrix[0]). Q: How do you do CW turns?
+
+[0,0], [1,0], [2,0] | [1,2], [2,2] | [2,1], [2,0] | [1,0] | [1,1]
+  0      1      2       3      4       3      2       1       2  -> Sum
+
+[0,0], [1,0], [2,0]
+[1,2], [2,2]
+[2,1], [2,0]
+[1,0]
+[1,1]
+
+We go from increase to decrease in len. There does not seem to be and clever math/indices trick to figure out like the diagonal traverse.
+
+Brute force. Iterate i -> till R. Turn down. Iterate j till C. Turn Left
+
+row, col, i, j, n, res = len(matrix) - 1, len(matrix[0]) - 1, 0, 0, 0, []
+while row > 0 or col > 0:
+	if i == 0: #traverse left
+		for i in range(col):
+			res.append(matrix[i][j])
+		n+=1
+	elif i == col: #traverse down
+		for j in range(n, row):
+			res.append(matrix[i][j])
+	elif j == row: #traverse left
+		for i in range(col - n, -1, -1):
+			res.append(matrix[i][j]
+	else: #traverse up
+		for j in range(row - n -1, -1, -1):
+			res.append(matrix[i][j]
+return res
+
+[-,-,-]
+[|,-,|]
+[-,-,|]
+
+row = 3, 2
+col = 3, 
+
+Ok, it seems like you mesed up the cases for spiraling inwards. You want to set a top, bottom, left, right var. After each right top +1, move down right -1 since you're iterating from the back, move left bottom -=1, move up, l+=1
+
+
+**Diagonal Traverse
+d = {}
+for i in range(len(matrix)):
+	for j in range(len(matrix[i])):
+		if i + j not in d:
+			d[i + j] = [matrix[i][j]]
+		else:
+			d[i + j].append(matrix[i][j])
+
+This builds the dict. The problem is 70% solved. Now you just have to figure out a method to traverse it in a zig zag pattern. You iterate through d[i+j] and if index % 2 == 0 down up, else go up down. Append to res.
+
+for key, val in d.items():
+	if key % 2 != 0:
+		res.append(val)
+	else:
+		res.append(reversed(val))
+
+I gave up and refered to GPT. The trick here is to sum i + j. The key big brained insight is that the elements on the same diagonal has the same i + j sum. Q: How does this help us? Well you could just do sum of diagnal - i to find j. 
+
+Try mapping out [i,j] = [0,0] | [1,0], [0,1] | [0,2], [1,1], [2,0] | [2,1], [1,2] | [2,2]
+Try to find the pattern of the [i,j] mapping. 
+
+[0,0]
+[1,0], [0,1]
+[0,2], [1,1], [2,0]
+[2,1], [1,2]
+[2,2]
+
+| [0,0] |
+| [1,0], [0,1] |
+| [2,0], [1,1], [0,2] |
+| [3,0], [2,1], [1,2], [0,3] |
+| [4,0], [3,1], [2,2], [1,3], [0,4] |
+-------------------------------------- Lets splits things up between increase and decrease
+| [4,1], [3,2], [2,3], [1,4] |
+| [4,2], [3,3], [2,4] |
+| [4,3], [3,4] |
+| [4,4] |
+
+R1 i start @ 0. As R += 1, i += 1. For each row, i -= 1. Once longest R is reached. First i always longest R. i -= 1 for every row.
+
+The j col, j = j + 1 till len of row, reset = 0. Once it reaches max len, the start of j += 1 each time and j = j + 1. 
+
+for i in range(len(mat)):
+	append i number of times, append i -> 0
+	clear()
+		[0] | [1] [0] | [2] [1] [0] | [3] [2] [1] [0]
+
+for j in range(len(mat)):
+	append j number of times, append 0 -> i
+	clear()
+
+res_i, res_j = [], []
+for i, j in range(len(mat)):
+	for _ in range(i - 1, -1, -1):
+		res_i.append(i)
+	for _ in range(j):
+		res_j.append(j)
+
+What ends up happening here is that you have [i] [j] in seperate arrs. So you iterate through both at the same time and append val of the mat in res. The way I'm implementing it, we would not heave to clear.
+
+res = []
+for i,j in range len(res_i):
+	res.append(mat[res_i[i], res_j[i]])
+
+Ok. Lets just try to solve for this pattern: [0] | [1] [0] | [2] [1] [0] | [3] [2] [1] [0]
+
 //Mar 27 2024
-**Flatten a Mutilevel Doubly Linked List
+**Diagonal Traverse
+lol this question is diabolical. You know that the dir of the traversal goes from 1 -> len(arr) before going back down to 9 again. 
+
+Let try to understand the problem. Quiz Q 1: What is the sum of indices (i, j) for the top right elem of any matrix? 
+
+**Plus One
+Given int. Rep digits where digits[i] is ith digit of int. And you add one. 
+
+1st method: turn arr into in, add, return the digits in arr format
+val = int(for dig in digits n.join(''))
+Wrong syntax, the correct method: 
+num = int(''.join(map(str, digits))
+return the val + 1 to arr
+num = [int(dig) for dig in str(num)]
+Ok for this method you have to convert the return digits back to string again. Not worth is.
+
+Loop from the back. Add the last val. If the last val == 9, carry = 1, add one again. If there is a carry and you reach index 0, insert @ 0 index and shift everything back. Ok this is not the most run time optimal because of the insert at the start. Instead of inserting at the start, you could do [1] + [rest of arr] since its more run time efficent. 
+
+for i in range(len(digits) - 1, -1, -1):
+	if digits[i] < 9:
+		digits[i] + 1
+		return digits
+	digits[i] = 0
+	
+	return [1] + digits
+
+**Largest Number At Least Twice of Others
+1) sort it
+2) check if [-1] > 2 * [-2]
+
+You have to return the index of the largest elem.
+You only have to store 2 hashs 1) largest val + index 2) 2nd largest val and index. Loop through the arr using enumerate.
+
+def dominantIndex(nums):
+    l1, l2 = [float('-inf'), -1], [float('-inf'), -1]  # Initialize with -1 for indices
+    for i, n in enumerate(nums):
+        if n > l1[0]:
+            l2[0], l2[1] = l1[0], l1[1]
+            l1[0], l1[1] = n, i
+        elif n > l2[0]:
+            l2[0], l2[1] = n, i 
+    
+    if l1[0] >= 2 * l2[0]:
+        return l1[1]
+    else:
+        return -1
+
+More readable two pass approach:
+
+max_val = max(nums)
+max_index = nums.index(max_val)
+
+for i, n in enumerate nums:
+	if i != max_index and n * 2 > max_val:
+		return -1
+
+return max_index
+
+One thing to note - you can find the index by simply calling nums.index(max_val) which I assume is also O(n)
+
+Linked List questions are hurting me, so I'm going to move into arrays.
+
+**Find Pivot Index
+prefixsumR = prefixsumL
+
+Q: what is the shortest method to write a prefix sum:
+
+ls, rs, n = nums, nums, len(nums)
+for i in range(1, n):
+	ls[i] += ls[i - 1]
+for i in range(n - 1, -1, -1):
+	rs[i] += rs[i + 1]
+	if rs[i] == ls[n - i]:
+		return nums[n - i]
+return -1
+
+Ok, it seems like you overly complicated the heck out of this question. The most elegent method to solve it is to sum all the nums. Check for left sum. If left sum = total sum - left sum, return i, else return -1. 
+
+sum_, ls = sum(nums), 0
+for i, n enumerate(nums):
+	return i if ls == sum - ls - n else ls += n
+return -1
+
+**Flatten a Mutilevel Doubly Linked List [Incomplete]
 It seems like you're just putting the child list right after cur node. This is an insertion problem.
 
 Loop through the linked list. If child, insert child and everything in the child layer between cur, and the next node. We can do this iterativly or recursivly. Lets try both methods.
@@ -42,12 +658,19 @@ if cur is None:
 
 OK, I had to cheat for this portion. As I've guessed, you have a temp storage for cur.next. You need that to relink everything after you've traversed through all of the child nodes one layer down. Then you call flatten(cur.child). Ok the one thing I didn't think of is that you need to find the last child - that is the one you have to link back up with the higher level.
 
-The process of relinking the nodes are 1) lastchild.next = tmp, tmp.prev = lastchild. That is if tmp though.
+The process of relinking the nodes are 1) lastchild.next = tmp, tmp.prev = lastchild. That is if tmp though. I'm still a little confused even when given the code. So lets walk through the DFS step by step.
 
+lastChildNode = cur.child
+while lastChildNode.next:
+    lastChildNode = lastChildNode.next
 
+With this, you're iterating till you find the last child node in a level. This is how you know where to link the end of the child to the start of the top level. 
 
+lastChildNode.next = next_temp
+if next_temp:
+    next_temp.prev = lastChildNode
 
-
+This simply relinks the child level with the parent level.
 
 **Add Two Numbers (Iterative)
 Ok so it turns out that I did not need to reverse the nodes.
