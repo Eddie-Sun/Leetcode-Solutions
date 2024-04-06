@@ -1,4 +1,25 @@
+//Apr 5 2024
+**Single Number
+I completely forgot about XOR operations. What you do is set res = 0, and for num in nums, res ^= num. 
+
+[4,1,2,1,2]
+res ^= 4 = 0 ^= 4 = 4
+4 ^= 1   = 0
+
+Ok, XOR happens at the binary level. Some useful proofs are: A number XORed with itself = 0. A number XORed with 0 is the number itself. XOR is commulative and associative. This means that the order of XOR operations dont matter. 
+
+
+
 //Apr 4 2024
+**Clone Graph
+It seems to me that if you want to make a deep copy of a graph given an reference node + adjacency list you want to do a BFS traversal. And if the new node is not copied, copy it to the new graph. BFT works best because it ensures that we connect every edge to every node, where we would have to manually backtrack for DFS.
+
+Given that you written BFS earlier, what is the major diff here I'm thinking.
+
+1) You have to make new nodes and copy the vals of each
+
+--DFS, BFS practice --- 
+
 Practicing traversals using adjacency lists. To initalize, you want a source and destination. 
 
 class GraphNode: 
