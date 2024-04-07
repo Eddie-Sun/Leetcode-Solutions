@@ -1,4 +1,139 @@
 //Apr 5 2024
+--Review of AdjLit BFS, DFS, Desgin--
+
+Lets start with the design of a graph:
+
+class graph:
+	def __init__(self):
+		self.adjList = {}
+	
+Ok Q: What does the __init__ method actually do in this context? Guess, it inialzies the adjList to a empty hashmap. And the self.adjList simply means that there could be mutiple instances of the same adjList object. 
+
+Ok, update in knowledge: __init__ is a constuctor which is auto created when new instance of class is made. The word self signifies that the method belongs to cur instance of class meaning each instance of graph can have own seperate adjList ditc. 
+
+	def addEdge(self, src, dst):
+		if src not in self.adjList:
+			self.adjList[src] = set()
+		if dst not in self.adjList:
+			self.adjList[dst] = set()
+		self.adjList[src].add(dst)
+
+	def removeEdge(self, src, dst) -> bool:
+		if src not in self.adjList[src] or dst not in self.adjList[dst]:
+			return False
+		self.adjList[src].remove(dst)
+		return True
+
+	def hasPath(self, src, dst) -> bool:
+		vistied = set()
+		return _dfs(src, dst, vistied)
+
+I noticed that when you call another function within the func def such as ins hasPath, you dont have to manually add self as a param? Ex return _dfs(src, dst, vistied). This is because when calling another method from the same class, the self is implicity passed as the first param by python.
+
+**Minimum Size Subarrary Sum
+Return min length of subarray that sum is greater or equal to target. Else return 0. This is a sliding window problem. You start off with a left pointer and a right pointer @ 0. L pointer shrinks the window (while sum of sub array >= target, shrink left, subtract l val 
+from sub array), else, R++ (we can just do that in a for loop). return length.
+
+I read the question wrong the first time. 
+
+L, total = 0, 0
+length, min = 0, float('inf')
+for R in range(len(nums)):
+	total += num[R]
+	length += 1
+	while total >= target:
+		min_length = min(length, min_length) 
+		L += 1
+		total -= nums[L]
+		length -= 1
+return min_length if min_length != float('inf') else min_length
+
+Corrected code: 
+
+L, total = 0, 0
+length, min_length = 0, float('inf')
+for R in range(len(nums)):
+    total += nums[R]  # Corrected typo here
+    length += 1
+    while total >= target:
+        min_length = min(length, min_length) 
+        total -= nums[L]  # Subtract the current L, then increment
+        L += 1
+        length -= 1
+return 0 if min_length == float('inf') else min_length
+
+**Find All Duplicates in an Array
+Ok the big brained solution to this is that you mark the indexs you visted by making it -. And the visit goes to the index of the val. [3,2,2,4], the first index marks 4 neg. And by traversing the abs vals of the arr.
+
+res = []
+for num in nums:
+	index = abs(num) - 1
+	if nums[index] < 0:
+		res.append(num + 1)
+	else: #mark as -
+		nums[index] = -nums[index]
+return res
+
+Given nums 1-n where each int appears once. Return a arr where intergers appear twice. There is the hash set solution which is O(n) time and O(n) space. 
+
+dup, res = set(), []
+for num in nums:
+	if num not in dup:
+		dup.add(num)
+	else:
+		res.append(num)
+return res
+
+Ok. Now how do we do it without a hash set? We cant sort it because it uses O(n) can we use the XOR operation? Everythime its 0, we append the res?
+
+res = []
+for num in nums:
+	
+Nope. The XOR method seems to only work for one repeat val due to the cummalitive property.
+
+--Design Graph--
+Example of the list: 
+
+{
+    1: {2, 3},
+    2: {4},
+    3: {4},
+    4: {1}
+}
+
+Keep in mind whn we are doing if src not in self.adjList or dst not in self.adjList, we are looking at the keys not the vals of the keys.
+
+class Graph:
+	def __init__(self)
+		self.adjList = {}
+	
+	def addEdge(self, src, dst):
+		if src not in self.adjList:
+			self.adjList[src] = set()
+		if dst not in self.adjList:
+			self.adjList[dst] = set()
+		self.adjList[src].add(dst)
+
+	def removeEdge(self, src, dst):
+		if src not in self.adjList or dst not in self.adjList:
+			return False
+		self.adjList[src].remove(dst)
+		return True
+	
+	def hasPath(self, src, dst): #this is just DFS no?
+		visited = set()
+		return self._dfs(src, dst, visited)
+
+	def _dfs(self, src, dst, visited):
+		if src == dst:
+			return True
+		visited.add(src)
+		for neighbor in self.adjList.get(src, []):
+			if neighbor not in visited:
+				if self._dfs(neightbor, dst, visited):
+					return True
+		return False
+
 **Single Number
 I completely forgot about XOR operations. What you do is set res = 0, and for num in nums, res ^= num. 
 
@@ -8,7 +143,37 @@ res ^= 4 = 0 ^= 4 = 4
 
 Ok, XOR happens at the binary level. Some useful proofs are: A number XORed with itself = 0. A number XORed with 0 is the number itself. XOR is commulative and associative. This means that the order of XOR operations dont matter. 
 
+DFS(node, target, adjList, visited):
+	if not node:
+		return 0
+	if node.val == target:
+		return 1
 
+	count += 1
+	visited.add(node)
+	for neighbor in adjList[node]:
+		count += dfs(node, target, adjList, visited)
+	visted.remove(node)
+	return count
+
+def BFS(node, adjList, target):
+	visited = set()
+	visited.add(node)
+	queue = deque()
+	queue.add(node)
+	length = 0
+	
+	while queue:
+		for _ in range(length(queue)): 
+			cur = queue.popleft()
+			if cur.val == target:
+				return length
+			for neighbor in adjList[cur]:
+				if neighbor not in visited:
+					visited.append(neighbor)
+					queue.add(neighbor)
+			length += 1
+	return length
 
 //Apr 4 2024
 **Clone Graph
