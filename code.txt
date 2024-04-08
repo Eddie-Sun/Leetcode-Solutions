@@ -1,4 +1,63 @@
 //Apr 7 2024
+**Single Element in a Sorted Array**
+Given sorted array of ints, every elem appears twice, except one. Return the elem that only returns once. O(1) Space and O(logn) time. We can't sort it because it's O(1) space. Can we use XOR? Probably not since that seems like it only works for detecting doubles of a val. Wait no oops, we can use XOR to detect single val. 
+
+res = 0
+for num in nums:
+	res ^= num 
+return res
+
+This is a O(n) solution with O(1) time.
+
+We know that it will be some form for binary search. Lower bound = 1st elem upper bound = last elem. WTF is the shrinking condition? We don't know where the single val is located. You have to cut it base on even or odd length of arr. If contain single == odd, else even.
+
+[3,3,7,7,10,11,11]
+       ^
+	  M 
+
+L, R = 0, len(nums)
+
+You have to look at [L] and [L + 1] are the same and (R + L) % 2 == 0. 
+
+If we do M = (L + R) // 2 on the example above, we get (0 + 7) // 2 = 3 (since rounded). Once you get to the mid point, you want to make a L and R scan. If dup on the L side, you know the repeat # in on the right of the arr. Keep doing it till you hit the num.  
+
+while L < R:
+	M = (L + R) // 2
+	if nums[M] == nums[M-1]:
+		L = M + 1
+	else:
+		R = M - 1
+return M
+
+One thing we want to figure out for Binary Search Problems is when to return L, R, or M. A general rule of thumb is that you return L, when you're finding the first val that satisfies a certain condition. R for last occurance that satisfies condition. While the return M checks if the binary search has a exact match.
+
+
+
+**Sqrt(x)**
+Binary search. Search space from (0->x).
+
+while L <= R:
+	M = (L + R) // 2
+	if M * M < x:
+		L = M + 1
+	if M * M > x:
+		R = M - 1
+return M
+
+I believe that the M, the answer, will be returned at the L == R case, in which the loop exits.
+
+def mySqrt(x):
+    L, R = 0, x
+    while L <= R:
+        M = (L + R) // 2
+        if M * M < x:
+            L = M + 1
+        elif M * M > x:
+            R = M - 1
+        else:
+            return M  # Perfect square case
+    return R  # For non-perfect squares, R is the integer part of the sqrt
+
 --Review AdjList Graph Design--
 
 Example: 
