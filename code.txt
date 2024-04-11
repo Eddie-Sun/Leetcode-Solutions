@@ -1,9 +1,93 @@
 //Apr 11 2024
+**Reverse Words in a String**
+Given input string s, reverse the order of the words. 
 
+s.split(' ') to split the words into arr. The hard part is that you also have to remove extra spaces. The solution seems to be words = s.strip().split() but what does that do?
+
+**Pascal's Triangle II**
+So given a rowIndex, return the row. We start each index from 0. It seems like you have a base case of first and 2nd row where you return [1] and [1,1] respectivly. Then, to generate cur row, cur_row = prev_row[i] + prev_row[i+1]. Recall to append a 1 before and after the loop. Outside, you simply have for i in range(rowIndex). 
+
+res = [[1][1,1]]
+for i in range(2, rowIndex):
+	res[i].append(1)
+	for j in range(len(res[-2])-1): #calculating cur row val
+		res[-1].append(res[-2][j] + res[-2][j+1])
+	res[-1].append(1)
+return res[-1]
+
+Correct ans:
+
+	
+**Remove K Digits**
+This is apperently a Leetcode Hard, so I won't work on this just yet.
+
+**Rotate Array**
+nums = nums[k:] + nums[:k]
+
+Ok apperently you have to do it in place. I'm thinking you have have a queue, and then popleft() and then then append. But that requires a new DS (queue) so its not in place. The O(n*k) solution is:
+
+for i in range(k - 1):
+	nums.append(nums.pop(0))
+
+One way to solve the problem above is to use the slicing operation so that you dont have to create a copy of the OG arr. The pattern to notice is that you pop the last kth elem and append it to the front. So we can write it this way: 
+
+nums[:] = nums[-k:] + nums[:-K]
+
+Something else to consider is the fact that you have to handle cases where k is larger than arr size. You did not think of the edge case where k > len(nums). In that case, we just wrap around.
+
+Going back, lets try to figure out what is wrong with the following answer: 
+
+        for i in range(k):
+            nums.append(nums.pop(0))
+
+Ok, so the problem is apprently an 1 off error. My current code rotates k-1 time. So the Q: is why not just use for i in range(k+1)? Then it would rotate the arr +1 times than required. 
+
+I'm still not sure what the main diff between:
+	nums.append(nums.pop(0)) and nums.insert(0, nums.pop())
+
+The diff between the two lies in which elem are being moved. 1) removes the first elem and moves it to the back 2) You move it to the begining
+
+Holy shit, so the thing I've been doing wrong is inserting at the back rather than the start when rotation this arr.
+
+Ok, we found two methods to do this. We can also do it with two pointers no? The trick is to take elems @ the back and move them to the front. This is kinda harder to do because you have to swap the pos of every elem to the right by k.
+
+Ok. the question you have to figure out is if there is a O(n) time and O(1) space method using two pointers? A: possibly. Apprently there is also another trick where you do it using reversals. 
+
+Ok, shot in the dark, you reverse the arr nums = [1,2,3,4,5,6,7], k = 3 to [7,6,5,4,3,2,1]. You popoff the last k elem and store them: [7,6,5,4] and [4,3,2,1]. Reverse them both and then add them to form [4,5,6,7,1,2,3,4]. 
+
+Ok, so with the proper method, is a more explicit version of nums[:] = nums[-k:] + nums[:-k].
+
+k = len(nums)
+start = 0
+end = k
+
+while start < end: 
+	nums[start], nums[end] = nums[end], nums[start]
+	start += 1
+	end -= 1
+
+Ok, the big brained move is to 1) reverse the entire arr 2) reverse the first k elems 3)reverse the remaining n-k elem. Ok, lets think through why this would work. 
+
+starting state: [1,2,3,4,5,6,7]
+[7,6,5,4,3,2,1], now lets reverse the first k elem
+[5,4,7,4,3,2,1] now k->n elem 
+[5,4,7,1,2,3,4] This is the correct output
+
+k = k % len(nums)
+n = len(nums)
+
+def reverse(start, end):
+	while start < end:
+		nums[start], nums[end] = nums[end], nums[start]
+		start += 1
+		end -= 1
+reverse(0, n-1)
+reverse(0, k-1)
+reverse(k, n-1)
 
 //Apr 9 2024
 **Rotate Array**
-return nums[:k] + reversed(num[k:])
+return nums[:k] + num[k:][::-1]
 
 **Min Size Subarray Sum**
 This is a sliding window problem. Pretty much, if @ target, run the min(cur_min, global_min)
