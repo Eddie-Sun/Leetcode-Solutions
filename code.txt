@@ -1,8 +1,202 @@
 //Apr 11 2024
+**Copy List with Random Pointer**
+The key is to go through the list and make a copy
+
+**Flatten a Multilevel Doubly Linked List**
+Too lazy to write it correctly and think about all of the edge cases. The corrected version:
+
+def flatten(self, head): 
+	if not head: 
+		return head
+
+	cur = head
+	while cur:
+		if cur.child:
+			child_tail = self.merge(cur, cur.child) 
+			
+			if cur.next: 
+				child_tail.next = cur.next
+				cur.next.prev = child_tail
+
+			cur.next = child_tail 
+			child_tail.prev = cur
+			
+			cur.child = None
+		cur = cur.next
+	return head
+
+	def merge(self, parent, child): 
+		current = child
+		while current.next: 
+			current = current.next
+		return current
+
+Ok, so it looks the the iterative solution might be better organized and easier to understand without the recursive overhead. For the primary flatten function, we iterate over the main list and look for nodes with children. When the node is found, you call the merge func. What the merge function does is locate the last node of the child list. Connect it to the main list node if it exists. Finally (you always seem to forget), you set the child pointer to None. 
+
+def flatten(self, head):
+	
+	cur = head
+	while cur or cur.child:
+		if cur.child:
+			child_tail = merge(cur.child)
+			if cur.next: 
+				cur.next.prev = child_tail
+				child_tail.next = cur
+			cur.next = child_tail
+			child_tail.prev = cur.next
+			cur.child = None
+
+	def merge(node):
+		while node:
+			node = node.next
+		return node
+
+def flatten(self, head): 
+	if not head: #return the end of the node
+		return head
+
+	def some other function to flatten():
+	
+You pass node in as a param.
+
+if not node:
+	return
+
+next_node = node.next 
+
+if node.child: #you traverse it and return the end of the child and connect that to the next of the next higher tree. 
+
+	child_node = flatten_rec(node.child)
+	
+	#Then there is the case of if next or if child
+	#Lets first work out the steps to reconnect the node
+
+	#Link the cur node to the child node
+	node.next = child_node
+	child_node.prev = node
+	
+	if next_node:
+		child_node.next = next_node
+		next_node.prev = child_node
+
+Ok, in the code above, the one thing you messed up is that when you reach the base case of the recursion, you get the tail. What you also want to store, is the actual val of the child node.
+
+next_node = node.next
+if node.child:
+	child_tail = flatten_rec(node.child)
+	
+	node.next = node.child
+	node.child.prev = node
+	node.child = None 
+	
+	if next_node:
+		child_tail.next = next_node
+		next_node.prev = child_tail
+
+	tail = flatten_rec(next_node) is next_node else child_tail
+	return tail
+else
+	tail = flatten_rec(next_node)
+	return tail if tail else node
+
+We ran into a problem where we return an empty linked lists. I'm only returning the tail node of the flattened list @ the each step. So we have to come up with a method to return the head.
+
+def flatten(self, node): 
+	if not node:
+		return None
+
+	next_node = node.next
+	
+	if node.child:
+		child_tail = self.flatten(node.child)
+		
+		node.next = child_tail
+		child_tail.prev = node
+		
+		if node_next:
+			node_next.prev = child_tail
+			child_tail.next = node_next
+		
+		node.child = None
+		
+		return child_node
+	
+	else:
+		return self.flatten(node_next)
+
+Ok, this code throws a big fat error when you return child_tail when it == None. To fix this, you have to add if child_tail. 
+
+GPT helped solution:
+
+def flatten(self, node):
+	if not node: 
+		return None 
+	
+	next_node = node.next #ok that is a pretty big brain iterate through recursion instead of passing node.next as param 
+
+	if node.child:
+		child_tail = self.flatten(node.child)
+
+	#Ok, here you have to convience youself that child_tail actually returns the tail of the child. 
+	
+---
+
+def flatten(self, head):
+	if not node:
+		return
+	if node.child:
+		node.next.prev = flatten(node.child)
+	flatten(node.next)
+	
+	return node
+
+Ok, this is a first draft. The problem I'm thinking about is when we reach the end of the child, how do we reconnect the end of that lower level list back up to point to the next higher level. 	
+Seems like you want recursion for this problem. What you are doing is moving to the next node till it has a child. If it does, you want to traverse through all of the child nodes. You end up connecting the end of the child node to the start of the original next node. Q: how do you best traverse this?
+
+The first sub problem you have to solve is 1)How do you traverse a linked list recursively?
+
+def traverse_list(node):
+	if not node:
+		return None
+	traverse_list(node.next)
+
+The advice that GPT gave is to also return the node. Which makes sense-> we need to know how to link the tree back together. 
+
+To traverse to the child: 
+
+if node.child:
+	traverse_list(node.child)
+travse_list(node.next)
+
+So this will always traverse down to the child first. We also need to return the node up to the call stack at the end. Ok so now we have two options 1) build a new linked list (seems easier) 2) manipulate the pointers in place. 
+
+Something else you want to consider is that you have to save a spot for the head pointer at the start and return it. 
+
+The problem with the base case of None is the fact that we end up skipping the elems are after the child node. So we also need a method to add the next node. HOLY SHIT I got a big brain move. You simply when seeing a child node, save cur.next as well. This way you have a reference to next node on the higher level of the linked list, so you you are popping off the call stack, you can reconnect them then.
+
+**Reverse Words in a String II**
+1) We want to break up the arr. 
+2) Iterate through the arr. 
+3) For reverse each word in the arr in place
+4) Return arr
+
+s = s.split() 
+for word in s:
+	word = word[::-1]
+return ' '.join(s)
+
+The problem with this is that we are not modifying the orgional list s, instead assigning the a new var. 
+
 **Reverse Words in a String**
 Given input string s, reverse the order of the words. 
 
 s.split(' ') to split the words into arr. The hard part is that you also have to remove extra spaces. The solution seems to be words = s.strip().split() but what does that do?
+
+The .strip method in python is used to remove leading spaces sand trailing spaces. The. s.split method splits @ a specified char. If no params are given, it just splits @ whitespace. 
+
+When you do .reversed(), you return the index not the words, so you have to ' '.join. So putting it all together. 
+
+return ' '.join(reversed(s.split().split()))
 
 **Pascal's Triangle II**
 So given a rowIndex, return the row. We start each index from 0. It seems like you have a base case of first and 2nd row where you return [1] and [1,1] respectivly. Then, to generate cur row, cur_row = prev_row[i] + prev_row[i+1]. Recall to append a 1 before and after the loop. Outside, you simply have for i in range(rowIndex). 
@@ -16,7 +210,6 @@ for i in range(2, rowIndex):
 return res[-1]
 
 Correct ans:
-
 	
 **Remove K Digits**
 This is apperently a Leetcode Hard, so I won't work on this just yet.
