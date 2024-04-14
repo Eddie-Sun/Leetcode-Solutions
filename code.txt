@@ -1,4 +1,11 @@
 //Apr 14 2024
+**Design Hashset**
+You have to design a hashset with using any of the built in hash table libraries.
+def __init__(self):
+	hashset = []
+
+def add(self, key) -> None: 
+
 **Rotate Linked List**
 Correct solution with optimizations:
 
