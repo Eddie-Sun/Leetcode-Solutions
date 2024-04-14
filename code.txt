@@ -1,8 +1,166 @@
 //Apr 14 2024
+**Rotate Linked List**
+Correct solution with optimizations:
+
+if not head or not head.next or k == 0: 
+	return head
+
+cur = head
+size = 1
+while cur.next:
+	size += 1
+	cur = cur.next
+cur.next = head
+
+k = k % size
+new_tail = head
+for _ in range(size - k):
+	new_tail = new_tail.next
+new_head = new_tail.next
+
+new_tail.next = None
+
+return new_head
+
+Give the head of a linked list, roate the list right by k places.
+
+Idea: Turn the linked list into a cycle. So connect the tail with the head. Track how long the linked list is. Move the head k times. That is the new head. From new head, move size of linked list times, and break the next. That is the new tail. Return the new head. 
+
+size = 0
+cur = head
+
+while cur.next:
+	size += 1
+	cur = cur.next
+cur.next = head
+
+cur = head
+for _ in range(k):
+	cur = cur.next
+new_head = cur 
+
+cur = new_head
+for _ in range(size): 
+	cur = cur.next
+cur.next = None
+
+return new_head
+
+There are a couple of things wrong with how I wrote my code. First and foremost my loop stops counting the size one node ealy because it checks for cur.next. The currect answer is while cur, or to add size +=1 at the end. Something else that is more of an optimization. Because rotating the list result in the same list, we should do k % size to minimize unessary rotations. That is a pretty big brained edge case that I did not think of. The fact that k can be larger than size. Finally, after determining the new head, we have to disconnect list properly.
+
+The first case: 
+
+if not head or not head.next or k == 0:
+	return head
+
+size = 1
+cur = head
+
+while cur:
+	size += 1
+	cur = cur.next
+cur.next = head
+
+k = k % size
+
+new_head = head
+for _ in range(size - k):
+	new_head = new_head.next
+
+new_tail = head
+for _ in range(size - 1)
+	new_tail = new_tail.next
+new_tail.next = None
+
+return return_head
+
+Example k = 10, size = 4 10 % 4 = 2. This is then equal to 2 rotations + 2(complete rotations). Therefore size - k = 4 - 2 = 2. Total number of rotations we need to calculate.
+
+Ok. So there seems to have been another error in my implementation. The key change is that after finding the new head, we have to immediately set the new_tail's next to None to break the cycle. We do not need the second loop. 
+
+**Search in a Binary Search Tree** 
+Ai ya. Yo do not need dfs for dis. Not doing this
+
+def serachBST(root, val):
+	def _dfs(root):
+		if not root:
+			return 
+		if root.val == val:
+			return True
+		
+		left_search = _dfs(root.left)
+		right_search = _dfs(root.right)
+		
+	return left_serach or right_search
+
+Oh its a binary search Tree: 
+
+def searchBST(root, val):
+    def _dfs(node):
+        if not node:
+            return False  # Return False if node is not found
+        if node.val == val:
+            return True  # Return True if the value matches
+        elif val < node.val:
+            return _dfs(node.left)  # Only search the left subtree if val is less than current node's value
+        else:
+            return _dfs(node.right)  # Only search the right subtree if val is greater than current node's value
+
+    return _dfs(root)  # Start the search from the root
+
 --Practice Graph Implementations--
 **Design a graph using adjList**
+Based off https://neetcode.io/problems/graph
 
+class Graph:
+	def __init__(self):
+		self.adjList = {}
 
+	def addEdge(self, src, dst):
+		if src not in self.adjList:
+			self.adjList[src] = set()
+		if dst not in self.adjList: 
+			self.adjList[dst] = set()
+		self.adjList[src].add(dst)
+	
+	def removeEdge(self, src, dst) -> bool:
+		if src or dst not in self.adjList: #ok, the syntax is wrong but right logic
+			return False
+		self.adjList[src].remove(dst)
+		return True
+
+	def hasPath(self, src, dst) -> bool:
+		visted = set()
+		return _dfs(src, dst, visited)
+
+	def _dfs(self, src, dst, visited) -> bool:
+		if src == dst: #This is the base case
+			return True
+
+		visted.add(src)
+		
+		for neighbor in self.adjList[src]:
+			if neighbor not in visited:
+				if self._dfs(neighbor, dst, visted):
+					return True
+		return False
+
+	def _bfs(self, src, dst):
+		visited = set()
+		queue = deque()
+		visted.add(src)
+		queue.add(dst)
+
+		while queue:
+			cur = queue.popleft()
+			if cur == dst: 
+				return True
+
+			for neighbor in adjList[cur]:
+				if neighbor not in visited:
+					visited.add(neighbor)
+					queue.append(neighbor, dst)
+		return False
 
 **Rotten Oranges**
 Correct code: 
