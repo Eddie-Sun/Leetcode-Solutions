@@ -1,6 +1,261 @@
-//Apr 11 2024
+//Apr 14 2024
+--Practice Graph Implementations--
+**Design a graph using adjList**
+
+
+
+**Rotten Oranges**
+Correct code: 
+
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        if not grid:
+            return -1
+
+        R, C = len(grid), len(grid[0])
+        rotten = deque()
+        directions = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+        res, oranges = 0, 0
+
+        for r in range(R):
+            for c in range(C):
+                if grid[r][c] == 1: 
+                    oranges += 1
+                elif grid[r][c] == 2:
+                    rotten.append([r, c])
+
+        while rotten and oranges > 0:
+            for _ in range(len(rotten)):
+                x, y = rotten.popleft()
+                for dx, dy in directions:
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < R and 0 <= ny < C and grid[nx][ny] == 1:
+                        grid[nx][ny] = 2
+                        oranges -= 1
+                        rotten.append((nx, ny))
+            res += 1
+
+        return res if oranges == 0 else -1
+
+Remeber for rotten oranges, you use bfs, so a queue. 0 = empty, 1 = fresh, 2 = rotten. You can rot oranges by marking a 1 as a 2. One thing to remember is that you have to start the rot evenly. So there could be mutiple areas in which you start the rot. Remember, you hoave to count the total number of steps it takes the orange to rot. 
+
+if not grid:
+	return -1
+
+R, C = len(grid), len(grid[0])
+rotten = dequeu()
+dir = [[1,0],[0,1],[-1,0],[0,-1]]
+res = 0
+
+for r in range(R):
+	for c in range(C):
+		if grid[r][c] == '2':
+			rotten.append([r,c])
+
+def bfs(loc):
+	while queue:
+		cur = queue.pop()
+		res += 1
+		for cur in dir:
+			if cur[r][c] + dir[r][c] == '1':
+				cur[r][c] + dir[r][c] == '2'
+				rotten.append(cur[r][c] + dir[r][c])
+			else:
+				continue
+
+return res
+
+Ok, lets think through if this piece of code would in theory work. You go through the entire grid and check the total number of oranges. Ok. What if there is a chance that there is an orange you cannot reach? In that case, you return -1 as well. So we add: 
+
+oranges = 0
+
+for r in range(R):
+	for c in range(C):
+		if grid[r][c] == '2':
+			rotten.append([r,c])
+		elif grid[r][c] == '1':
+			count += 1
+
+When you infect an orange after: 
+
+	cur[r][c] + dir[r][c] == '2'
+	Add: 
+	count -= 1
+
+return res if count == 0 else return -1
+
+**Island Perimeter**
+You're counting the number of recusrive calls (number of times the 1 grid tries to expand but fail)
+
+if not grid:
+	return - 1
+
+R, C = len(grid), len(grid[0])
+res = 0
+
+dfs(r,c):
+	if r > R or c > C or r < 0 or c < 0 or grid[r][c] == 0:
+		return 1
+	if grid[r][c] == -1: 
+		return 0
+	grid[r][c] = '-1'
+	dfs(r + 1, c)
+	dfs(r - 1, c)
+     	dfs(r, c + 1)
+	dfs(r, c - 1)
+
+for r in range(R):
+	for c in range(C):
+		if grid[r][c] == 1:
+			res += dfs(r,c)
+
+Something to to remeber is the fact that you want to do the addition of the perimeters within the dfs. You also want to mark visited as -1 instead of setting it as 0 to prevent recounting. 
+
+Ok. You're code is mostly correct? There are some issues. First of all, the values should be 0,1,2. But you are using strings dumb dumb. Instead of pop, you should be using popleft (duh). Also also, cur is a coordinate, not a object. When updating the grid, you are doing ==. Finally you forgot to check to see if it falls out of grid space. 
+
+//Apr 13 2024
+--Practice Graph Implementation--
+
+BFS Rotten Oranges: 
+
+def orangesRotting(self, grid):
+	if not grid:
+		return -1
+	
+	R, C = len(grid), len(grid[0])	
+
+	bfs(r,c): 
+	
+	for
+
+DFS Number of islands: 
+
+Remeber to mark the islands as visited by setting the 1s to 0 in the dfs function
+
+def numIslands(self, grid):
+	R, C = len(grid), len(grid[0])
+	res = 0
+	
+	for r in range(R):
+		for c in range(C):
+			if grid[r][c] == 1:
+				res += dfs(r,c,grid)
+
+	def dfs(r,c,grid):
+		if r < R and c < C and r >= 0 and c >= 0 and grid[r][c] == 1:
+			grid[r][c] == 0
+			dfs(r+1, c, grid)
+			dfs(r-1, c, grid)
+			dfs(r, c+1, grid)
+			dfs(r, c-1, grid)
+		return #good practice to put the base case at the start tho 
+
+Correct ans:
+
+def numIslands(self, grid):
+	if not grid: 
+		return 0
+	
+	R, C = len(grid), len(grid[0])
+	res = 0
+	
+	def dfs(r, c):
+		if r < R and c < C and r >= 0 and c >= 0 and grid[r][c] == 1:
+			grid[r][c] = "0"
+            	dfs(r + 1, c)
+            	dfs(r - 1, c)
+            	dfs(r, c + 1)
+           	dfs(r, c - 1)
+		return
+	
+	for r in range(R):
+		for c in range(C):
+			if grid[r][c] == '1':
+				dfs(r,c)
+				res +=1
+
+	return res
+
+	Ok dumb dumb. Just remeber to have the base case first. 
+
 **Copy List with Random Pointer**
-The key is to go through the list and make a copy
+The key is to go through the list and make a copy with nodes points to random nodes. So each node has two pointers: 1) next 2) random. What you want to do is iterate through the list while cur. and cur = cur.next. If the random pointer points to an exisiting node, good, if not, create it and point to it. This is where we hit our first problem. If we already created a random val in the future, and we now have a cur.next that is suppose to point to it, how do we accomplish that? 
+
+The assumption is that we cannot solve this question in a single run and we need extra O(n) space. You can solve the problem of figuring out the mappings of the random pointers by creating a hash map when going through the first run of the linked list. The key of the map can be the pointers of the orgional node, while the vals that we later look up is the the assoicated deep copy.
+
+First thing is first, lets create a hash map:
+
+hashmap = {}
+
+Now let us iterate thorugh the orgional list, and create the deep copy of only the next vals while adding it to the hashmap. The sub problem to remeber here is to remeber how to create a new node. I'm going to ask GPT for the syntax. A: We can call the new_node = Node(5) keyword.
+
+cur = head
+
+while cur:
+	copy_cur = Node(cur.val)
+	hashmap[cur] = copy_cur
+	cur = cur.next
+
+That creates: 1 - 2 - 3- 4 - 5. But there is no connections. It seems like we have to make all the connections on the second iteration. So that means we have to save cur.next vals as well. We can use an array in the hashmap to store [next] and [random].
+
+cur = head
+while cur:
+	copy_cur = Node(cur.val)
+	hashmap[copy_cur]['next'] = cur.next
+	hashmap[copy_cur]['random'] = cur.random
+	cur = cur.next
+
+What makes more sense? Using the old nodes as keys or the new nodes? I would imagine using the old nodes as keys. Also you don't have to do the hashmap[copy_cur]['next'] and hashmap[copy_cur]['random'] crap. You just need to store the vals of the nodes. 
+
+cur2 = head
+while cur2:
+	hashmap[cur2].next = cur2.next
+	hashmap[cur2].random = cur2.random
+
+You want to save the head of the new deep copy. 
+
+CODE:
+
+cur = cur2 = head
+hashmap = {}
+new_head = Node(cur.val)
+
+while cur:
+	cur_copy = Node(cur.val)
+	hashmap[cur] = copy_cur
+	cur = cur.next
+
+while cur2:
+	hashmap[cur2].next = hashmap[cur2.next]
+	hashmap[cur2].random = hahsmap[cur2.random]
+
+return new_head
+
+Ok, I needed to take a mental break here, so I handed the rest to chatGPT. 
+
+I had a good start, but the proper method to do it is as follows: 
+
+if not head:
+	return None 
+
+hashmap = {}
+
+cur = head
+while cur:
+	copy_cur = Node(cur.val)
+	hashmap[cur] = copy_cur
+	cur = cur.next
+
+cur = head #damn you dummy, I forgot that we had a reference to the orgional head node
+
+while cur: 
+	if cur.next:
+		hashmap[cur].next = hashmap[cur.next]
+	if cur.random: 
+		hashmap[cur].random = hashmap[cur.random]
+	cur = cur.next
+
+return hashmap[head]
 
 **Flatten a Multilevel Doubly Linked List**
 Too lazy to write it correctly and think about all of the edge cases. The corrected version:
