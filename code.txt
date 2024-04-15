@@ -1,3 +1,229 @@
+//Apr 15 2024
+**Design Hashmap**
+Ok, this question is pretty much the same as design hashmap. 
+
+**Sum Root to Leaf Numbers**
+class Solution:
+    def sumNumbers(self, root):
+        def allPaths(node, path, res):
+            if not node:
+                return
+
+            # Add current node's value to the path
+            path.append(str(node.val))
+
+            # Check if it's a leaf node
+            if not node.left and not node.right:
+                # Join path into a number and add to results
+                res.append(int(''.join(path)))
+            else:
+                # Continue to traverse the tree
+                allPaths(node.left, path, res)
+                allPaths(node.right, path, res)
+
+            # Backtrack by removing the last node in the path
+            path.pop()
+
+        res = []
+        allPaths(root, [], res)
+        return sum(res)
+
+**Binary Tree Paths**
+Correct method cleaned up by chat GPT:
+
+def all_paths(node, path, res):
+	if not node:
+		return
+	
+	path.append(str(node.val))
+
+	if not node.left and not node.right:
+		res.append('->'.join(path))
+	else:
+		all_paths(node.right, path, res) 
+		all_paths(node.left, path, res)
+	path.pop()
+res = [] 
+all_paths(root, [], res)
+return res
+
+We need to continue passing through path and res because we use those params to maintain the state through our functions. Also, we can pass [] as path because we don't need to return it outside of the all_paths func right? Lets say if we need to return the path in the outer function, then we would need to declare path = []. 
+
+This is a sub problem to Sum Root to Leaf Numbers: 
+
+def binaryTreePaths(self, root):
+
+	def all_paths(node, path, res):
+		if not node: 
+			return
+		
+		path.append(node.val)
+
+		if not node.left and not node.right:
+			res.append(path.copy())
+		else:
+			all_paths(node.left, path, res)
+			all_paths(node.right, path, res)
+		path.pop()
+	
+	def format_res(res):
+		if res.len(1):
+			return str(res[0])
+		for path in range(len(res)):
+			for node in range(len(path)):
+				res[path] += str(node) + '->'
+		return res 
+		
+	res = []
+	all_paths(root, [], res)
+	format_res(res)
+
+**Sum Root to Leaf Numbers**
+Lets try to solve the all paths:
+
+path = []
+
+def all_paths(node, path, res):
+	if not node:
+		return 
+
+	path.append(node.val)
+
+	if not node.left and not node.right:
+		res.append(path.copy())
+	else:
+		all_paths(node.left)
+		all_paths(node.right)
+
+	path.pop()
+		
+return res
+
+Ok, so you want to append all the number as they were a string. And then add it. It seems like in order traversal is the method to go. root.val to str. while root, root.left, root.right. Append val to int onto a res arr. At the end, return sum(res). 
+
+Recall that the method of an in order traversal is:
+
+	res = []
+	if root:
+		traverse(root.left) 
+		res.append(node.val)
+		traverse(node.right)
+	traverse (root)
+
+For this, you want to do DFS tho. The DFS traversal algo explores the nodes and edges in a graph/tree before backtracking.
+
+def dfs(node):
+	if node is None:
+		return
+
+	res += (to_string(node.val))
+	dfs(node.left) 
+	dfs(node.right)
+		
+Q: Does this provide a DFS traversal of the entire tree?
+
+If the tree looks like: 
+
+    1
+   / \
+  2   3
+ / \
+4   5
+
+
+The output would be 1,2,4,5,3. We need the following traversal:
+
+1,2,4
+1,2,5
+1,3
+
+You would actually need to do a different algo:
+
+def all_paths(root):
+	
+	def dfs(node, path, res):
+		if not node:
+			return
+		
+		path.append(node.val)
+		if node.left is None and node.right is None:
+			res.append(path.copy())
+
+The path.copy() creates a shallow copy of path list. Q: why do we need it? We need to create a copy for all possible path and we do not further modify the new version of path. 
+
+Ok. Remeber the base case. Generally it is always return None. Once you hit the case of if there are no more paths, then create a copy. The other case is to traverse. At the end, there is a path.pop(). I wonder what that does. The pop removes the last elem in the call stack. This is just standard backtracking.
+
+**Design Hashset**
+There are a few methods for hashset. __init__, add, remove, contains. In the _init_. you're setting the hashset as an empty array. For the add function, if not self.contains(key): self.hashset.append(key). But it seems to me that the self.contains(key) is O(n) as you're traversing through the entire array to check to see if the key is there. Same with the def remove(key) -> None: if self.contains(key): self.hashset.remove(key). Which is also O(n).
+
+Ok, lets do the shitty implementaion of the hashmap first: 
+
+class MyHashSet:
+	
+	def __init__(self):
+		self.hashset = []
+
+	def add(self, key):
+		if self.hashset not contains(key):
+			self.hashset.append(key)
+
+	def remove(self, key):
+		if self.contains(key):
+			self.hashset.remove(key)
+
+	def contains(self, key) -> bool:
+		if self.hashset.contains(key):
+			return True
+		return False
+
+Lets walk through another (proper) method of implementing the hashset under the hood.
+
+def __init__(self):
+	self.size = 1000
+	self.buckets = [[] for _ in range(self.size]]
+
+Ok the code above allocates 1000 empty arrays or buckets. My question is, why not just do: 
+
+self.buckets = []*1000 <- This does not work because it mutiplies and empty list by 1000. One thing you got to think about is what is the diff between a immutable and mutable object. And why is python designed in a way where nums = [0] * 100 = immutable and list = [[]] * 1000 = mutable.
+
+Remember, when you are trying to generate a list of 1000 empty arrays, it is mutable (all the pointers reference the same mem location), therefore, you have to inialize it like:
+
+def __init__(self):
+	self.size() = 1000
+	self.bucket = [[] for _ in range(size)]
+
+def hash_function(self, key):
+	return key % self.size
+
+def add(self, key):
+	bucket_index = self.hash_function(key)
+	if key not in self.buckets[bucket_index]:
+		self.buckets[bucket_index].append(key)
+
+Ok, so what you're doing is creating a hash of the bucket_index. Then you are storing the val of the key into the bucket_index elem of the buckets array. The naming is kinda confusing. The key you are suppose to be able to retreive at O(1) along with assoicated val. 
+
+With the add function, lets see the scenarios. 1) The bucket is empty, therefor, set the val to the hash 2) the bucket is full, then you have to chain. 
+
+def remove(self, key):
+	bucket_index = self.hash_function(key)
+	if key in self.buckets[bucket_index]:
+		self.buckets[bucket_index].remove(key)
+
+At this point, it might be easier to defire bucket:
+
+def remove(self, key): 
+	bucket_index = self.hash_function(key)
+	bucket = self.buckets[bucket_index]
+	if key in bucket:
+		bucket.remove(key)
+
+def contains(self, key):
+	bucket_index = hash_function(key)
+	bucket = self.buckets[bucket_index]
+	if kye in bucket: 
+		return True
+	return False
+
 //Apr 14 2024
 **Design Hashset**
 You have to design a hashset with using any of the built in hash table libraries.
@@ -9,7 +235,7 @@ def add(self, key) -> None:
 **Rotate Linked List**
 Correct solution with optimizations:
 
-if not head or not head.next or k == 0: 
+if not head or not head.next or k == 0:
 	return head
 
 cur = head
