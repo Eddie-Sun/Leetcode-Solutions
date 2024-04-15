@@ -1,6 +1,60 @@
 //Apr 15 2024
 **Design Hashmap**
-Ok, this question is pretty much the same as design hashmap. 
+Ok, this question is pretty much the same as design hashset. The question that is top of mind is how do we associate a key to a value?
+
+Brain is too fried, so I'm going to just use the answer that GPT gave to me:
+
+class MyHashMap:
+	def __init__(self):
+		self.size = 1000
+		self.buckets = [[] for _ in range(size)]
+
+	def hash(self, key):
+		return key % self.size
+
+	def put(self, key, value):
+		bucket_index = self.hash(key)
+		bucket = self.buckets[bucket_index]
+		for i, (k, v) in enumerate(bucket):
+			if k == key:
+				bucket[i] = (key, value)
+			return 
+		bucket.append((key, value))
+
+Ok, lets go through this function together. First we have bucket_index which is just a call to the hash func. Once we find the bucket, we have touples: (key, value). When using the enumerate, we access 1) the index 2) the touple of (key, value). If k == key (accessed key value), bucket[i] == key. This handles the case where there is already a key and we are simply adding a new value. The other case is if there is no assoicated key in which case we append a key, value in the assoicated bucket.
+
+bucket = [val1, val2, val3 ..etc]
+buckets = [bucket1, bucket2, ..etc]
+
+Now that we got that out of the way, let us try to write the get function by ourselves:
+
+	def get(self, key) -> int:
+		bucket_index = hash(key)
+		bucket = buckets[bucket_index]
+		for (k,v) in bucket: 
+			if k == key:
+				return bucket v
+		return -1
+
+Ok lets think about the structure of the bucket again. Each bucket contains a list of:
+
+bucket = [(k1,v1), (k2,v2)...etc]
+
+	def remove(self, key) -> None:
+		bucket_index = hash(key)
+		bucket = buckets[bucket_index]
+		for i, (k,v) in enumerate(bucket):
+			if k == key:
+				bucket.remove((k,v)) #Figure out if this is correct syntax
+				del bucket[i]
+				return
+
+Something to keep in mind is when you use the remove method, you don't have to do the enumerate through the bucket.
+
+	for item in bucket:
+		if item[0] == key:
+			bucket,remove(item) 
+			break
 
 **Sum Root to Leaf Numbers**
 class Solution:
@@ -27,8 +81,6 @@ class Solution:
         res = []
         allPaths(root, [], res)
         return sum(res)
-
-
 
 **Binary Tree Paths**
 Correct method cleaned up by chat GPT:
