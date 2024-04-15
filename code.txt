@@ -28,6 +28,7 @@ class Solution:
         allPaths(root, [], res)
         return sum(res)
 
+
 **Binary Tree Paths**
 Correct method cleaned up by chat GPT:
 
