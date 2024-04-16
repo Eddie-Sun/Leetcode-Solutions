@@ -1,3 +1,76 @@
+//Apr 16 2024
+**Swap Nodes in Pairs**
+Given a linked list, swap every two adj nodes and return head.
+
+Base case if not node.next or node.next.next (we want to stop if we are @ the 2nd last elem.
+
+1-2-3-4
+
+if not node.next or not node.next.next:
+	return
+#Recursive case
+node, node.next.next = node.next.next, node
+swapPairs(node.next)
+
+Correct answer:
+
+def swapParirs(self, head):
+	if head is None or head.next is None
+		return head
+
+	first_node = head
+	second_node = head.next
+
+	first_node.next = self.swapPairs(second_node.next)
+	second_node.next = first_node
+	
+	return second_node
+
+Ok... I am very confused.
+
+
+
+**Reverse String**
+We know that the base case, we reduce til the len <= 1. Ok the trick to the recursive case is that we add all the elems exculding the 0th index. At the end, we add the 0th index. Like so:
+
+return reverse_string(s[1:])+s[0])
+
+Initial call: 
+
+ello + h
+llo + e
+lo + l
+o + l
+
+Combinding calls
+
+o + l -> ol
+ol + l -> oll
+oll + e -> olle
+olle + h -> olleh
+
+if len(s) <= 1:
+	return s
+
+return reverse_string(s[1:]+s[0])
+
+To implement a in place solution, we can use a helper function to swap elements recursively. The question is 1) why does the helper work where not having the helper failed 2) why do we even need a helper? Can we not just make the recursive call reverseString?
+
+The followup to this is then, for recursive functions, if we are introducing a new var, we always want to make a helper function right?
+
+def reverseString(self, s):
+	def reverseHelper(L, R):
+		if L < R:
+			s[L], s[R] = s[R], s[L]
+			reverseHelper(L + 1, R - 1)
+	reverseHelper(0, len(s) - 1)
+
+Ok one thing I noticed after writing my helper function is the fact that I find it a lot easier to write recursive functions that does not have a return val ex return reverseHelper() or return doSomeThing(reverseHelper)
+
+This can be broken up into action oriented (no return val) vs value returning recursion. 
+
+One thing to think about is when to use action oriented vs value returning recursion. Is there a heuristic?
+
 //Apr 15 2024
 **Reverse String**
 We know how to do it using L R pointer, how do we do it using recursion. First and formost, the base case is if we reach the end.
