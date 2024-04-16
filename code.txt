@@ -1,4 +1,20 @@
 //Apr 16 2024
+**Reverse Linked List**
+Reverse a linked list using recursion. What is the base case:
+
+if not head, return. Q: Do you want to return anything. A: yes, you want to return head.
+
+1-2-3-4-5
+
+In this list the head would just be 5 no? There seems to be a misunderstanding in that the final reversed list 5 will be the new head, but it actaully is 1? The recursion will terminate at the last node 5. So therefor isn't the first val returned 5?
+
+Ok, yes, we return 5. 
+
+The recursive case:
+node, node.next = node.next, node
+
+The hint that GPT gave is that next_node = reverseList(node.next)
+
 **Swap Nodes in Pairs**
 Given a linked list, swap every two adj nodes and return head.
 
@@ -27,8 +43,6 @@ def swapParirs(self, head):
 	return second_node
 
 Ok... I am very confused.
-
-
 
 **Reverse String**
 We know that the base case, we reduce til the len <= 1. Ok the trick to the recursive case is that we add all the elems exculding the 0th index. At the end, we add the 0th index. Like so:
