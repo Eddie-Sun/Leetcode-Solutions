@@ -1,4 +1,136 @@
+//Apr 17 2024
+--Review--
+1) Design a Hashmap
+
+def __init__(self):
+	self.size = 10000
+	self.buckets = [[] for _ in range(self.size)]
+
+def hash(self, key):
+	return key % self.size
+
+def put(self, key, value):
+	bucket_index = hash(key)
+	bucket = self.buckets[bucket_index]
+	for i, (k, v) in enumerate(bucket):
+		if k == key:
+			bucket[i] = (key, value)
+			return
+	bucket.append(key, value)
+
+Ok, remeber that the keys are values are stored in pairs. One bucket could look like (k1,v1),(k2,v2) etc.
+
+If we do self.buckets = [[] for _ in range(10)]
+
+1) Put key1 value a
+	1.1) Calculate bucket_index = hash(1) % 10 = 1
+	1.2) bucket = self.buckets[1]
+	1.3) Because bucket1 is empty (no key), append (key, value)
+
+[[], [(1, 'a')], [], [], [], [], [], [], [], []]
+
+Question. Could a bucket have mutiple key value pairs? Yes, if there is hash collisions. Ex if bucket size = 10. 2%10 vs 12%10 both == 2.
+
+Ok. When placing the key, we don't take the hash - the hash is only for calculating the index of the bucket.
+
+def get(self, key):
+	bucket_index = hash(key)
+	bucket = self.buckets[bucket_index]
+	for i, (k, v) in enumerate(bucket):
+		if k == key:
+			return bucket[i][1]
+	return -1
+
+Ok, it works, but we didn't need the indexing of bucket[i]
+
+def get(self, key):
+    bucket_index = self.hash(key)  # Use the class's hash method
+    bucket = self.buckets[bucket_index]
+    for k, v in bucket:
+        if k == key:
+            return v  # Directly return the value
+    return -1  # Return -1 if the key is not found
+
+def remove(self, key):
+	bucket_index = self.hash(key)
+	bucket = self.buckets[bucket_index]
+	for i, (k,v) in enumerate(bucket):
+		if k == key:
+			bucket.remove(k,v)
+
+Accessing the index is used when we need to replace or update an item directly into the list. The way I implemented remove, the method takes in a single argument. The correct method is: 
+
+def remove(self, key):
+    bucket_index = self.hash(key)
+    bucket = self.buckets[bucket_index]
+    for item in bucket:
+        if item[0] == key:
+            bucket.remove(item)
+            return  # Exiting after removal is important to avoid modification during iteration issues
+    return  # Optional: handle the case where the key is not found
+
+Ok, notice the huge drop in efficency when you do for item in bucket vs for i, (k,v) in enumerate (bucket). When we are using enumerate, we can directly modify items in the list by index 
+
 //Apr 16 2024
+--Review--
+1) Design a Hashset
+def __init__(self):
+	self.size = 10000
+	self.buckets = [[] for _ in range(self.size)]
+
+def hash(self, key):
+	return key % self.size
+
+def add(self, key):
+	bucket_index = self.hash(key)
+	bucket = self.buckets[bucket_index]
+	if key not in bucket:
+		bucket.append(key)
+
+def remove(self, key): 
+	bucket_index = self.hash(key)
+	bucket = self.buckets[bucket_index]
+	if key in bucket:
+		bucket.remove(key)
+
+def contains(self, key):
+	bucket_index = self.hash(key)
+	bucket = self.buckets[buket_index]
+	if key in bucket:
+		return True	
+
+**Merge Two Sorted Lists**
+You are given two sorted lists. L1 and L2. Merge them by splicing together nodes of the two lists. Return the head of the merged linked list.
+
+base cases:
+if not list1, return list2 
+if not list2, return list1
+
+if list1.val > list2.val:
+	list1 = mergeTwoList(list1, list2.next)
+	return list1
+else:
+	list2 = mergeTwoList(list1.next, list2)
+	return list2
+
+Ok, I was pretty close, but I fucked up the traversals. You want to move to the next val of the list.
+
+def mergeTwoLists(list1, list2):
+	if not list1:
+		return list2
+	if not list2:
+		return list1
+
+	if list1.val < list2.val
+		list1.next = mergeTwoLists(list1.next, list2)
+		return list1
+	else:
+		list2.next = mergeTwoLists(list1, list2.next)
+		return list2
+
+**Fibonacci Number**
+f(n) = f(n-1) + f(n-2), base case n = 1 return 1, n = 0 return 0
+
 **Reverse Linked List**
 Reverse a linked list using recursion. What is the base case:
 
@@ -13,7 +145,59 @@ Ok, yes, we return 5.
 The recursive case:
 node, node.next = node.next, node
 
-The hint that GPT gave is that next_node = reverseList(node.next)
+The hint that GPT gave is that next_node = reverseList(node.next). Q: Why why do we want to set the next_node = reversedList(node.next)? This means that the return of the linked list will be node.next no? Unless we're setting node_node to a param we are going to be defining somewhere in the recursive function. 
+
+That code snippet could be node.next.next = node 
+1-2-> points back to 1
+node.next = None
+1 does not point to anything. The recursive step repeats this. So: 
+
+1-2-3-4-5 turn into 5-4-3-2-1 where 1 points to None.
+
+I am on the right track with my understanding. The reason that for this question, they did next_node = reverseList(node.next) is that this call will eventually return the new head of the reversed list. Think about why that may be.
+
+1-2-3-4-5. When you hit the base case, the pointer to 5 will be returned which is the new head. So the next_node holds the current node value. 
+
+Ok. Now lets look at how the reconnecting works. By setting node.next.next = node, we are reversing the pointer. Why we do node.next = None makes sure that reversed node does not point back to it old next node which could create a loop.
+
+Given that, for the patter 1-2-3-4-5, we return at the base case 5. The unwind looks like:
+
+4.next.next = 4 which points 5 -> 4 and 4.next = None 
+3.next.next = 3 which points 4 -> 3 and 3.next = None
+
+Etc etc etc. Finally, we return next_node (which is 5) bubbling up the next head. 
+
+reverseLinked(self, head):
+	if not head:
+		return head
+	
+	node.next.next = node
+	node.next = None
+	next_node = reverseLinked(head.next)
+
+We don't need a helper function.
+
+Ok, the bigest problem is 1) I need to make the recursive call before doing the swap first- imgaine, you have to traverse to the end of the list and have all the nodes in the call stack before you do the reversal process. 
+
+if not head or head.next (since we are calling node.next.next)
+
+next_node = self.reverseLinked(head.next)
+head.next.next = head
+head.next = None
+
+return next_node
+
+Ok. It seems to me that the next node is returned on every iteration. So in the example 1-2-3-4-5 the return for next node will be: 
+
+head: 5 -> this is returned as next_node
+next_node: 4
+next_node: 3
+next_node: 2
+next_node: 1
+
+Is it safe to say that in a recursion problem where we are doing in place manipulation of the node, there should be a case other than the base case that does some form of return during every step.
+
+Ok to be 100% honest, the next_node part and the return still kind of confuses me. Its just to return/save the value of the next into the call stack right? 
 
 **Swap Nodes in Pairs**
 Given a linked list, swap every two adj nodes and return head.
