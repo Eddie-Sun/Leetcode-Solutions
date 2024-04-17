@@ -1,7 +1,219 @@
 //Apr 17 2024
---Review--
-1) Design a Hashmap
+**998 Smallest String Starting From Leaf**
 
+
+
+Now that we solved this question, is there a more optimal solution? What if we keep a running tally of the shorest path encountered, and if the cur path is longer than the shorest path, we break out of this recursive cycle and move onto another track right away? What I've been talking about is a method called pruning.
+
+Oh shet. Turns out that the nodes are vals 0-25. We have to convert them to str too: path.append(chr(node.val + 97))
+
+There seems to be a few things wrong with my code. The main problem is that you 1) didnt have a case where res is empty string 2) the path should be from the leaf to root. Not root down to leaf. 
+
+def smallestFromLeaf(self, root):
+	res = []
+
+	def allPaths(node, path):
+		if not node:
+			return
+		path.append(node.val)
+		if not node.left and not node.right:
+			res.append(''.join(reversed(path))
+		else: 
+			dfs(node.left, path)
+			dfs(node.right, path)
+		path.pop()
+	
+	allPaths(root, [])
+	return min(res) if res else ''
+
+For this question, we can do dfs. The brute force approach is to add all paths to res and return min. 
+
+def smallestFromLeaf(self, root):
+	res = []
+	def allPaths(node, path):
+		if not node:
+			return
+		path.append(node.val)
+		if not node.left and not node.right:
+			res.append(path)
+		else:
+			allPaths(node.left)
+			allPaths(node.right)
+		path.pop()
+	return min(res)
+
+--Review DFS and BFS for Binary Trees + N-Node Tree--
+
+def dfs(node):
+	if not node:
+		return
+	dfs(node.left)
+	dfs(node.right)
+
+def bfs(node):
+	if not node:
+		return
+	queue = dequeu(node)
+	while queue:
+		node = queue.popleft()
+		#process the node
+		if node.left:
+			queue.append(node.left)
+		if node.right:
+			queue.append(node.right)
+
+Now for n-node trees:
+
+def dfs(node): 
+	if not node: 
+		return 
+	#do something with the vals
+	for child in node.children:
+		dfs(child) 
+
+def bfs(node):
+	if not node:
+		return
+	queue = dequeue(node)
+	while queue:
+		node = queue.popleft()
+		#do something 
+		for child in node.children:
+			queue.append(node.child)
+
+**111 Minimum Depth of Binary Tree**
+This seems like a DFS problem. You have to keep the min depth (store it somewhere) 
+
+def minDepth(self, root): 
+	dfs(root):
+		if not node.left and not node.right:
+			return 1
+		left = dfs(node.left)
+		right = dfs(node.right)
+		return 1 + min(left, right)
+	return dfs(root)
+
+To visualize how this code would work, we can imagine that all of the leaf nodes start with a 1 (thus the return 1 if not node.left or node.right). When we do left or right = dfs(), we're adding 1 each node we go up. And the return 1 + min (left, right) returns the shortest path from the leaf to the cur node in the unwind. Eventually, when we reach the root, we'll return the shortest depth. 
+
+**Palindrome Linked List**
+There is a more elegant recursive solution. We don't reverse the list, but we compare the nodes symmetrically from the front to the back without modifying the list structures. This method aviods reversing the list. 
+
+The main idea goes as follows - as the recursive call unwinds (stack frames popped off) we compare the nodes encountered on the way back with nodes from the beginning using external reference to maintain state
+
+base case if not node. Recursive step - note we don't actually have to reverse the node but rather just compare the values from the top of the call stack with the cur node val. Then we pop off the stack and compare that to node.next.
+
+def isPalindrome(self, head):
+	ref = [head]
+
+Above, we set the ref to be mutable. But y tho. TLDR, it allows you to keep the global state. 
+
+def recurse(node):
+	if not Node: 
+		return True
+
+	result = recurse(node.next)
+	
+	if ref[0].val != node.val:
+		return False
+
+	ref[0] = ref[0].next
+	return result
+
+return recuse(head)
+
+Ok the thing to keep in mind is once you reach the base case, the unwind is true,   until ref[0].val != node.val. Then it just remains false. If that condition is never hit, then it just remains true the entire time, thus is a palindrome. 
+
+Another way to write the reverse function:
+
+def reverseList(node):
+	prev, cur = None, node
+	while cur:
+		cur.next, prev, cur = prev, cur, cur.next
+	return prev
+
+new_head = reverseList(slow)
+
+Code review with GPT:
+
+def isPalindrome(head):
+	if not head or head.next:
+		return True
+
+	slow = fast = head
+	while fast and fast.next:
+		slow, fast = slow.next, fast.next.next
+
+	def reverseList(node):
+		if not node or not node.next
+			return node
+		new_head = reverseList(node.next)
+		node.next.next, node.next = node, None
+		return new_head
+
+	new_head = reverseList(slow)
+
+	while new_head:
+		if head.val != new_head.val:
+			return False
+		head, new_head = head.next, new_head.next
+
+	return True
+
+You find the length of the list and reverse the other side. And you compare if the node vals are the same through out. You can use the fast and slow pointer to find head2 and size of the list. Don't actually need the size of the list Actually. 
+
+12321 is palidrome
+123321 is also palidrome
+
+f = s = head
+while f and f.next:
+	s, f = s.next, f.next.next
+new_head = s
+
+def reverseList(node):
+	if not node:
+		return node
+	next_node = reverseList(node.next)
+	node.next.next = node
+	node.next = None
+	return next_node
+reverseList(s)
+
+while head and new_head:
+	if head.val != new_head.val:
+		return False
+	head, new_head = head.next, new_head.next
+
+return True
+
+--Review--
+3) Sum Root to Leaf Numbers
+Note that the code fails in the case root = [0,1] when you do not pass res in as a param in allPaths(). Think about why that might be. You wrote or instead of and for if not node.left and not node.right.
+
+This is pretty much the same question as the one below. The key diff is now you are appending the str, but turning it to an int. And at the end, you return the sum of res. 
+
+2) Binary Tree Paths. Given the root of a binary tree, return all the paths. We can use recursion to solve this.
+
+def binaryTreePaths(self, root):
+	res = []
+
+	def allPaths(root, path):
+		if not root:
+			return
+		
+		path.append(root.val)
+		if not root.left and not root.left:
+			res.append(path)
+		else:
+			allPaths(root.left, path)
+			allPaths(root.right, path)
+		path.pop()
+
+	allPaths(root, [])
+	return res
+
+Forgot how to format the joining @ "->". res.append('->".join(path))
+
+1) Design a Hashmap
 def __init__(self):
 	self.size = 10000
 	self.buckets = [[] for _ in range(self.size)]
