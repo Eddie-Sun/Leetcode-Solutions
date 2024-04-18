@@ -1,7 +1,159 @@
+//Apr 18 2024
+**894. All Possible Full Binary Trees**
+Given a integer n, generate all possible full binary Trees. 
+
+Base case if n == 0
+Recursive case is when you use the nodes to build out the binary Tree
+
+
+This looks similar to the all possible paths algo. Seems to me that both DFS and BFS would work here.
+
+Base case:
+	if not child.left and not child.right
+
+Wait this seems to be the all paths algo but with BFS. Recall the BFS algo for binary tree:
+
+queue = deque
+while queue:
+	cur = queue.popleft()
+	#do somthing with cur
+	queue.append(child.left)
+	queue.append(child.right)
+
+The all paths algo:
+	
+res = []
+def allPaths(node, path):
+	if not node:
+		return
+	path.append(node.val)
+	if not child.left and not child.right:
+		res.append(path)
+	else:
+		allPaths(node.left)
+		allPaths(node.right)
+	path.pop()
+
+So for all possible Full Binary Trees we can do:
+
+Ok. What happened here was that I misread the question. I thought you were given a tree, and you look at the subtrees to see how many unique subtrees form a full BST. 
+
+**231. Power of Two**
+Same as before. 
+
+**342. Power of Four**
+def powerOfFours(n):
+	if n == 0:
+		return False
+	if n == 1: 
+		return True
+	return self.powerOfFours(n) and n % 4 == 0
+
+Its not that you don't know recursion, but rather you didn't think about what would make something isPowerOfFour. First and formost, the % must == 0, and the recursive call must == 1.
+
+Ok you fucked this one up. There are two basecases: 
+
+1) n == 0: return False
+2) n == 1: return True
+else: return n % 4 == 0
+
+Given a int, return if its a power of four, otherwise return False. return n % 4 == 0 and self.isPowerofFourth(n//4)
+
+def isPowerOfFour(n):
+	if n == 0:
+		return True
+	isPowerOfFour(n // 4)
+	return False
+
+**463. Island Perimeter**
+There were a few mistakes in my code mainly being that I get the bounds wrong. It should be:
+	
+	if r < 0 or c < 0 or r >= R or c >= C or grid[r][c] == 0:
+		return 1
+
+We should also mark things as visited by setting it as -1
+
+One thing I've been thinking of is why r < 0, c < 0 instead of <= 0
+
+
+This is the problem of the day. To count the perimeter, we can simply count the total number of recursive steps.
+
+if not grid:
+	return -1
+
+R, C = len(grid), len(grid[0])
+
+dfs(r, c):
+	#1 check bounds
+	if r <= 0 or c <= 0 or r > R or c > C or grid[r][c] != 1:
+		return 1
+	if grid[r][c] == -1:
+		return 0
+	
+	return dfs(r+1, c) + dfs(r, c+1) + dfs(r-1, c) + dfs(r, c-1)
+
+for r in R:
+	for c in C:
+		if grid[r][c] == 1:
+			res = dfs(r,c)
+return res
+
 //Apr 17 2024
+**Remove Linked List Elements**
+
+def removeElements(self, head, val):
+	if not head:
+		return head
+	
+	head.next = sself.removeElements(head.next, val)
+	return head.next if head.val == val else head
+
+Base case if not node. Recursive case removeElements(node.next)
+
+def removeElements(self, head, val):
+	new_head = head
+	def remove(root):
+		if root.val == val:
+			root.next = root.next.next
+		remove(root.next)
+	return new_head
+
 **998 Smallest String Starting From Leaf**
+The problem with my current pruning algo is the fact that it just keeps outputting "{" the entire time.
 
+Another attempt at is. You set self.shortest = None. for the pruning step, after you the current path, you do: 
 
+if self.shorest is None or current_path < self.shortest:
+	self.shortest = current path.  
+
+Pruning algo:
+1) Maintain global or recursive scope min
+2) Before making the recursive call, compare cur path len w/ shortest path. If continuing would lead to longer or equal path, skip call
+3) Keep updating the shortest path 
+
+For 1) the shorest path would be a string 'abdbc' for example. The starting state would have to to be a inf str or int. In which we would do the comparision to. Before the recursive call, we would have min(cur path, shorest path).
+
+Brain too hurtie. Asked GPT to give me the code: 
+
+self.shortest = '{' as this is the char that comes after z in ascii
+
+def dfs(node, path):
+	if not node:
+		return
+	
+	path.append(char(node.val + 97))
+	if not node.left and not node.right:
+		cur_path = ''.join(reversed(path))
+		if cur_path < self.shortest:
+			self.shortest = current_path
+	else:
+		if len(path) < len(self.shortest):
+			dfs(self.left)
+			dfs(self.right)
+	path.pop()
+	
+	dfs(root, [])
+	return self.shorest
 
 Now that we solved this question, is there a more optimal solution? What if we keep a running tally of the shorest path encountered, and if the cur path is longer than the shorest path, we break out of this recursive cycle and move onto another track right away? What I've been talking about is a method called pruning.
 
