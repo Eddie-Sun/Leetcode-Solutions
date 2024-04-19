@@ -1,10 +1,124 @@
+//Apr 19 2024
+--Backracking, combinations, subsets--
+A subset is the list of all possible sets (matter does not order). The boiler plate code for subsets:
+
+def subsets(nums):
+	res = []
+	def backtrack(start, path):
+		res.append(path)
+		for i in range(start, len(nums)):
+			backtrack(i + 1, paths + [nums[i]])
+	backtrack[0, [])
+	return res 
+
+print(subsets([1,2,3]))
+
+A 
+
+**Max Depth of Binary Tree**
+def maxDepth(self, root):
+	depth = 0
+	def dfs(root):
+		if not root:
+			return 1 #here we should return 0 since we hit a non exisiting node
+		depth += dfs(root.left) + dfs(root.right)
+	return depth
+
+Another problem is we are using depth to accumlate the depth of the tree. 
+
+**Reverse String**
+base case: if L > R: return. Why do we want to return None instead of returning a value?
+
+if L > R:
+	return
+
+s[R], s[L] = s[L], s[R]
+reverseString(L + 1, R - 1):
+
+Ok, so for this problem, we didn't need an explicit base case. The dfs(node.left) + dfs(node.right) calculates the entire sum of the tree. What we want to do is calculate the individual left and right depth by creating a var and setting it to dfs(left,right). Key thing to note is that we want to return if not node. 
+
+Q: Would this base case also work?
+
+if not node.left and not node.right:
+	return 1
+
+This could work too. But you still need the if not node case regardless. 
+
+def maxDepth(self, root):
+	def dfs(node):
+		if not node:
+			return 0
+		left_depth = dfs(node.left)
+		right_depth = def(node.right)
+		return max(left_depth, right_depth) + 1
+	return dfs(root)
+
 //Apr 18 2024
+**Swap Nodes in Pairs**
+Base case if not node or node.next, return head.
+
+if not head or head.next:
+	return head
+
+next_node = self.swapPairs(node.next) #traverse the list
+
+Ok, you have a 1st node and a second node. You want the 2nd node to point to the 1st node and the first node to point to the last node??? 
+
+Ok lets work this problem out together. We have 1->2->3->4. Afterwards:
+
+1 -> 4
+2 -> 1
+3 -> None
+4 -> 3
+
 **894. All Possible Full Binary Trees**
-Given a integer n, generate all possible full binary Trees. 
+Chat GPT solution (no way I would've came up with this myself)
+
+def allPossibleFBT(N):
+    # Using a dictionary to memoize the results for different values of N
+    memo = {}
+    
+    def buildFBT(n):
+        if n not in memo:
+            if n == 1:
+                memo[n] = [TreeNode(0)]
+            else:
+                trees = []
+                for left_size in range(1, n, 2):
+                    right_size = n - 1 - left_size
+                    for left in buildFBT(left_size):
+                        for right in buildFBT(right_size):
+                            root = TreeNode(0)
+                            root.left = left
+                            root.right = right
+                            trees.append(root)
+                memo[n] = trees
+        return memo[n]
+    
+    if N % 2 == 0:
+        return []  # Return empty list if N is even, as it's impossible to form a full binary tree
+    return buildFBT(N)
+
+Ok. if n == 1: memo[n] = [Treenode(0)]. What does that do? I'm not sure if I understand the syntax. 
+
+Given a integer n, generate all possible full binary Trees.
 
 Base case if n == 0
-Recursive case is when you use the nodes to build out the binary Tree
+Recursive case is when you use the nodes to build out the binary Tree. 
+Return the possible ways you can build a binary tree. 
 
+Almost seems like a permutaion/combination problem. Q: which one is it? 
+
+More aligned with the principle of combinations rather than permutations. We are selecting possible splits of total nodes and the order of the groups do not matter only the size do. 
+
+It seems to be the base cases should be n == 0 return 1 (valid tree) and n == 1 return 0 (invalid tree) and backtrack. Ok apperently this base case is not a good solution for the problem. Then what is the correct base case? Would you have to actually build out the tree to solve it? 
+
+Ok so for the base case:
+
+if n == 0:
+	return []
+if n == 1:
+	return ([TreenoNode()])
 
 This looks similar to the all possible paths algo. Seems to me that both DFS and BFS would work here.
 
