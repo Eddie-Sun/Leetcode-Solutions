@@ -1,4 +1,82 @@
 //Apr 20 2024
+**Construct String from Binary Tree**
+Given root of binary tree. Node = int val, if left((val)()), if right(()(val)), if both: ((val)(val). You also have to mantain a stack for the closing brackets. Under x condition, you pop() and append the closing bracket.
+
+def tree2str(self, root):
+	res = ''
+
+	def dfs(root):
+		if not root: 
+			return
+		if not root.left:
+			dfs(root.right)
+			res.append('()(' + str(root.right.val) + ')')
+
+Crap. Seems like you have to spend some more time thinking about the rules of the brackets.
+
+**Diameter of Binary Tree**
+Asked GPT to refined and fix code: 
+
+def diameterOfBinarTree(self, root):
+	cur_max = 0
+	
+	def depth(node):
+		nonlocal cur_max
+		if not node:
+			return 0
+		left = depth(node.left)
+		right = depth(node.right)
+
+		cur_max = max(cur_max, left + right)
+		return 1 + max(left, right)
+	
+	depth(root)
+	return cur_max
+
+To solve this you simply find the deepest left and right nodes. Combine the depths, return.
+
+def diameterOfBinaryTree(self, root):
+	cur_max = 0
+	def depth(root):
+		if not root:
+			return 0
+		if not root.left and not root.right:
+			return 1
+		left = depth(root.left)
+		right = depth(root.right)
+		return max(cur_max, left + right)
+
+	return depth(root)
+
+**Invert Binary Tree**
+Attempt 2:
+
+def invertTree(self, root):
+	def invert(root):
+		if not root:
+			return
+		root.left, root.right = root.right, root.left
+		invert(root.left)
+		invert(root.left)
+		return root
+	return invert(root)
+
+The question is if you have to return any values for the recursive call. The answer is yes (duh). You are manipluating the left and right pointers. 
+
+First attempt: 
+
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        old_root = root
+        def invert(root):
+            if not root:
+                return
+            root.left = invert(root.left)
+            root.right = invert(root.right)
+        return old_root 
+
+Ah I forgot about the base case of if not root. Also, how do we just return invert(root)? 
+
 **Number of Ways to Arrive at Desitnation**
 LMAO fuk that. I don't wana do shortest path algo yet. 
 
