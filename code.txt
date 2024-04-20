@@ -1,5 +1,173 @@
+//Apr 20 2024
+**Number of Ways to Arrive at Desitnation**
+LMAO fuk that. I don't wana do shortest path algo yet. 
+
+**797. All Paths From Source to Target**
+Question would this work then? 
+
+def allPathsSourceTarget(self, graph):
+	res = []
+	def DFS(node, path):
+		path.append(node)
+		if node == len(graph) - 1:
+			res.append(path)
+		else:
+			for neighbor in graph[node]:
+				DFS(neighbor)
+		path.pop()
+	
+	DFS(0, [])
+	return res
+
+It appears to me that path is modified in place and only exisits within the recursive call. 
+
+Asked GPT to help correct my pseudocode: 
+
+def allPathsSourceTarget(self, graph):
+	res = []
+	path = []
+	
+	def DFS(node):
+		path.append(node)
+		if node == len(graph) - 1:
+			res.append(path.copy())
+		else:
+			for neighbor in graph[node]:
+				DFS(neighbor)
+		path.pop()
+
+	DFS(0)
+	return res
+		
+You would want to use DFS to find all paths in a graph as it naturally handles path tracking through recursion. 
+
+def allPathsSourceTarget(self, graph):
+	res = []
+	visited = set()
+
+	def DFS(node, path):
+		visted.add(node)
+		path.append(node.val)
+		if node.val == target:
+			res.append(path)
+		elif node not in visited:
+			for neighbor in node:
+				DFS(neighbor, path)
+		path.pop()
+
+	return res
+
+Asked chatGPT, if you want to track all paths in BFS(), you can do the following: 
+
+Seems like you want to do BFS using adj List. If == target, append path.
+
+def allPathsSourceTarget(self, graph):
+	
+	def BFS(node, path):
+		queue = deque()
+		visisted = set()
+		queue.append(node)
+		visited.append(node)
+	
+		while queue:
+			cur = queue.popleft()
+			for neighbor in cur:
+				if neighbor in visted:
+					return
+				else:
+					queue.append(neighbor)
+					visited.add(neighbor)
+					
+
+Question: How the heck do we append path during BFS without using recursion? You have to make an array, and append to that array everytime. If this arr == target, append to res. 
+
+
+--Generating Subsets--
+So combinations are actually very similar to subets, but you only append when k length has been reached. 
+
+def combine(nums, k):
+	res = []
+	def backtrack[start, path]:
+		if len(path) == k:
+			res.append(path)
+		for i in range(start, len(nums)):
+			backtrack(i + 1, path + [nums[i]])
+
+	backtrack[0, []]
+	return res
+
+def subsets(nums):
+	res = []
+	def backtrack(start, path):
+		print(path)
+		res.append(path)
+		for i in range(start, len(nums)):
+			backtrack(i + 1, path + [nums[i]])
+	
+	backtrack[0, []]
+
+**1992 Find All Groups of Farmland**
+
+With help from GPT:
+
+def findFarmLand(land):
+	if not land:
+		return []
+
+	R, C = len(land), len(land[0])
+	res = []
+
+	def explore(r,c):
+		if r >= R or or c >= C or land[r][c] == 0:
+			return r-1, c -1
+		land[r][c] = 0
+		bottom_r = explore(r + 1, c)[0]
+		right_c = explore(r, c + 1)[1]
+		return bottom_r, right_c
+
+	for r in range(R):
+		for c in range(C):
+			if land[r][c] == 1:
+				orig_r, orig_c = r, c
+				bottom_r, bottom_c = explore(r, c)
+	return res
+
+Given m x n binary matrix. 0 = forested and 1 = farmland. There is no adjacent groups of farmland allowed. So you are returning the top left coordinate and the bottom right coordinate.
+
+1) You want some way to scan the grid for 1s
+2) You prob want to do DFS in the + x and - y dir since its perfect square. There is no case where
+Thought: You can probably get away with doing the search in one direction actually (r+1, c+1)
+
+When you start the append first [r,c] 
+
+You also have to mark the entire rectangle as visited. 
+
+
+def findFarmland(self, land):
+	if not land:
+		return
+
+	R, C = len(land), len(land[0])
+	res = []
+	
+	for r in range(R):
+		for c in range(C):
+			if land[r][c] == 1:
+				diagonalSearch(r, c, [r,c])
+
+	def diagonalSearch(r, c, path):
+		if r > R or c > C or land[r][c] != 1:
+			path.append(r-1)
+			path.append(c-1)
+			res.append(path)
+			return
+		diagonalSearch(r + 1, c + 1)
+
+	return res
+
+
 //Apr 19 2024
---Backracking, combinations, subsets--
+--Backtracking, combinations, subsets--
 A subset is the list of all possible sets (matter does not order). The boiler plate code for subsets:
 
 def subsets(nums):
@@ -12,8 +180,6 @@ def subsets(nums):
 	return res 
 
 print(subsets([1,2,3]))
-
-A 
 
 **Max Depth of Binary Tree**
 def maxDepth(self, root):
