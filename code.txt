@@ -1,3 +1,79 @@
+//Apr 21 2024
+**Binary Tree Postorder Traversal**
+Right, left, Root - Seems like its actually left, right, root
+
+def postorderTraversal(self, root):
+	res = []
+	def traverse(node):
+		if not node:
+			return
+		traverse(node.right)
+		traverse(node.left)
+		res.append(node.val)
+	traverse(root)
+	return res
+
+**Binary Tree Preorder Traversal**
+Root, Left, Right
+
+def preorderTraversal(self, root):
+	res = []
+	def traverse(node):
+		if not node: 
+			return
+		res.append(node.val)
+		traverse(node.left)
+		traverse(node.right)
+	traverse(root)
+	return res
+	
+
+**Binary Tree Inorder Traversal**
+If I recall, its L, R, Right. 
+
+def inorderTraversal(self, root): 
+	res = []
+	def traverse(node):
+		if not node:
+			return
+		traverse(node.left) 
+		res.append(node.val)
+		traverse(node.right)
+	return res 
+
+**Diameter of Binary Tree**
+
+Chat GPT feedback:
+
+Incorrect increment. Correct code:
+
+def diameterOfBinaryTree(self, root):
+	cur_max = 0
+	def depth(node):
+		nonlocal cur_max
+		if not node: 
+			return 0
+		left = depth(node.left)
+		right = depth(node.right)
+		cur_max = max(left + right, cur_max)
+		return max(left, right) + 1
+	depth(root)
+	return cur_max 
+
+def diameterOfBinaryTree(self, root):
+	cur_max = 0
+	def depth(node): 
+		nonlocal cur_max
+		if not node:
+			return 0 
+		if not node.left and not node.right:
+			return 1 
+		left = depth(node.left)
+		right = depth(node.right)
+		cur_max = max(left + right, cur_max) + 1
+		return cur_max
+	return depth(root)
+
 //Apr 20 2024
 **Construct String from Binary Tree**
 Given root of binary tree. Node = int val, if left((val)()), if right(()(val)), if both: ((val)(val). You also have to mantain a stack for the closing brackets. Under x condition, you pop() and append the closing bracket.
