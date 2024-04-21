@@ -1,4 +1,163 @@
 //Apr 21 2024
+**Subtree of Another Tree**
+Recall, the problem to check if two trees p and q are equal is:
+
+def isSameTree(self, p, q) -> bool:
+	if not p and not q: #This means that we reached the end of the tree
+		return True
+	if p is None or q is None or p.val != q.val:
+		return False
+	left_same = isSameTree(p.left, q.left)
+	right_same = isSameTree(p.right, q.right)
+	return left_same + right_same
+
+return isSameTree(p,q)
+
+**Find if Path Exists in Graph**
+Asked GPT to help review my code. There is a few issues with my implementaion. We have to 1) create an adj list from the edge list:
+
+graph = {i: [] for i in range(n)}
+for u, v in edges:
+	graph[u].append(v)
+	graph[v].append(u)
+
+Ok. So one thing to remeber is to convert to adj list when doing the traversals- this actually seem to be most of the problem a lot of the times. Then you have DFS and BFS written so much that I can write it faster than one can take a piss. 
+
+In the context of graph theory, u = edge and v = vertext.
+
+Question, if the graph was not unidirectional, what would creating the adj list look like?
+
+graph = {i: [] for i in range(n)}
+for u, v in edges:
+	graph[u].append(v)
+	graph[v].append(u)
+
+It would look like so:
+
+{
+  0: [1, 2],  # Only 0 to 1 and 0 to 2
+  1: [2],     # Only 1 to 2
+  2: []       # No outgoing edges from 2
+}
+
+graph = {i: [] for i in range(3)}
+for u, v in edges:
+	graph[u].append(v)
+
+
+visited = set()
+
+def dfs(dst, src):
+	if src == dst:
+		return True
+	visited.add(src)
+	for neighbor in graph[src]:
+		if neighbor not in visted:
+			if dfs(negihbor, dst):
+				return True
+			return False
+	
+This is a DFS algo. 
+
+def validPath(n, edges, source, destination):
+	visited = set()
+	visted.add(source)
+	def dfs(n, edges, src, dst):
+		if dst == src:
+			return True
+		if src not in visited:
+			visted.add(src)
+			for neighbor in edges[src]:
+				if dfs(neighbor):
+					return True
+	
+	dfs(n, edges, source, destination)
+
+**Same Tree**
+Corrected GPT code:
+
+def traverse(p, q):
+	if p is None and q is None:
+		return True
+	if p is None or q is None or p.val != q.val:
+		return False
+	left_same = traverse(p.left, q.left)
+	right_same = traverse(p.right, q.right)
+	return left_same and right_same
+	
+return traverse(p, q)
+
+Given the roots of p and q. Write a function to check if the trees are the same.
+def traverse(p,q, same):
+	if not p or q:
+		return
+	if p.val != q.val:
+		return False
+	traverse(p.left, q.left, same)
+	traverse(p.right, q.right, same)
+	return True
+return traverse(p, q, True)
+	
+
+**Balanced Binary Tree**
+Corrected version of isBalanced(self, root):
+	def check_balance(node):
+		if not node:
+			return 0, True
+
+		left_depth, is_left_balanced = check_balance(node.left)
+		right_depth, is_right_balanced = check_balance(node.right)
+	
+		cur_depth = max(left_depth, right_depth) + 1
+		is_balanced = (is_left_balanced and is_right_balanced and (abs(left_depth - right_depth) <= 1)
+		return current_depth, is current_balanced
+
+		if not root:
+			return True
+
+		depth, is_balanced = check_balance(root)
+		return is_balanced
+		
+
+Ok, my understanding of this problem is wrong. It requires the checking of balance @ every node - not just the min max. 
+
+Determine if a Binary Tree is height balanced. A height-balanced binary tree is a binary tree in which the depth of the two subtrees of every node never differs by more than one.
+
+Ok. For this, we can just find the max height, min height for the tree and see if max depth - min depth > 1. Return false, else return true
+
+def isBalanced(self, root):
+	def traverse(node):
+		if not node: 
+			return 0
+		left = traverse(node.left)
+		right = traverse(node.right)
+		return [1 + min(left, right), 1 + max(left, right)]
+	min_depth, max_depth = traverse(root)
+	return max_depth - min_depth < 1
+
+**Max Depth of Binary Tree**
+Ok, it seems like you made a locgical mistake in how depth is calculated. left = traverse = int. So is right. But to calculate the depth you do return 1 + max(left, right), very similar to return max(left, right) + 1 in the diameter of Binary Tree calculation. 
+
+def maxDepth(self, root):
+	def depth(node):
+		if not node:
+			return 0
+		left = depth(node.left) + 1
+		right = depth(node.right) + 1
+		return max(left, right)
+	return depth(root)
+
+**Invert Binary Tree**
+Return the root after inverse
+
+def invertTree(self, root):
+	if not node: 
+		return
+	node.left, node,right = node.right, node.left
+	invertTree(node.left)
+	invertTree(node.right) 
+	return root
+
 **Binary Tree Postorder Traversal**
 Right, left, Root - Seems like its actually left, right, root
 
