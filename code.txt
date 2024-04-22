@@ -1,5 +1,119 @@
+//Apr 22 2024
+**752 Open the Lock**
+Asked GPT for answer:
+
+from collections import deque
+
+def openLock(deadends, target):
+    dead = set(deadends)  # Hash set for quick lookup
+    queue = deque([('0000', 0)])  # (state, depth)
+    visited = set('0000') if '0000' not in dead else set()
+
+    while queue:
+        state, depth = queue.popleft()
+        if state == target:
+            return depth
+        for i in range(4):
+            for move in (-1, 1):  # Decrement or increment each wheel
+                new_state = list(state)
+                new_state[i] = str((int(new_state[i]) + move) % 10)
+                new_state = ''.join(new_state)
+                if new_state not in visited and new_state not in dead:
+                    visited.add(new_state)
+                    queue.append((new_state, depth + 1))
+    return -1
+
+Lets try a BFS approach. We could see this as 1) 4d matrix 2) adj list. We can't do either with this problem. 
+
+@ each decision point, we have 8 possible paths. So this is a BFS on a tree with 8 children. Total 4 deep.
+
+Ok 1) this is not 4 deep. There is 10k possible states. This is closer to a graph because each node could have mutiple predecessors - think graph with cycle since the circular nature of the wheel. 
+
+The lock has circular wheels with vals from 0 - 9, len(4) as str. Return min numbers of turns to unlock the lock. 
+
+1) We need a hash map of our tried vals, if in set, retun -1. This means that we ended up where we started = no way to reach target val (you're going to end up in inf loop). 
+
+The first thing I'm thinking about, is when incrementing/decreaing the vals, is it better to start from [0] or [-1]? Does it matter? (recall you can both increase/decrease). 
+
+Lets walk through an example together. Go from start. 
+
+target = 0202
+
+1) match [0] index. Done. i += 1
+	0000
+2) match [1] index. Done i += 1
+	0200
+3) match [2] index. i += 1
+	0200
+
+This is a BFS problem. Q: Can we make a decision tree and then BFS it? 
+
+--Review-- 
+Reverse linked list using recursion:
+
+def reverse(head):
+	if not head or head.next:
+		return head
+	next_node = reverse(head.next)
+	next_node.next.next = head
+	head.next = None
+
+	return next_node
+
+Traverse a linked list using recursion:
+
+def traverse(root):
+	if not root:
+		return
+	print(root)
+	return traverse(root.next)
+
 //Apr 21 2024
 **Subtree of Another Tree**
+
+def isSubtree(self, main_tree, sub_tree) -> bool:
+	if not main_tree:
+		return False
+	if not sub_tree:
+		return True
+	
+	if self.sameTree(main_tree, sub_tree):
+		return True
+	
+	return self.isSubtree(main_tree.left, sub_tree) or self.isSubtree(main_tree.right, sub_tree)
+
+def is sameTree(main_tree, sub_tree) -> bool:
+	if not main_tree and not sub_tree:
+		return True
+	if main_tree == None or sub_tree == None or main_tree.val != sub_tree.val:
+		return False
+	
+	return sameTree(main_tree.left, sub_tree.left) and sameTree(main_tree.right, sub_tree.right)
+
+def isSubtree(self, s, t) -> bool:
+	if not t: 
+		return True
+	if not s:
+		return True
+	
+	if self.sameTree(s,t):
+		return True
+	return self.isSubtree(s.left, t) or self.isSubtree(s.right(s.right, t))
+
+	def sameTree(self, s, t):
+		if not s and not t: 
+			return True
+		if s and t and self.sameTree(s.left, t.left) and self.sameTree(s.right, t.right)
+		return False
+
+The key thing we got to figure out is how to determine if the tree is the stubtree of another. The flag is a valid strat. However, there is prob a better method to do this.
+
+Another method is to when unwinding the tree, the the vals of subtree to some wacky val. And after the first traversal, traverse the subtree again and check if all the subtree vals are set to that wacky val. This leads to a bunch of problems. You use extra space and assume that the marked val does not exist in the orgional tree. 
+
+The subtree problem shares a lot of similarties with the problem below. It seems to me like that the trick to this question is if you can exhaust the entire subtree. 
+
+The problem here is we don't know when we've reached the subtree when recursing. So we can only really figure out if its a subtree in during the unwinding phase. 
+
 Recall, the problem to check if two trees p and q are equal is:
 
 def isSameTree(self, p, q) -> bool:
