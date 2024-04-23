@@ -1,62 +1,9 @@
 //Apr 23 2024
-**Construct String from Binary Tree**
-
-Correct solution:
-
-def tree2str(self, root):
-	if not root:
-		return ''
-
-	def helper(node):
-		if not node:
-			return ''
-
-		res = str(node.val)
-
-		if node.left or node.right:
-			res += '(' + helper(node.left) + ')'
-
-		if node.right:
-			res += '(' + helper(node.right) + ')'
-
-		return res
-
-	return helper(root)
-
-
-GPT helped me contruct a better rule set:
-
-1) if root node: append val
-2) if left node: append left child (recursive)
-3) if left node don't exist, but right, append ()
-4) if right node: append recursive right res
-5) if leaf, return
-
-def tree2str(self, root): -> str:
-	res = root.val
-	def helper(node):
-		if not node:
-			return ''
-		if not node.left and node.right:
-			res += '()'
-		if not node.left:
-			res += '(' + helper(node.left) + ')'
-		if not node.right:
-			res += '(' + helper(node.right) + ')'
-	helper(root)
-
-This seems like root, left, right traversal (dfs). The trick is to figure out the rules of the (). 
-
-if root node = append 'val'
-if leaf node = append '(val)'
-if None, append '()'
-
-At the start of going into every child '(' and at the end ')'
-
 **Path Sum**
 Todo: Try an all paths algo
 
 GPT reccomendation:
+
 def def(node, cur_sum):
 	if not node:
 		return False
@@ -68,9 +15,7 @@ def def(node, cur_sum):
 
 	return dfs(node.left, cur_sum) or dfs(node.right, cur_sum)
 
-Somthings to remeber. When you want to check if either the left or right subtree contains x, you can do dfs(left) or def(right) provided that the return val is True or False. 
-
-Also, if not node.left and not node.right is to check the leaf node which you have to do. And the base case is, if you run out of nodes to check, return False. 
+Somthings to remeber. 
 
 Check if root-to-leaf path has all values == sum. This is dfs.
 
