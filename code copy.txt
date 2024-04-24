@@ -1,75 +1,15 @@
 //Apr 24 2024
-**Delete Node in a BST**
-I am way too lazy to figure out the exact method when there are children nodes. Something about a rotation. 
-
 **Insert into a Binary Search Tree**
-Lets try the recursive solution to insert into a binary tree again: 
+
+Lets think of the iterative solution. 
 
 def insertIntoBST(root, val):
-	if not root:
-		return TreeNode(val)
-	
-	if root.val < val:
-		if not root.right:
-			root.right = TreeNode(val)
-		else:
-			insertIntoBST(root.right, val)
-	elif root.val > val:
-		if not root.left:
-			root.left = TreeNode(val)
-		else:
-			insertIntoBST(root.left, val)
-	return root
+	while root:
+		if root.val < val:
+			root = root.right
+		elif root.val > val:
+			root = root.left	 
 
-Lets try a solution of this that uses recursion:
-
-def insertIntoBST(root, val):
-	if not root:
-		return TreeNode(val)
-	if val < root.val:
-		return insertIntoBST(root.right, val)
-	else:
-		return insertIntoBST(root.left, val)
-	return root
-
-Lets think of the iterative solution. When inserting, we should make sure its a balanced BST. 
-
-  4
- / \
-2   7
-   /
-  6
-
-
-In this example, lets say that we try to insert 5. It would not make sense to insert it to the left of 6. 
-
-  4
- / \
-2   5
-   / \
-  6   7
-
-This following tree would make more sense. The algo for this is. 
-
-def insertIntoBST(root, val):
-	if not root:
-		return TreeNode(val) 
-
-	cur = root
-	while cur:
-		if val < cur.val:
-			if not cur.left:
-				cur.left = TreeNode(val)
-				return root
-			cur = cur.left
-		else:
-			if not cur.right:
-				cur.right = TreeNode(val)
-				return root
-			cur = cur.right
-	return root
-	
-			
 **235. Lowest Common Ancestor of a Binary Search Tree**
 Based on the iterative solution, lets try to write the recursive version:
 
