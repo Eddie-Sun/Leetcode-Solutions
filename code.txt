@@ -1,3 +1,142 @@
+//Apr 25 2024
+**Binary Tree Level Order Traversal II**
+Ok, I'm going to Jank it by doing res[::-1]
+
+**Binary Tree Level Order Traversal**
+Corrected version according to chat GPT:
+
+def levelOrder(root):
+	if not root:
+		return []
+
+	res = []
+	queue = deque([root])
+
+	while queue:
+		level_size = len(queue)
+		level = []
+
+		for _ in range(level_size):
+			cur = queue.popleft()
+			level.append(cur.val)
+
+			if cur.left:
+				queue.append(cur.left)
+			if cur.right:
+				queue.append(cur.right)
+
+		res.append(level)
+
+	return res
+
+This is just BFS.
+
+def levelOrder(root):
+	res = []
+
+	def BFS(root):
+		queue = deque()
+		queue.append(root)
+		
+		while queue:
+
+			cur = queue.popleft()
+			res.append(level)
+			level = []
+			
+			if cur.left:
+				queue.append(cur.left)
+				level.append(cur.val)
+			if cur.right:
+				queue.append(cur.right)
+				level.append(cur.val)
+	
+	BFS(root)
+	return res
+
+**450 Delete Node in a BST**
+GPT Corrected Answer: 
+
+def deleteNode(self, root, key):
+	if not root: 
+		return
+
+	if key < root.val: 
+		root.left = self.deleteNode(root.left, key)
+	elif key > root.val:
+		root.right = self.deleteNode(root.right, key)
+	else:
+		if not root.left:
+			return root.right
+		elif not root.right
+			return root.left
+
+	#Node with two children
+	
+		min_larger_node = root.right
+		while min_larger_node.left:
+			min_larger_node = min_larger_node.left
+		root.val = min_larger_node.val
+		root.right = self.delete(root.right, root.val)
+
+		return root
+
+Seems like we return the root of the tree. Lets solve this using recursion. In a BST, if the node being deleted has:
+
+1) no child, remove from tree
+2) 1 child, replace node with child
+3) 2 children, find smallest node in right subtree. 
+
+def deleteNode(self, root, key) -> TreeNode:
+	if not root:
+		return
+
+	#search tree
+	if root.val < key:
+		self.deleteNode(root.right, key)
+	else:
+		self.deleteNode(root.left, key)
+	
+	#delete node
+	if root.val == key:
+		if not root.left and not root.right:
+			root == None
+		elif root.left ^ root.right: #swap the nodes
+			if root.left:
+				root = root.left
+				root.left = None
+			else:
+				root = root.right
+				root.right = None
+		else:
+			cur = root.right
+			while cur: #find min val of right subtree
+				cur = cur.left
+			root = cur
+			cur = None
+
+	return root 
+
+One thing to recall, is that other than adding a node, when you're modifying a tree using recursion, you should set root.left and root.right to the recursive call unless you have a good reason not to. 
+
+--Review--
+**701 Insert into a Binary Search Tree**
+def insertIntoBST(self, root, val): -> TreeNode
+	if not root: 
+		return TreeNode(val)
+
+	if root.val < val:
+		if not root.right: 
+			root.right = TreeNode(val)
+		else:
+			self.insertIntoBST(root.right, val)
+	else:
+		if not root.left:
+			root.left = TreeNode(val)
+		else:
+			self.insertIntoBST(root.left, val) 
+	return root
+
 //Apr 24 2024
 **Delete Node in a BST**
 I am way too lazy to figure out the exact method when there are children nodes. Something about a rotation. 
