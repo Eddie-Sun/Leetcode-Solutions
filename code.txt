@@ -1,4 +1,83 @@
 //Apr 25 2024
+**1443. Minimum Time to Collect All Apples in a Tree**
+This algo is generalizable to a subset of graph traversal algos. 
+
+This is closer to a BFS graph min len problem than a binary tree problem. Since there are mutiple apples to collect, we actually should probably use DFS. 
+
+1) we prob want to convert the n and edges into and adj list? Yes. 
+
+def build_list(edges):
+	adj_list = {}
+	for u, v in edges:
+		adj_list[u].append(v)
+		adj_list[v].append(u)
+	return adj_list
+
+def minTime(self, n, edges, hasApple) -> int:
+	adj_list = build_list(edges)
+	visited = set()
+
+	def dfs(node):
+		visited.add(node)
+		total_cost = 0
+		has_apple_in_subtree = hasApple[node]
+	
+		for neighbor in adj_list[node]:
+			if neighbor not in visted:
+				cost_of_subtree = dfs(neighbor)
+				if cost_of_subtree > 0:
+					total_cost += cost_of_subtree + 2
+
+		return total_cost if has_apple_in_subtree or total_cost > 0 else 0		
+
+	dfs(0)
+
+**101 Symmetric Tree**
+Chat GPT response:
+
+def isSymmetric(self, root) -> bool:
+	if not root:
+		return True
+
+	def dfs(p,q):
+		if not p and not q:
+			return True
+		if not p or not q or p.val != q.val:
+			return False
+		
+		return dfs(p.left, q.right) and dfs(p.right, q.left)
+
+	return dfs(root.left, root.right)
+
+Given the root of a binary tree, check if it is a mirror of itself. root.left.val == root.right.val. Return false. There must be a way to check left and right at the same time. 
+
+def isSymmetric(self, root) -> bool: 
+	if not root:
+		return True
+	
+	if node.val 
+
+	return self.isSymmetric(root.left) and self.isSymmetric(root.right)
+
+Ok, lets try to split the tree up into two parts:
+
+def isSymmetric(self, root) -> bool:
+	if not root:
+		return True
+
+	def dfs(p,q):
+		if not p and not q:
+			return True
+		if p or q:
+			return False
+	
+		if p.val != q.val:
+			return False
+
+		return dfs(p.left, q.right) and dfs(p.right, q.lefts)
+
+	return dsf(root.left, root.right)
+
 **783 Minimum Distance Between BST Nodes**
 Technically it is O(H) with h being the height of the tree.
 
