@@ -1,4 +1,99 @@
 //Apr 25 2024
+**783 Minimum Distance Between BST Nodes**
+Technically it is O(H) with h being the height of the tree.
+
+def minDiffinBST(self, root): -> int:
+	self.min_diff = float('inf')
+	self.prev = None
+
+	def in_order_traverse(node):
+		if not node: 
+			return
+	
+		in_order_traverse(node.left)
+
+		if self.prev is not None:
+			self.min_diff = min(self.min_diff, node.val - prev.val)
+		prev.val = node.val
+
+		in_order_traverse(node.right)
+
+	in_order_traverse(root)
+	return self.min_diff	
+
+Given root of BST return the min diff between the vals of any two diff nodes.
+
+First brute force solution that is O(n) space and O(n) time is to traverse through the tree. Store all the vals in arr. L, R, Right = Lowest to higest since its a BST
+
+def minDiffInBST(self, root) -> int:
+        nodes = []
+        def dfs(node):
+            if not node:
+                return
+            dfs(node.left)
+            nodes.append(node.val)
+            dfs(node.right)
+        dfs(root)
+        
+        min_diff = float('inf')
+        for i in range(1, len(nodes)):
+            min_diff = min(min_diff, nodes[i] - nodes[i-1])
+
+        return min_diff
+
+You can also do this without saving the val of the nodes (O(1)). 
+
+def minDiffInBST(self, root) -> int:
+	if not node:
+		return 
+	
+	min(min_diff, )
+
+**199 Binary Tree Right Side View**
+This is BFS, but only the right most nodes. If there are left nodes that are deeper than the right, we return those. So this is level order traversal, but we only return the right most elem in each level. 
+
+def rightSideView(self, root) -> List[int]:
+	res = [] 
+	
+	queue = deque([root])
+	
+	while queue:
+		queue_size = len(queue)
+
+		for i in range(queue_size)
+			cur = queue.popleft()
+
+			if i == queue_size - 1:
+				res.append(cur.val)
+			if cur.left:
+				queue.append(cur.left)
+			if cur.right: 
+				queue.append(cur.right)
+	return res
+			
+ 
+--Review (all paths)--
+Goal here is to print all paths of a binary tree. 
+
+def binaryTreePaths(self, root) -> list:
+	res = []
+	
+	def dfs(node, path):
+		if not root:
+			return
+		
+		path.append(node)
+		
+		if not root.left and not root.right:
+			res.append('->'.join(path))
+
+		dfs(node.left, path)
+		dfs(node.rigth, path)
+		path.pop()
+
+	dfs(root, [])
+	return res
+
 **Binary Tree Level Order Traversal II**
 Ok, I'm going to Jank it by doing res[::-1]
 
