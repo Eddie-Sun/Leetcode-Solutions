@@ -1,3 +1,16 @@
+//Apr 26 2024
+**1443. Minimum Time to Collect All Apples in a Tree**
+Recall, generally when given edges, and n nodes, you want to turn it into an adj list for easy manipulation.
+
+adj_list = {} 
+for u, v in edges:
+	adj_list[u].append(v)
+	adj_list[v].append(u)
+
+The question I have top of mind is if the creation of the list changes based on what kind of graph it is. 
+
+Recall that u stands for vertices (nodes) and v stands for ending vertex. So another way to look at it is start and finish (which combine to make an edge). 
+
 //Apr 25 2024
 **1443. Minimum Time to Collect All Apples in a Tree**
 This algo is generalizable to a subset of graph traversal algos. 
