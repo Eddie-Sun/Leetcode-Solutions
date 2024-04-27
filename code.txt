@@ -1,5 +1,292 @@
+//Apr 27 2024
+
+**501. Find Mode in Binary Search Tree**
+
+class Solution:
+    def findMode(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+
+        elem_map = defaultdict(int)
+    
+        def traverse(node):
+            if not node:
+                return
+            traverse(node.left)
+            elem_map[node.val] += 1
+            traverse(node.right)
+
+        traverse(root)
+
+        res = []
+        max_freq = 0
+        for key, val in elem_map.items():
+            max_freq = max(val, max_freq)
+
+        for key in elem_map:
+            if elem_map[key] == max_freq:
+                res.append(key)
+
+        return res
+
+**98 Validate Binary Search Tree**
+
+A jank solution is in order traversal and check if always increasing. 
+
+res = []
+def inOrder(node)
+	inOrder(node.left)
+	res.append(node.val)
+	inOrder(node.right)
+
+return res == sorted(res) 
+
+def dfs(node, min_val, max_val):
+	if not node:
+		return True
+
+	if not (min_val < node.val < max_val):
+		return False
+
+	return dfs(node.left, min_val, node.val) and dfs(node.right, node.val, max_val)
+
+return dfs(root, -float('inf), float('inf'))
+
+Lets try to trace till 4: 
+
+        8
+       / \
+      3   10
+     / \    \
+    1   6    14
+       / \   /
+      4   7 13
+
+
+node	min_val 	max_val
+8	-∞		∞
+3	-∞		8
+6	3		8		
+4	3		6
+
+min_val = val of left most common ancestor to cur node
+max_val = val of right most common ancestor to cur node
+
+First attempt = epic fail
+
+Given root, determine if its a valid BST. The tricky part is that you're only returning True false with this BST. 
+
+def isValidBST(self, root) -> bool:
+        if not root: 
+            return True
+	
+        if root.left or root.right:
+            if root.left:
+                if root.left.val < root.val:
+                    return True
+                else:
+                    return False
+            if root.right:
+                if root.right.val > root.val:
+                    return True
+                else:
+                    return False
+
+        return self.isValidBST(root.left) and self.isValidBST(root.right)
+	
+
+**1448 Count Good Nodes in Binary Tree**
+Glanced @ how GPT did it.
+
+def goodNodes(self, root) -> int:
+	dfs(node, max_val):
+		if not root:
+			return 0
+
+		count = 1 if node.val >= max_val else 0
+		max_val = max(node.val, max_val)
+
+		left_count = dfs(node.left, max_val)
+		right_count = def(node.right, max_val)
+
+		return count + left_count + right_count
+
+	return dfs(root, -float('inf')
+
+Damn, your last implementaion was dumb af. 
+
+This is easy DFS and check if the children are larger. If yes return += 1, else 0?
+
+def goodNodes(self, root)-> int:
+	if not node:
+		return 0
+	
+	left = self.goodNodes(root.left)
+	right = self.goodNodes(root.right)
+
+	if left.val > node.val:
+		return 1
+	if right.val > node.val:
+		return 1
+	return 0
+
+	return left + right
+
+
+**652 Find Duplicate Subtrees**
+Gave on on this because I needed a win earlier in the day. Asked ChatGPT. 
+
+subtree_map = defaultdict(int)
+duplicates = []
+
+def serialize(node):
+	if not node:
+		return "#"
+
+	serial = str(node.val) + ',' + serialize(node.left) + ',' + serialize(node.right)
+
+	subtree_map[serial] += 1
+
+	if subtree_map[serial] == 2:
+		duplicates.append(node)
+	return serial
+
+	serialize(root)
+	return duplicates
+	
+Q: Do we need to even serialize/flatten the tree in the first place? It does not seem trivial to me how we can determine which nodes are subtree based based on the technique used yesterday.
+
+Another method is to build a tree with () brackets defining the children, and then using a hashmap to track what same subtrees has been already added.
+
+(1)(()(0)) 
+
+(1)
+
 //Apr 26 2024
+**652 Find Duplicate Subtrees**
+
+Ok. I kinda mentally checked out here. But according to chat GPT, 1) serialize each subtree 2) count subtree occurrences 3) collect dups. 
+
+To solve this problem you should do 1) same tree 2) is subtree. Done and done. 
+
+Note, that another method to check if subtree is to serialize(node)
+
+def serialize(node):
+	if not node:
+		return
+	return str(node.val) + ',' + serialize(node.left) + serialize(node.right)
+
+tree_serial = serialize(root)
+subtree_serial = serialize(subRoot)
+
+return subtree_serial in tree_serial
+
+**103 Binary Tree Zigzag Level Order Traversal**
+This is just level order traversal, but at the end of each queue, you reverse the order you append. You can do the ordering based on even odd. if n % 2 == 0, you go from right to left.
+
+def zigzagLevelOrder(self, root) -> int:
+	res = []
+
+	queue = deque([root])
+	while queue:
+		level_size = len(queue)
+		level = []
+		for i in range(level_size):
+			cur = queue.popleft()
+			if root.left:
+				queue.append(root.left)
+			if root.right:
+				queue.append(root.right)
+		
+		if level_size % 2 == 0:
+			reverse = -1
+		else:
+			reverse = 1
+
+		res.append(level[::reverse])
+	
+	return res
+
+**2492 Minimum Score of a Path Between Two Cities**
+Misread the question: Massive L 
+
+Help from GPT. To store the min val, we simply add another var (you dummy)
+
+Ok, lets break this base case down. If src in visited, return 0. You should return the min distance between the prev path that worked and the cur path that worked. 
+
+Q: how do you do the min statement. 
+
+class Solution:
+    def minScore(self, n: int, roads: List[List[int]]) -> int:
+        adj_list = defaultdict(list)
+        for u, v, distance in roads:
+            adj_list[u].append((v, distance))
+            adj_list[v].append((u, distance))
+
+        def dfs(src, dst, visted):
+            if src in visted:
+                return 0
+            
+            path_sum = 0
+            visited.add(src)
+
+            for neighbor, distance in adj_list[src]:
+                if neighbor not in visted:
+                    sub_sum = dfs(neighbor, dst, visted)
+                    if neighbor == dst:
+                        path_sum += sub_sum + distance
+    
+            return path_sum
+
+        dfs(0, n, set())
+
+--Good to know--
+There are a bunch of diff graphs out there. If you're just given edges and nodes, here is how you convert each of them into an adj_list. 
+
+Directed Graph:
+
+adj_list = defaultdict(list)
+for u, v in edges:
+	adj_list[u].append(v)
+
+Undirected Graph:
+
+adj_list = defaultdict(list)
+for u, v in edges:
+	adj_list[u].append(v)
+	adj_list[v].append(u)
+
+Weighted Graph:
+
+adj_list = defaultdict(list)
+for u, v in edges: 
+	adj_list[u].append((v, weight))
+	adj_list[v].append((u, weight))
+
 **1443. Minimum Time to Collect All Apples in a Tree**
+def minTime(n, edges, hasApple): -> int:
+	adj_list = defaultdic(list) 
+	for u,v in edges:
+		adj_list[u].append(v)
+		adj_list[v].append(u)
+
+	def dfs(node, visited):
+		if node in visited:
+			return 0
+
+		vistied.add(node)
+		total_cost = 0
+
+		for neighbor in adj_list[node]:
+			if neighbor not in visted:
+				sub_tree_cost = dfs(neighbor, visited)
+				if cost_from_subtree > 0 or hasApple[neighbor]:
+					total_cost += sub_tree_cost + 2
+			return total_cost
+
+		return dfs(0, set()) if total_cost > 0 else 0
+
+
 Recall, generally when given edges, and n nodes, you want to turn it into an adj list for easy manipulation.
 
 adj_list = {} 
@@ -7,9 +294,52 @@ for u, v in edges:
 	adj_list[u].append(v)
 	adj_list[v].append(u)
 
-The question I have top of mind is if the creation of the list changes based on what kind of graph it is. 
+The question I have top of mind is if the creation of the list changes based on what kind of graph it is.
 
-Recall that u stands for vertices (nodes) and v stands for ending vertex. So another way to look at it is start and finish (which combine to make an edge). 
+Recall that u stands for vertices (nodes) and v stands for ending vertex. So another way to look at it is start and finish (which combine to make an edge).
+
+Lets try to apply DFS to our problem: 
+
+def dfs(node)
+	if node in visited:
+		return 0
+
+	visited = set()
+	visited.add(node)
+	
+	for neighbor in adj_list[node]:
+		if neighbor not in visited:
+			
+			dfs(neighbor)
+dfs(0)
+
+1. Ok for visted handling, we should have visited outside of the dfs func so the results persist.
+
+2. When visiting a node to check if it has an apple we could do hasApple[node]. So if that path has apples then we should be going in that dir. Therefore, we count the depth it takes to go there. 
+
+3. When we recurse into each neighbor in the DFS if there is apple in that path and its not in visited, we should traverse towards the apple and += 2 for each layer we go down.
+
+4. Base case 1) if in visited, return 0. This happens when we already went to the node before. We don't want to do that (or ever have to due to the tree like structure) so we return 0. If no more neighbors or all the neighbors visited, return 0 too? In terms of the nodes with apples we should return the cumlative sum of steps to conver all the paths with apples. And in terms of nodes without apples, we don't want to go there unless there is a apple lower down in the path.
+
+def dfs(node, visited):
+	if not node in vistied:
+		return 0
+	visited.add(node)
+
+	total_cost = 0
+	for neighbor in adj_list[node]:
+		if neighbor not in visted:
+			cost_from_subtree = dfs(neighbor, visited) 
+			if cost_from_subtree > 0: #pretty much if the subtree has apples
+				total_cost += cost_from_subtree + 2
+
+		if hasApple[node]:
+			return total_cost + 2
+		return total_cost
+
+We do if cost_from_subtree > 0: to check if it has apples right? And if it does we know we have to go down that path requiring at least + 2 to go there. 
+
+I think another key thing for me to wrap my mirror smooth brain around is the fact that when you initalize the total_cost to 0, you += 2 unpon every recursive call unwind, so you set it as 0 once, and you add a call stack worth of 2s. Its not like you're resetting the value to 0 each time you unwind the stack. 
 
 //Apr 25 2024
 **1443. Minimum Time to Collect All Apples in a Tree**
