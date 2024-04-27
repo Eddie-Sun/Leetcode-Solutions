@@ -1,4 +1,67 @@
 //Apr 27 2024
+**124 Binary Tree Maximum Path Sum**
+
+Code according to Gemini:
+
+def maxPathSum(self, root) -> int:
+	res = -float('inf')
+
+	def dfs(node)
+		nonlocal res
+
+		if not node:
+			return 0
+
+		left_max = max(0, dfs(node.left))
+		right_max = max(0, dfs(node.right))
+
+		cur_max = node.val + max(left_max, right_max)
+		res = max(res, cur_max)
+
+		return cur_max
+
+	dfs(root)
+	return res
+
+Ok, so the really smart thing to do is that the left_max and right_max does not exactly calculate the 'max' val possible, but rather think of this as a substep to see if you would want to append this to the arry. If its a -, you dont add it therefore its (0). Do nothing. Which is the same as not adding that path? 
+
+cur_max, looks at the max possible val in the cur subtree. You add the most recent node to the max val of the left and right subsum (check which subtree to keep). At the end, you do the global max to compare the left and right subtree at each unwinding to get the global max. 
+
+Since you're looking at pairs of adjecent nodes, you can do visit left subtree, visit right subtree, visit root. And take all possible paths and track the min val of it.
+
+Ok, Gemini helped me a bit in that its not just adjacent nodes. A path can zigzag through the tree as long as there is a parent child relationship. Right, would this require backtracking?
+
+Say we make an array of all the possible values, and for each, we apply the min func to the subpath
+
+Ok lets break the question down into the base case:
+
+1) What do we return? int. if not node, return 0.
+2) The left path should only return its left subchildren while the right path only the right subchildren. We keep a tally of maxsum as a global var. 
+3) The help from each children should be the left or right sub_sums?
+
+def maxPathSum(self, root) -> int:
+	
+	def dfs(node, cur_sum) -> int:
+		if not node:
+			return 0
+		
+		cur_sum = 0
+
+		left_sum = 
+		
+The tricky part for me is the fact that I only know how to calculate (or ever had to calculate) the total sum of a left or right subtree. I never had to skip the val in between the values left and right adj nodes to create "a path". 
+
+So the trick is, for the children, instead of returning the sum of the subtree, you return max_path sum from that child. 
+
+
+def maxPathSum(self, root) -> int:
+
+	def traverse(root)
+
+**230 Kth Smallest Element in BST**
+
+Ok. lets try the trivial solution to this first. In order traverse, and then return -kth from end. Done. 
+
 --Review--
 Sub Tree of another tree:
 
