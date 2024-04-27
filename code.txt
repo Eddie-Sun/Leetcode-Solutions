@@ -1,4 +1,37 @@
 //Apr 27 2024
+--Review--
+Sub Tree of another tree:
+
+def isSubtree(treeNode, subTreeNode)-> bool:
+	if not treeNode:
+		return False
+	if not subTreeNode:
+		return True
+
+	if isSameTree(treeNode, subTreeNode):
+		return True
+
+	return self.isSubtree(treeNode.left, subTreeNode) or self.isSubtree(treeNode.right, subTreeNode)
+
+def isSameTree(p, q)-> bool:
+	if not p and not q:
+		return True
+
+	if not p or not q or p.val != q.val
+		return False
+	return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)
+	
+Validate BST:
+
+def validateBST(root):
+	lower, upper = -float('inf'), float('inf')
+	def dfs(node, lower, upper) -> bool:
+		if not node:
+			return True
+		if not (lower < node.val < upper):
+			return False
+		return dfs(node.left, lower, node.val) and dfs(node.right, node.val, upper)
+	return dfs(root, lower, upper)
 
 **501. Find Mode in Binary Search Tree**
 
