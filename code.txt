@@ -1,3 +1,720 @@
+//May 1 2024
+**99 Recover Binary Search Tree**
+GPT said that elements.append(node). Why not append node.val and then traverse through node.val? Just bad practice. Unless you have a super good reason, you generally want to keep the refrence to the nodes. Then you simply sort buy node vals: 
+
+sorted_values = sorted(node.val for node in elements)
+
+
+The problem with this approach is that the i in the recursive case does not correctly maintain the index. 
+
+sorted_values = sorted(node.val for node in elements)
+
+What if we do inorder traversal. Sort the arr, and manually fill in the vals with another DFS?
+def recoverTree(self, root) -> None:
+	res = []
+	def inOrder(node):
+		if not node:
+			return None
+		inOrder(node.left)
+		res.append(node.val)
+		inOrder(node.right) 
+	inOrder(root)
+
+	res = sorted(res)
+	
+	def fillTree(node, i):
+		if not node:
+			return None
+		fillTree(node.left, i+1)
+		node.val = res[i]
+		fillTree(node.right, i+1)
+	fillTree(root, 0)
+	return root
+
+**2385 Amount of Time for Binary Tree to Be Infected**
+Given root with unique vals (so our adj list could be vals). Infection starts from node with val start. Return total min for entire tree to be infected. 
+
+1) Turn tree into undirected graph 
+2) BFS to spread infection, return total_min
+
+def amountOfTime(self, root, start) -> int:
+    adj_list = defaultdict(list)
+    
+    def dfs(node, parent):
+        if not node:
+            return
+        if parent is not None:
+            adj_list[node.val].append(parent.val)
+            adj_list[parent.val].append(node.val)
+        dfs(node.left, node)
+        dfs(node.right, node)
+        
+    dfs(root, None)
+    
+    queue = deque([start])
+    visited = set([start])
+    infection_time = 0
+    
+    while queue:
+        level_size = len(queue)
+        for _ in range(level_size):
+            cur = queue.popleft()
+            for neighbor in adj_list[cur]:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+                    visited.add(neighbor)
+        infection_time += 1
+    
+    return infection_time - 1
+
+**863 All Nodes Distance K in Binary Tree**
+def distance(root, target, k) -> list:
+	adj_list = defaultdict(list)
+	def dfs(node, parent):
+		if not node:
+			return
+		if parent is not None: 		
+			adj_list[node].append[parent]
+			adj_list[parent].append[node]
+		if node.left:
+			dfs(node.left, node)
+		if node.right:
+			dfs(node.right, node)
+	dfs(root, None)
+
+	res = []
+	distance = 0
+	visited = set([root])
+	queue = deque([root])
+	while queue:
+		queue_size = len(queue)
+		for _ in range(queue_size):
+			cur = queue.popleft()
+			if distance == k:
+				res.append(cur.val)
+			for neighbor in adj_list[cur]:
+				if neighbor not in visited:
+					visited.add(neighbor)
+					queue.append(neighbor)
+		distance += 1
+		if distance > k:
+			break
+
+	return res
+
+	The problem here is that you don't distingish how the levels are process. You need a for loop. 
+	res = []
+	level = 0
+	visited = set()
+	queue = deque([root])
+	while queue:
+		cur = queue.popleft()
+		visited.add(cur)
+		for neighbor in adj_list[cur]:
+			if neighbor not in visted:
+				queue.append(cur)
+				if level = k:
+					res.append(cur.val)
+		level += 1
+
+	return res
+
+**2000 Reverse Prefix of Word**
+Reverse word that starts @first occurance of char. 
+
+for i, char in enumerate(word):
+	if char == ch:
+		return word[:i + 1][::-1] + word[i + 1:]
+return word
+
+//Apr 30 2024
+**863 All Nodes Distance k in Binary Tree**
+
+Now we got that out of the way, we are given a target node, so we add that to out queue for our BFS.
+
+Ok. Since you cannot go up in a binary tree, turn this tree into a graph problem (adj list), and store all the nodes k distance away from target.
+
+def distance(self, root, target, k):
+
+Ok, the first sub problem to this is given the root of a binary tree, convert it to and adj list:
+
+adj_list = defaultdict(list)
+
+def dfs(node, parent): 
+	if not node: 
+		return
+
+	if parent is not None:
+		ajd_list[node.val].append(parent.val)
+		adj_list[parent.val].append(node.val)
+
+	if node.left:
+		dfs(node.left, node)
+	if node.right:
+		dfs(node.right, node)
+
+dfs(root, None)
+
+Wait this breaks if there are different nodes on the tree that share the same value. So we have to link by the acutal node values.
+
+adj_list = defaultdict(list)
+def dfs(node, parent):
+	if not node:
+		return None 
+
+	if parent is not None:
+		adj_list[node].append(parent)
+		adj_list[parent].append(node)
+		
+	if node.left:
+		dfs(node.left, node)
+	if node.right:
+		dfs(node.right, node)
+
+dfs(root, None)
+
+**2415 Reverse Odd Levels of Binary Tree**
+If you think about it, this question is pretty much zig zag traversal, however, the trcky part is that we have root vals 
+
+def reverseOddLevels(root):
+	queue = deque([root])
+	level = 0
+	while queue:
+		level_size = len(queue)
+		level_val = []
+		for _ in range(level_size):
+			#dont have to do if node.left and node.right since its a perfect tree
+			cur = queue.popleft()
+			level_val.append(cur.val)
+			queue.append(cur.left)
+			queue.append(cur.right)
+
+		if level % 2 == 1:
+
+			{algo}
+
+		level += 1
+	
+	return root
+
+{algo}:
+	
+for i in range(len(cur_level)//2: 
+	        current_level[i].val, current_level[-1-i].val = current_level[-1-i].val, current_level[i].val
+
+
+Ok: 
+root =
+[0,1,2,0,0,0,0,1,1,1,1,2,2,2,2]
+Output
+[0,2,1,0,0,0,0,1,1,1,1,2,2,2,2]
+Expected
+[0,2,1,0,0,0,0,2,2,2,2,1,1,1,1]
+
+You can't really get it to work just doing recursion and DFS. Lets give up on this and do BFS. The reason is that you have to do the reverse not just at the level below the parent, but the entire level. 
+
+The problem with this is we end up swapping all the children nodes as well. So we gonna jank this and just swap the vals
+
+We should be able to solve this using standard dfs and counting if the depth % 2 == 0. If yes, reverse else, continue. 
+
+def reverseOddLevels(self, root): 
+	def reverse(node, level) -> treeNode: 
+		if not node: 
+			return None
+
+		if level % 2 == 0: #if even, you swap the children (odd nodes)
+			node.left, node.right = node.right, node.left
+		
+		level += 1
+		
+		reverse(node.left. level)
+		reverse(node.right, level)
+		return root
+
+	return reverse(root, 1)
+
+//Apr 29 2024
+**567 Permutation in String**
+def checkInclusion(s1, s2)-> bool:
+	if len(s1) > len(s2):
+		return False 
+
+	s1_hashmap = {}
+	for char in s1:
+		if char in s1_hashmap:
+			s1_hashmap[char] += 1
+		else:
+			s1_hashmap[char] = 1
+
+	L = 0
+	s2_hashmap = {}
+
+	for R in range(len(s2)):
+		char = s2[R]
+		if char in s1_hashmap:
+			if char in s2_hashmap:
+				s2_hashmap[char] += 1
+			else:
+				s2_hashmap[char] = 1
+
+		if R - L + 1 > len(s1):
+			if s2_hashmap[s2[L]] == 1:
+				del s2_hashmap[s2[L]]
+			else:
+				s2_hashmap[s2[L]] -= 1
+			L += 1
+
+		if s2_hashmap == s1_hashmap:
+			return True
+
+	return False
+
+Ok notice how s1 seems to always be the shorter string. Ok you cant even use permutations since is s1 could be up to 1000 char long and the run time is O(n!*n).
+
+Ok so to solve this we need 1) sliding window 2) probably a hashmap. 
+
+Loop through s2. store all the char and count in st2 hash. Iterate through s1. Subtract the vals from str2 hash with s1. This would not work since the vals would have to be grouped together. So we could take the len of s1 first and have a sliding window len(s1). For the window, keep a count of the chars:
+
+a = 2
+b = 3
+c = 1
+etc. 
+
+When you move the window, you remove the left most elem from the hash and add the right most val to the hash. While at the same time you do a comparison if you can match every s1 char into the ditc of s2. 
+
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        window_size = R = len(s1)
+        L = 0
+        s2_hashmap = {}
+        for R in range(len(s2)):
+            #of s1 can fit in s2_subset, return true
+            for char in s1:
+                if char1 not in s2_hashmap:
+                    continue
+                return True
+
+            if R - L + 1 > window_size:
+                if s2_hashmap[s2[L]] == 1:
+                    s2_hashmap.remove(s2[L])
+                else:
+                    s2_hashmap[s2[L]] -= 1
+                L += 1
+            if s2[R] in s2_hashmap:
+                s2_hashmap[s2[R]] += 1
+            else:
+                s2_hashmaps2[R] = 0
+
+        return False
+
+You gotta now edit the code so it actually works now. 
+
+Time for review: combinations, subsets, permutations.
+
+Combinations: Selects a group of items from a collection where ordering does not matter. So for backtracking 123 == 321 thus 321 isnt added. 
+
+def combinations(nums, k):
+	result = []
+	def backtrack(start, path):
+		if len(path) == k:
+			res.append(path)
+		for i in range(start, len(nums)):
+			backtrack(i + 1, path + nums[i])
+	backtrack[0, []]
+	return res
+
+Wait, why do you not need to pop for this question. We actually do handle that case. The recursive call creates a new list with path + [nums[i]]. 
+
+def combinations(nums, k):
+	res = []
+	def backtrack(start, path):
+		if len(path) == k:
+			res.append(path)
+			return
+
+		for i in range(start, n + 1):
+			backtrack(i + 1, path + [i])
+		
+	backtrack(1, [])
+	return res
+
+
+The more efficent method where we do not send a copy of path (which is saved on the recursive stack), but rather modifying directly to save mem.
+
+def combine(n, k):
+	res = []
+	def backtrack(start, path)
+		if len(path) == k:
+			res.append(path[:])
+			return
+		for i in range(start, n + 1):
+			backtrack(i + 1, path.append(i))
+			path.pop()
+	backtrack(1, [])
+	return res
+
+Q: what does path[:] do? Im assuming that it points to the mem location of the orgional path func. 
+A: This is a shallow copy of the list object. Think of it as copying the addresses where the items are being store rather than the item itself. 
+
+Shallow copy vs deep copy and usecases.
+
+subset = special set of combination where its the combination of all len sets. 
+
+
+def subsets(nums):
+	res = []
+
+	def backtrack(start, path):
+		res.append(path) 
+		for i in range(start, n):
+			path.append(i)
+			backtrack(i + 1, path)
+			path.pop()
+	backtrack(0, [])
+	return res
+
+With permutations, ordering matters:
+
+def permutations(nums):
+	res = []
+
+	def backtrack(path):
+		if len(path) = len(nums):
+			res.append(path[:])
+			return
+
+		for num in nums:
+			if num not in path:
+				path.append(num)
+				backtrack(path)
+				path.pop()
+	backtrack([])
+	return res
+
+In permutations, we do num in nums because we don't have to traverse through subarrays - we are only concered with the odering of elems. 
+
+
+**Reverse Linked List II**
+Correct code:
+
+def reverseBetween(head, left, right):
+	left_head = head
+	for _ in range(left):
+		left_head = left_head.next
+	
+	right_head = left_head
+	prev = None
+
+	for _ in range(left, right)
+		prev, right_head.next, right_head = right_head.next, prev, right_head.next
+
+	left_head.next = prev
+	right_head.next = right_head
+
+	return head if left > 1 else prev
+
+
+#return head of the OG linked list
+
+def reverseBetween(head, left, right):
+	left_head = head
+	for _ in range(left):
+		left_head = left_head.next
+	
+	right_head = left_head
+	prev = None
+
+	for _ in range(left, right)
+		prev, right_head.next, right_head = right_head.next, prev, right_head.next
+
+1-2-3-4-5
+  L   R
+
+**Unique Binary Search Trees II**
+def generateTrees(n) -> list:
+	if n == 0:
+		return []
+
+	def generate_trees(start, end):
+		if start > end:
+			return [None]
+		res = []
+		for root_val in range(start, end + 1):
+			left_subtrees = generate_trees(start, root_val - 1)
+			right_subtree = generate_trees(root_val + 1, end)
+			
+			for left_tree in left_subtrees:
+				for right_tree in right_subtrees:
+					root = newNode(root_val)
+					root.left = left_tree
+					root.right = right_tree
+					res.append(root)
+			return result
+	return generate_trees(1, n) 
+
+This is the exact same problem as the previous one we solved with Catalan's numbers, but this time, we actually have to build a tree.
+
+If n == 1 or n == 0, return None to recurse back. 
+
+def generateTrees(n) -> list:
+	res = []
+	def combinations(n, root):
+		
+		for root in range(1, n + 1):
+
+Lets break the problem down together. First and foremost, the min runtime is the amount of trees you can build. Another observation is that for the root node, the numbers 1 - n should take turns being the root.
+
+When building the tree, we must also follow the rules of a binary tree. left < parent < right.
+
+Lets first think about the basecase. Since we're building a tree, if n == 1, we return the cur node, and if n == 0 we return 0 as a signal to unwind the stack. 
+
+For root selection, we could have for root in range(1, n + 1) outside of the recursive calls to make sure that every n val gets a chance of being the root.
+
+Building Construction. When we have the node n. So we have to have some sort of method to remeber to not re-use nodes. I'm almost thinking of for every permuation of the tree, we keep a set(), and only draw upon the vals that are still in the set (not used). But this way, we are try out every possible combination of a potential tree, rejecting most of the attempts. This does not seem very run time efficent.
+
+The logic to check if valid tree should be something along the lines of: 
+
+if new_val < parent:
+	parent.left = newNode(new_val)
+else:
+	parent.rigth = newNode(new_val)
+
+-
+
+The insight is that when building the subtree, everything smaller than root goes to the left subtree while everything bigger goes to the right. We can acheive this recursivly by doing: 
+
+left_sub_tree = generate_trees(1, root - 1)
+right_sub_tree = generate_trees(root + 1, n)
+
+This way we start from the root, and build outwards? 
+
+When building the tree, we should probably return the pointer to the tree nodes, but at the end, we should have a function that appends all the possible trees into a array to append onto a final res array in which we return.
+
+How do we generate all possible left and right subtrees? The given loop is: 
+
+for left_tree in left_subtrees:
+	for right_tree in right_subtrees: 
+
+where left_subtrees is just a range from start to root_val - 1. 
+
+So in this case left_tree and right_tree just take the vals of int from (start to root_val - 1) and (root_val + 1, end).
+
+So you're saying pretty much, for this recursive call, we'll take an number root from 1-n. And we split that up into a left and right subtree as defined by (start, root_val - 1) and (root_val + 1, end). For the left and right subtree, we are able to create every possible subtree by the two nested for loops. 
+
+
+//Apr 28 2024
+--Bonus--
+Catalan numbers sequence of natural numbers. Where C0 == 1 is the base case. With DP, there is top down (memo) and bottom up (real DP). Bottom up is called tabulation btw. For memo, recursive func that checks the res input is already computed. For tab, initalize arr with base case and iterativly fill the vals based on the recursive formula. 
+
+def catalan = [0] * (n + 1)
+catalan[0] = 1
+
+**Unique Binary Search Trees**
+class Solution:
+    def numTrees(self, n: int) -> int:
+        def calculate(n, memo):
+            if n in memo:
+                return memo[n]
+
+            if n == 0 or n == 1:
+                return 1
+
+            total_trees = 0
+            for root in range(1, n + 1):
+                left_trees = calculate(root - 1, memo)
+                right_trees = calculate(n - root, memo)
+                total_trees += left_trees * right_trees
+
+            memo[n] = total_trees
+            return total_trees
+    
+        return calculate(n, {})
+
+def of a BST, left < parent < right. Does not have to be a complete tree. Return type of int. Give a int n. Where the nodes you have to work with is 1 -> n. Brute force every combination and see if its a tree? DFS. Build tree? This isn't your average tree traversal problem...
+
+**662 Maximum Width of Binary Tree**
+Correct code:
+
+def widthOfBinaryTree(root) -> int:
+    width = 0
+    queue = deque([(root, 0)])  
+    while queue:
+        level_size = len(queue)
+        _, start_index = queue[0]  
+        end_index = 0 
+
+        for _ in range(level_size):  
+            cur, cur_index = queue.popleft() 
+            end_index = cur_index
+
+            if cur.left: 
+                queue.append((cur.left, 2 * cur_index + 1))  
+            if cur.right:
+                queue.append((cur.right, 2 * cur_index + 2))  
+
+        width = max(width, end_index - start_index + 1) 
+    return width
+
+1) end_index = cur_index gives you pretty much the last index elem of the row - the first index
+
+2) if cur.left:
+	queue.append((cur.left, 2 * cur_index + 1))	
+
+Ok. I have to pretty much prove to myself that 2 * cur_index + 1 is always the val of the left node. 
+
+But what if on a tree the level goes like 1, None, None, None, None, 4?
+
+          1       <-- Index: 0
+         /
+     None         <-- Index: 1 (2 * 0 + 1)
+    /   \  \   \
+ None None None 4 <-- Indices: 3, 5, 7, 15
+
+Oh ma god. This uses the val of the parent index to calculate the val of the cur index. 
+
+def widthOfBinaryTree(root) -> int:
+	if not root:
+		return 0
+	
+	width = 0
+	queue = deque([root, 0])
+	while queue:
+		level_size = len(queue)
+		L = float('inf')
+		R = -float('inf)
+
+		for i in range(level_size):
+			cur, index = queue.popleft()
+               if cur:  
+                   L = min(index, L)
+                   R = max(index, R)
+			
+			if cur.left:
+				queue.append((cur.left, index))
+               if cur.right:
+                    queue.append((cur.right, index)) 
+
+            width = max(width, R - L + 1)  
+        return width
+   
+	1
+	12
+	1234 - ex cur index == 4
+	12345678 the cur index then is 9? 
+
+So the calculation of the index assuming that its is a full tree = 
+
+	if cur.left: 2 * cur_index + 1
+
+Nah this is too big brained. I smol brain rn. 
+
+Gemini Review:
+1) For the index of every level, min is technically 0 and if its a full tree, R doubles. 2) We would want to skip L and R for the first level. 3) Well in my code I kept a global width and for each level did width = max(width, R - L). 
+
+This is BST but at each level, you count None as a elem and add that. Then you count the total max index diff of non None elems @ each level. When you are appending to the path (if cur.left or if cur.right) you have to have some form of method to also add the None elems.
+
+One sub problem that you have to figure out is how do you add the children of the None vals.
+
+def widthOfBinaryTree(root) -> int:
+	if not root:
+		return 0
+	
+	width = 0
+	queue = deque([(root, 0)])
+	while queue:
+		level_size = len(queue)
+		for i in range(level_size):
+			cur = queue.popleft()
+			if cur.left:
+				queue.append((cur.left, i))
+			elif cur.right:
+				queue.append((cur.right, i))
+			else:
+				queue.append((None, i))
+
+		L = float('inf)
+		R = -float('inf)
+		for val, index of queue:
+			if val != None:
+				L = min(index, L)
+				R = max(index, R)
+
+		width = max(width, R - L)
+	return width
+
+Now we have a tuple of the index and the vals, at the end of each level, we keep a running tally of the R most and L most of elem that is not None.
+	
+**958 Check Completeness of a Binary Tree**
+Ok so the correct way to do it is have a flag called is_empty, and if empty and there is a left and right child in the following nodes, we know to return False. That is all there is to this problem. 
+
+def isCompleteTree(self, root) -> bool:
+	if not root:
+		return True
+	
+	queue = deque()
+	queue.add(root)
+	empty = False
+	
+	while queue:
+		level_size = len(queue)
+		for _ in range(level_size):
+			cur = queue.popleft()
+
+			if empty and (cur.left and cur.right):
+				return False
+			
+			if cur.left:
+				queue.append(cur.left)
+			else: 
+				empty = True
+
+			if cur.right:
+				queue.append(cur.right)
+			else:
+				empty = True
+
+	return True
+			
+
+DFS seems like an non ideal algo. Lets try BFS?
+
+def isCompleteTree(self, root) -> bool:
+	queue = deque()
+	queue.add(root)
+	
+	while queue:
+		level_size = len(queue)
+		for i in range(level_size):
+			cur = queue.popleft()
+			(if cur.right and not cur.left) \
+			or not cur.right and i != level_size: #If there is a right child without a left
+				return False
+			if cur.left:
+				queue.append(cur.left)
+			if cur.right:
+				queue.append(cur.right)
+
+	return True
+
+Code breaks at this test case: [1,2,3,5,null,7,8]
+
+We also have to make sure that there is always a right child unless i == level_size. Nope that is a epic fail. 
+
+The rule here is that it cannot have more neighbors if there is no right child. For that level, if there are any more items to loop over and we missing a right child, return False. 
+
+
+You simply have to check if there are full leafs. But upon re-reding the question, that is not the def of a complete binary tree. You use recursion. Return val is bool. Question: is there any other axuillary DS we have to pass in as a param? No. 
+
+One idea is to have a counter that cannot > 1 for number of empty children, but that will not work, we can fail @ case in example 2.
+
+def isCompleteTree(root) -> bool:
+	if not root:
+		return True
+
+	#Question how do we know if its not at the right most leaf 
+
+	return self.isCompleteTree(root.left) and self.isCompleteTree(root.right) #Since we have to compare both left and right subtrees
+
 //Apr 27 2024
 **124 Binary Tree Maximum Path Sum**
 
