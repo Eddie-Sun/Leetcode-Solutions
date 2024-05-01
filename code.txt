@@ -1,9 +1,97 @@
 //May 1 2024
 **99 Recover Binary Search Tree**
+The big brain move is to solve it using Morris Traversal. Spend some time in the next few days to better understand the algo []todo.
+
+if prev and node.val < prev.val:
+	if not first:
+		first = prev
+	second = node
+prev = node
+
+Given the tree:
+
+    3
+   / \
+  1   4
+     /
+    2  
+
+With the code snippet:
+
+if prev and node.val < prev.val:
+	if not first:
+		first = prev
+	second = node
+prev = node
+
+If you think about the def of a inOrder traversal, the cur node val should always be bigger than the prev val. If this is happening for the first time, the first val = prev val. prev = node I get. Why set second as node? 
+
+Proper method: 
+1) find the two swapped nodes using first, second, prev = None
+
+def recoverTrees(root):
+	first = second = prev = None
+	
+	def inOrder(node):
+		nonlocal = first, second
+
+Alternative solution using NonLocal:
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def recoverTree(self, root: Optional[TreeNode]) -> None:
+        elements = []
+        def inOrder(node):
+            if not node:
+                return
+            inOrder(node.left)
+            elements.append(node)
+            inOrder(node.right)
+        
+        inOrder(root)
+        sorted_values = sorted(node.val for node in elements)
+        index = 0
+
+        def refillTree(node):
+            nonlocal index
+            if not node:
+                return None
+            refillTree(node.left)
+            node.val = sorted_values[index]
+            index += 1
+            refillTree(node.right)
+        
+        refillTree(root)
+
+def recoverTree(self, root):
+	elements = []
+	def inOrder(node):
+		it not node:
+			return
+		inOrder(node.left)
+		res.append(node)
+		inOrder(node.right)
+	inOrder(root)
+	sorted_values = sorted(node.val for node in elements)
+	def refillTree(node, index):
+		if not node:
+			return index
+		index = refillTree(node.left, index)
+		node.val = sorted_values[index]
+		index += 1
+		index = refillTree(node.right, index)
+		return index
+
+	refillTree(root, 0)
+
 GPT said that elements.append(node). Why not append node.val and then traverse through node.val? Just bad practice. Unless you have a super good reason, you generally want to keep the refrence to the nodes. Then you simply sort buy node vals: 
 
 sorted_values = sorted(node.val for node in elements)
-
 
 The problem with this approach is that the i in the recursive case does not correctly maintain the index. 
 
