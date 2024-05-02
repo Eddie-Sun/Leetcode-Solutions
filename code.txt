@@ -1,4 +1,123 @@
+//May 2 2024
+**133 Clone Graph**
+The oldToNew dictonary maps each original node to the corresponding clone. 
+
+key = orgional node, values = new nodes. 
+
+class Solution:
+    def cloneGraph(self, node: "Node") -> "Node":
+        oldToNew = {}
+
+        def dfs(node):
+            if node in oldToNew:
+                return oldToNew[node]
+
+            copy = Node(node.val)
+            oldToNew[node] = copy
+            for nei in node.neighbors:
+                copy.neighbors.append(dfs(nei))
+            return copy
+
+        return dfs(node) if node else None
+--
+
+oldToNew = {}
+
+def dfs(node):
+	if node in oldToNew: #This is is the same as if in visited
+		return oldToNew[node]
+
+#Q: Why do you have a return value of oldToNew[node] if in visited? A: You need to return the value to actually connect the other nodes with it even if visted to create a deep copy of the graph.
+
+	copy = Node(node.val) # this is the copy of the node
+	oldToNew[node] = copy
+	for nei in node.neighbors:
+		copy.neightbors.append(dfs(nei))
+	return copy
+
+return dfs(node) if node else None 
+
 //May 1 2024
+**133 Clone Graph**
+This is a pretty standard DFS problem. The novel thing about this problem is that we have to create a deep copy of the graph via clone. And the method you use to access it isn't adj_list[cur] but rather node.neightbors. 
+
+We created a dict to track the cloned nodes. 
+
+def cloneGraph(node):
+	if not node:
+		return None 
+
+	cloned_nodes = {}
+	visted = set()
+	
+	def dfs(node):
+		if node in visited: 
+			return
+
+		visted.add(node) 
+
+		if node not in cloned_nodes:
+			cloned_nodes[node] = Node(node.val)
+		
+		clone = cloned_nodes[old_node]
+
+**105 Construct Binary Tree from Preorder and Inorder Traversal**
+Given this tree:
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+Preorder:  [3,9,20,15,7]
+Inorder: [9,3,15,20,7]
+
+The trick is to notice that preorder always has root as first elem (does not matter if left or right root). We then use that to find the root val in post order which cleanly divides the tree into left and right subtrees. 
+
+def buildTree(preorder, inorder):
+	root = TreeNode(preorder[0])
+	midpoint_index = inorder.index(preorder[0])
+
+	root.left = self.buildTree(preorder[1:mid+1], inorder[:mid])
+	root.right = self.buildTree(preorder[mid+1:], inorder[mid+1:])
+
+	return root
+
+**106 Construct Binary Tree from Inorder and Postorder Traversal**
+Given in order and post order arrays, construct a binary tree. You cannot do the (start + end) // 2 = mid since you don't know where mid starts. 
+
+def buildTree(inorder, postorder) -> TreeNode:
+	if not inorder not or postorder: 
+		return None
+
+	def createTree():
+		...
+		root.left = createTree()
+		root = TreeNode(somearray[index])
+		root.right = createTree()
+
+#You also have to track the index values.
+
+Key insight: root_val = postorder[post_end]
+
+**108. Convert Sorted Array to Binary Search Tree**
+class Solution:
+    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+        if not nums:
+            return None
+        
+        def createTree(start: int, end: int) -> TreeNode:
+            if start > end:
+                return None
+            mid = (start + end) // 2
+            root = TreeNode(nums[mid])
+            root.left = createTree(start, mid - 1)
+            root.right = createTree(mid + 1, end)
+            return root
+        
+        return createTree(0, len(nums) - 1)
+
 **99 Recover Binary Search Tree**
 The big brain move is to solve it using Morris Traversal. Spend some time in the next few days to better understand the algo []todo.
 
