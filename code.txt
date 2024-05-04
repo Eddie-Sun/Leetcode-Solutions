@@ -1,5 +1,235 @@
+//May 4 2024
+def pop(self):
+	
+
+//May 3 2024
+Learn abouts Heap and Queues. Backtracking (Tree Maze). A heap is always a full binary tree. We normally store heaps using arrays. There are generally two types of heaps 1) Min Heap 2) Max Heap. Min heap root = smallest. When deleting root = highest priority. The opp for max heap. 
+
+lefChild = 2i
+rightChild = 2i + 1
+parent = i/2
+
+Psuedo implementation of heap: 
+
+class Heap:
+	heap = []
+	constructor():
+		heap = []
+		heap.add(0)
+
+There are a few functions for heaps. The first being push:
+
+def push(self, val):
+	self.heap.append(val)
+	i = len(self.heap) - 1
+
+while i > 1 and self.help[i] < self.heap[i//2] #while 1) in the heap 2) the cur val larger than the child value
+
+	while i > 1 and self.heap[i] < self.heap[i//2]:
+		self.heap[i], self.heap[i//2] = self.heap[i//2], self.heap[i]
+		i = i // 2
+
+The push function is O(logn) since it takes time to percolate up.
+
+Pop() form a heap is more complicated. You have to swap
+
 //May 2 2024
+**1905 Count Sub Islands**
+Futher simplified code:
+1) Combine the two grids into one pass
+2) Use a direct marking strategy
+3) Eliminate un-needed subIsland param
+
+def countSubIslands(grid1, grid2):
+	R, C = len(grid1), len(grid1[0])
+	
+	def dfs(r, c):
+		if 0 < r <= R and 0 < c <= C and grid2[r][c] == 1:
+			grid2[r][c] = 0
+			is_sub = grid[r][c] == 1
+            	is_sub &= dfs(r + 1, c)
+            	is_sub &= dfs(r - 1, c)
+            	is_sub &= dfs(r, c + 1)
+            	is_sub &= dfs(r, c - 1)
+			return is_sub
+		return True #This is for if it is out of bounds
+
+		res = 0
+		for r in range(R):
+			for c in range(C):
+				if grid2[r][c] == 1:
+					if dfs(r,c):
+						res += 1
+		return res
+
+Correction by GPT:
+
+def countSubIslands(grid1, grid2):
+	R, C = len(grid1), len(grid[0])
+	visited1 = set()
+
+	def dfs1(r, c):
+		if r < 0 or r >= R or c < 0 or c >= C or (r,c) in visited1 or grid[r][c] == 0:
+			return
+		visited1.add((r,c))
+		dfs1(r + 1, c)
+        	dfs1(r - 1, c)
+        	dfs1(r, c + 1)
+        	dfs1(r, c - 1)
+
+	for r in range(R):
+		for c in range(C):
+			if grid1[r][c] == 1 and (r, c) not in visited:
+				dfs1(r, c)
+
+	res = 0
+	
+	def dfs2(r, c subIsland):
+		if r < 0 or r >= R or c < 0 or c >= C or grid[r][c] == 0:
+			return True
+		grid[r][c] = 0
+		isSub = subIsland and (r,c) in visited1
+		isSub = dfs2(r + 1, c, isSub) and isSub
+        	isSub = dfs2(r - 1, c, isSub) and isSub
+        	isSub = dfs2(r, c + 1, isSub) and isSub
+        	isSub = dfs2(r, c - 1, isSub) and isSub
+        	return isSub
+		
+	for r in range(R):
+		for c in range(C):
+			if grid2[r][c] == 1:
+				if dfs2(r, c, True):
+					res += 1
+
+	return res
+
+We can use DFS to track the the coordinates of the islands in grid1. Then we do DFS again on grid 2. But we only += 1 to the results if we find all the 1s for an island and all of them belong in the visted coordinates of grid1.
+
+def countSubIslands(grid1, grid2):
+
+	grid1islands = set()
+	R, C = len(grid1), len(grid1)[0]
+
+	def dfs1(r,c):
+		cur_cell = (r, c)
+		if r < 0 or r >= R or c < 0 or c >= C or cur_cell in grid1islands:
+			return None
+		grid1islands.add((r,c))
+		dfs1(r+1, c)
+		dfs1(r-1, c)
+		dfs1(r, c+1)
+		dfs1(r, c-1)
+
+	for r in range(R):
+		for c in range(C):
+			if grid1[r][c] == 1:
+				dfs(r,c)
+	res = 0
+	def dfs2(r,c, subIsland):
+		cur_cell = (r, c)
+			if r < 0 or r >= R or c < 0 or c >= C or grid2[r][c] == '0':
+				return 0
+			grid2[r][c] = '0' #mark as visited
+			if cur_cell not in grid1islands:
+				subIsland = False
+			dfs2(r+1, c)
+			dfs2(r-1, c)
+			dfs2(r, c+1)
+			dfs2(r, c-1)
+			return 1 if subIsland
+
+	for r in range(R):
+		for c in range(C):
+			if grid[r][c] == '1':
+				res += dfs2(r,c, True)
+	return res
+
+**953 Verifying an Alien Dictionary**
+??? How did the break statement fix things??
+
+w1[j] != w2[j] case, if the ordering is wrong return false. Else if the the char of w1 < char of w2, we stop the loop.
+
+Better solution:
+
+Outer forloop remains the same: 
+w1, w2 = words[i], words[i+1]
+for j in range(min(len(w1),len(w2)):
+	if w1[j] != w2[j] #This avoids un-needed lookups on the hash table
+		if orderHash[w1[j]] > orderHash[w2[j]]:
+			return False
+	else:
+		if len(w1) > len(w2):
+              	return False
+
+How is this a graph problem? A: it is not. 1) Create a hash table of the ordering. This way when iterating through a letter you can check if the ordering match at O(1) time. Then you compare adj words and letters. 
+
+class Solution:
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        orderHash = {}
+        for i, val in enumerate(order):
+            orderHash[val] = i
+
+        for i in range(len(words) - 1):
+            w1, w2 = words[i], words[i+1]
+            shortestWord = min(len(w1), len(w2))
+
+            for j in range(shortestWord):
+                if orderHash[w1[j]] > orderHash[w2[j]]:
+                    return False
+            if len(w1) > len(w2) and w1[:shortestWord] == w2[:shortestWord]:
+                return False
+
+        return True
+		
+"he" "help"
+  ^    ^
+
+Other fail condition is if the char are the same but one is longer. If 1) the shorter one run out 2) orderHash[w1[j]] > orderHash[w2[j]] is not triggered. The ticky part here is 1) how do we track which word is shorter? We have to ensure that w1 is shorter. 
+
+
 **133 Clone Graph**
+def cloneGraph(node):
+	oldToNew = {}
+
+	def dfs(node):
+		if node in oldToNew:
+			return oldToNew[node]
+		copy = Node(node.val)
+		oldToNew[node] = copy
+		for nei in node.neighbors:
+			copy.neighbors.append(dfs(nei))
+		return copy
+	return dfs(node) if node else None
+
+Prompt. Here is my answers. Give feedback. Be as nuancsed and specific as possible
+
+1) We need to check if a node already exisits in 'oldToNew' because we dont want to do reduent work (make addional recursive calls) if the node is already in the dict. We simply have to return the value of the cloned node to connect it to the graph with the other copy neighbors in the call copy.neighbors.append(dfs(nei)). This also prevents cycles by acting similar to the vistied set(). 
+2) We we don't use the oldToNew dict and crate a new node every time we encounter a new node like so: new_node = node(node.val), we won't be able to reference the neighbor nodes and connect them? At this step specifcally: for nei in node.neighbors, if we didn't do oldToNew[node] = copy, how do we know which node to connect its old neighbors with (the old neighbors happen to be a deep copy since of the recursive call)? 
+
+Feedback: Without this mapping, each recursive call will create mutiple clones of the same node. This is because we're essentially losing out on the visited = set() feature that checking if node in oldToNew also provides right? Else you end up with mutiple clones of the same node if you end up re-visiting something (will happend if you have mutiple edges connected to it)
+
+Generally with a node, it will be re-visted porportional to the number of edges is connected to it right? Is there a mathatical relationship/formula between it? Yes. That is called the degree of a graph. For undirected graphs, it visited d times where d = degree = # of edges connected to it. For directed graphs. So for both visted = d(v) where v = number of direct connected edges. 
+
+3) The process of linking nodes happens @ copy.neighbors.append(dfs(nei)), this recursivly calls on the function and there are 2 scenarios 1) node exisits in oldToNew dict we return oldToNew[node] with the value Node(node.val) defined in the prev recursive call (oldToNew[node] = copy). 2) It does not exist, then we set copy new node val and run through the for nei in node.neighbors loop. This way during the recursive call node must in oldToNew (since             oldToNew[node] = copy in previous call).
+
+4) This solution aviods infinite cyle by maintaining a version of visited by checking if the node (key) exists already in the oldToNew map. 
+
+5) If there are two different paths leading to it from the root, whichever is closer to the root triggers: 
+
+            copy = Node(node.val)
+            oldToNew[node] = copy
+
+So when the other path leads it it, it'll hit:
+		
+		if node in oldToNew:
+                return oldToNew[node]
+
+Returning the pointer to the clone. 
+
+6) Already mentioned. The first return returns the pointer to the deep copy of the node in the old to new dict to reconnect the nodes. The return copy happens once at the end of the unwinding and returns the copy of the first node. 
+
+10) Time and space are both O(n)
+
 The oldToNew dictonary maps each original node to the corresponding clone. 
 
 key = orgional node, values = new nodes. 
