@@ -1,6 +1,666 @@
-//May 4 2024
-def pop(self):
+//May 7 2024
+**79 Word Search**
+Additional optimizations and writing it in a diff recursive method: 
+
+def exist(board, word) -> bool:
+	if not board or not word:
+		return False
+
+	R, C = len(board), len(board[0])
+
+	char_count = {}
+	for r in range(R):
+		for c in range(C):
+			char = board[r][c]
+			if char in char_count:
+				char_count[char] += 1
+			else:
+				char_count[char] = 1
+
+	word_count = {} 
+	for char in word:
+		if char in word_count:
+			word_count[char] += 1
+		else:
+			word_count[char] = 1
+
+	for char in word_count:
+		if word_count[char] > char_count.get(char, 0):
+			return False
+
+	def dfs(r, c, index):
+		if index == len(word):
+			return True
+		if r < 0 or r >= R or c < 0 or c >= C or board[r][c] != word[index]:
+			return False
 	
+		tmp, board[r][c] = board[r][c], '#'
+		found = dfs(r + 1, c, index + 1) or dfs(r - 1, c, index + 1) or \
+		dfs(r, c + 1, index + 1) or dfs(r, c - 1, index + 1)
+		board[r][c] = tmp
+		return found
+
+	for r in range(R):
+		for c in range(C):
+			if board[r][c] == word[0] and dfs(r,c,0)
+				return True 
+
+	return False
+
+
+GPT refined version of the code: 
+
+def exist(board, word) -> bool:
+	if not board or not word:
+		return False
+
+	R, C = len(board), len(board[0])
+
+	def dfs(r, c, index):
+		if index == len(word) - 1:
+			return board[r][c] == word[index]
+
+		tmp, board[r][c] = board[r][c], '#'
+	
+		for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+			nr, nc = r + dr, c + dc
+			if 0 <= nr < R and 0 <= c < nc and board[nr][nc] == word[index+1] and dfs(nr,nc,index+1):
+				return True
+
+		board[r][c] = tmp
+		return False
+
+	for r in range(R):
+		for c in range(C):
+			if board[r][c] == word[0] and dfs(r,c,0):
+				return True
+	
+	return False
+
+
+Ok looking that this question, it seems like it is DFS w/ backtracking.
+
+There is a few things we should keep track of:
+
+1) Q: How do we start the traversal? Answer, the most effective method is to prob loop through, and start at the first starting char.
+2) How do we track visited? We can keep set of [r][c] and mark it as visted in a set
+3) We pop() the visited var
+
+Keep in mind, we don't keep track of the path var to save in mem. 
+
+def exist(board, word) -> bool:
+	if not board or word:
+		return False
+
+	R, C = len(board), len(board[0])
+
+	def dfs(r,c, index):
+
+		if r < 0 or r > R or c < 0 or c > C or board[r][c] == '#' or board[r][c] != word[index]:
+			return False
+		
+		if board[r][c] != word[-1]: #if you reach the end and it matches
+			return True
+
+		board[r][c] == '#'
+		dfs(r+1, c)
+		dfs(r-1, c)
+		dfs(r, c+1)
+		dfs(r, c-1)
+	
+	for r in range(R):
+		for c in range(C):
+			if board[r][c] == word[0]:
+				dfs(r,c, 0)
+
+**Permutations II**
+The trick here is that there is unique numbers so you have to track the index of the permutation rather than the value itself.
+
+Answer from GPT:
+	
+def permuteUnique(nums):
+	nums.sort()
+	res = []
+	used = [False] * len(nums)
+	
+	def backtrack(path):
+		if len(path) == len(nums):
+			res.append(path[:])
+			return
+
+		for i in range(1, len(nums)):
+			if used[i] or (i > 0 and nums[i] == nums[i-1] and not used[i-1]):
+				continue
+			used[i] = True
+			path.append(num[i])
+			backtrack(path)
+			path.pop()
+			used[i] = False
+
+	backtrack([])
+	return res
+
+
+
+Regular permutations:
+def permuate(nums):
+	res = [] 
+	def backtrack(path):
+		if len(path) == len(nums): 
+			res.append(path)
+		for num in nums:
+			if num not in path:
+				path.append(num)
+				backtrack(path) 
+				path.pop()
+	backtrack([])
+	return res
+
+**2816 Double a Number Represented as a Linked List**
+Come up with function to mutiple str by 2: 
+
+carry, doubled = 0, []
+for digit in reversed(val):
+	current_double = int(digit) * 2 + carry
+	carry = current_double // 10
+	doubled.append(current_double % 10)
+
+if carry:
+	doubled.append(carry)
+
+Corrected version:
+
+def doubleIt(head):
+	val = ''
+	cur = head
+	while cur:
+		val += str(cur.val)
+		cur = cur.next
+
+	val = str(int(val)*2)
+
+	dummy = ListNode(0)
+	cur = dummy
+	for num in val:
+		cur.next = ListNode(int(num))
+		cur = cur.next
+
+	return dummy.next
+
+We still (pretty much always want to a dummy node for the case of handling just the head node)
+
+Given head. return the head after doubling the sum of linked list:
+
+1-8-9 * 2 = 378
+
+1) Iterate through the linked list. 
+2) Change the value as you iterate through the array
+3) return head (we don't have to do the dummy stuff since we're not deleteing) 
+
+def doubleIt(head):
+	cur = head
+	val = ''
+	while cur:
+		val.append(cur.val) #dumb mistake
+		cur = cur.next
+	
+	val = str(int(val)*2)
+
+	cur2 = head
+	for num in val:
+		if cur == None:
+			cur = Node(int(num))
+		cur.val = int(num)
+		cur = cur.next.next
+	
+	return head
+
+//May 6 2024
+**2487 Remove Nodes from Linked List**
+
+GPT corrected code:
+
+    if not head or not head.next:
+        return head
+
+    # Traverse and collect values
+    cur = head
+    arr = []
+    while cur:
+        arr.append(cur.val)
+        cur = cur.next
+
+    # Reverse and calculate max from right
+    arr.reverse()
+    max_right = [arr[0]]
+    for i in range(1, len(arr)):
+        max_right.append(max(max_right[-1], arr[i]))
+
+    # Reverse to original order
+    max_right.reverse()
+
+    # Rebuild the linked list
+	dummy = ListNode(0)
+	cur = dummy
+	orig = head
+	for i in range(len(arr)):
+		if orig.val >= max_right[i]:
+			cur.next = ListNode(orig.val) 
+			cur = cur.next
+		orig = orig.next
+
+	return dummy.next
+
+0
+  5-2-13-3-8
+
+Given head. Remove nodes where it is a greater val on the right. There is no way to do this in single run O(N). The question to ask here is, how do you track if the val on the right is bigger? Idea: keep tally of max val seen so far: 
+
+5-2-13-3-8 turns into 5-5-13-13-13. Then we do a compare and remove all where input vals < largest_seen_elem. 
+
+No we actually have to traverse backwards from 8:
+
+13-13-13-8-8 so only return 13, 8 
+
+def removeNodes(head):
+	cur = head
+	arr = []
+	while cur:
+		arr.append(cur.val)
+		cur = cur.next
+
+	arr1 = arr1[::-1]
+	arr2 = [arr1[0]]
+	for i in ramge(1, arr1):
+		arr2.append(max(arr2[-1]), arr[i])
+	arr2 = arr2[::-1]
+
+	#this gets us to 13-13-13-8-8
+
+	cur2 = head
+	i = 0
+	while cur2.next and i < len(arr2):
+		if cur2.val < arr2[i]:
+			cur2.next = cur2.next.next #skips node
+		i += 1
+	
+	return head
+
+//May 5 2024
+**47 Permutations II**
+Since there is repeat vals in the nums, instead of normal permutations doing the check of vals, we can just check if index not in path. Permutaions have to be unique. So we turn into tuple (mutable) -> set (to get rid of dups) -> return.
+
+By the def, you are promised that you won't re-use elems. 
+
+res_index = []
+def backtrack(path_index):
+	res_index.append(path_index)
+	for i in range(len(nums)):
+		if i not in path_index:
+			path_index.append(i)
+			backtrack(path_index)
+			path_index.pop()
+backtrack([])
+res = [0] * len(res_index)
+for i, index in enumerate(res_index):
+	res[index] = nums[i]
+return res
+
+**40 Combination Sum II**
+def combinationSum2(candidates, target):
+	res = []
+	def backtrack(start, path, cur_sum):
+		if cur_sum == target:
+			res.append(path[:])
+			return
+		elif cur_sum > target:
+			return
+
+		for i in range(start, len(candidates)):
+			path.append(candidates[i])
+			backtrack(i + 1, path, cur_sum + candidates[i])
+			path.pop()
+	backtrack(0, [], 0)
+	res = []
+
+**Subsets II**
+More elegent solution:
+
+for i in range(start, len(nums)):
+	if i > start and nums[i] == nums[i-1]:
+		continue
+
+Where continue just skips to the next iteration of the loop. Because of the extra comparisons, this code is actually slower. 
+
+Jank solution: 1) Create a normal subet 2) turn it into a set() 3) turn it back into a list
+
+res = [] 
+def backtrack(start, path):
+	res.append(path[:])
+	for i in range(start, len(nums)):
+		path.append(nums[i]) 
+		backtrack(i + 1, path)
+		path.pop()
+backtrack(0, [])
+res = [tuple(subset) for subset in res]  
+return list(set(res))
+
+We had to sort the nums first. 
+
+**Permutations**
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        res = []
+        def backtrack(path):
+            if len(path) == len(nums):
+                res.append(path[:])
+                return
+            for num in nums:
+                if num not in path: 
+                    path.append(num)
+                    backtrack(path)
+                    path.pop()
+        backtrack([])
+        return res
+
+**Combinations**
+def combine(n, k):
+	res = [] 
+	def backtrack(start, path):
+		if len(path) == k:
+			res.append(path)
+			return
+		for i in range(start, n):
+			path.append(i)
+			backtrack(i+1, path)
+	backtrack(1, [])
+	return res
+
+**Combination Sum**
+def combinationSum(candidates, target):
+	res = []
+
+	def backtrack(start, path, current_sum):
+		if current_sum == target:
+			res.append(path[:]
+			return
+		elif current_sum > target:
+			return
+
+		for i in range(start, len(candidates)):
+			path.append(candidates[i])
+			backtrack(i, path, current_sum + candidates[i])
+			path.pop()
+
+	backtrack(0, [], 0)
+	return res
+
+First try (epic fail):
+
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        res = []
+        def backtrack(start, cur_sum, path):
+            if cur_sum == target:
+                res.append(path[:])
+                
+            for i in range(start, len(candidates)):
+                cur_sum += candidates[i]
+                path.append(candidates[i])
+                backtrack(i + 1, cur_sum, path)
+                if cur_sum > target:
+                    val = path.pop()
+                    cur_sum -= val
+        backtrack(1, 0, [])
+        return res
+
+**78 Subsets**
+The code below returned an empty arr? Forgot to call the func. 
+
+def subsets(nums):
+	res = []
+	def backtrack(start, path):
+		res.append(path)
+		return 
+		for i in range(start, len(nums)):
+			backtrack(i + 1, path[:] + nums[i])
+			path.pop()
+	return res
+
+**2441 Largest Positive Integer That Exists With Its Negative** 
+Find the largest neg that post also exisit.
+
+max_val = -1
+numSet = set(nums)
+for num in nums:
+	if -num in numSet:
+		max_val = max(max_val, abs(num))
+return max_val
+
+**237 Delete Node in a Linked List** 
+We do not have access to the first node (head). 
+
+//May 4 2024
+**355 Design Twitter**
+
+class Twitter:
+
+    def __init__(self):
+        
+
+    def postTweet(self, userId: int, tweetId: int) -> None:
+        self.tweetMap[userId].append([self.count, tweetId])
+
+    def getNewsFeed(self, userId: int) -> List[int]:
+        
+
+    def follow(self, followerId: int, followeeId: int) -> None:
+        
+
+    def unfollow(self, followerId: int, followeeId: int) -> None:
+        
+Ok, the way that it was implemented, it has a hashmap of [userId] and within it, there is self.count and tweetId. 
+
+1) What does self.count do? When we initalized it we started with 0. We have two diff inits 1) tweetMap: userId -> [count, tweetIds] 2) followMap: userId -> set(followeeId)
+
+Recall, we are given tweetId and userId. Q: Still have not figured out what count does in this context. Count rep the mechanism for ordering tweets. Count = timestamp for ordering index. Newer tweets have lower counts. getNewsFeed function uses a min-heap for sorting tweets. The more recent the tweet, the lower the count, the top to the top it will appear on the news feed. 
+
+Ok, lets break down the problem in getNewsFeed(userId) -> List: 
+	res = []
+	minHeap = []
+
+	followMap[userId].add(userId)
+
+#this is the user id of the logged in user. We go to the follow hashmap, and add the user? This pretty much ensures that the user sees their own tweets, by including their own tweets when constructing news feed. 
+
+You loop through the followeeId which in this case is a set() can't follow the same person twice. 
+
+
+**621 Task Scheduler** Gave up @ 35 min
+Q: what if you have the letters [a,a,a,a,b,b,c]. You add to heap = processed.
+
+Given tasks rep-ed by letters. Cooling time n. 1 cycle = 1 task done. Contraint: identical tasks must be seperated by n intervervals. Return min intervals. 
+
+The first question to answer is what you keep in the heap. I'm thinking tuple (letter, time left). Or in this case (time left, letter). You want to count the number of pops. everytime you pop, a letter, you set the time for all other instances of the letter to n. Q: what if you store the val of the letter on a hashmap? 
+
+hashmap: cooldown: letters
+1: a
+2: c,d
+3: 4
+n : -
+
+minheap: cooldown
+
+Q: What if there are no tasks you can do in the cooldown period? 
+
+Q: What if you pop a the min time? 1) min_time += popped val 2) that letter gets reset to n. 
+
+Refined approach: 
+
+Hashmap:
+{
+a:time
+b:time 
+c:time
+etc etc etc
+}
+
+total_time which is the pop val of the min heap
+
+You have to heapify by time there is no way around it. How do we access the shortest time at O(1). Everytime we pop 'A' the time val changes, so the min heap would change as well. 
+
+Ok screw the heap minHeap for now. 
+
+Q: Can we have a hashmap only solution? I think so: 
+
+hashmap{
+0:
+1:
+2:
+3:
+4:
+5: 
+..
+n:
+}
+
+1) We add 'AAAAAA' to the hashmap. When we process, for that elem, we remove last elem of str. Move that to n. 
+
+Ok using the time as keys is dumb.
+
+**215 Kth Largest Element in an Array**
+Given int nums array. Return kth largest elem. = minheap. No sorting.
+
+heapq.heapify(nums)
+while len(nums) > k:
+	heapq.heappop(nums)
+return nums[0]
+
+min val is at the top. We keep removing the min vals. kth largest should be @ top. 
+
+**973 K Cloest Point to Orgin** 26 min
+Given array of points. (x,y). [[x,y],[]]. Return k closest to orgin. If it is the closest, we want to be popping max, therefore, it should be a max heap.
+
+1) Make a distance var (list floats using formula)
+2) Heapify (max heap), keep popping while len(heap) > k
+3) return heap[0]
+
+distances = []
+for x, y in range(points):
+	distances.append((math.sqrt((x**2) + (y**2)))
+distances = [-distance in distance in distances]
+heapq.heapify(distance)
+while len(heapq) > k:
+	heapq.heappop(distance)
+return -distances[0]
+
+You end up returning the distances instead of the cordinates. We are returning the kth closest points, not point. So in this case we return entire heap. 
+
+**1046 Last Stone Weight**
+We are smashing the heaviest of two stone. That screams max heap to me. We pop twice. 1st pop() = y, 2nd pop() = x. If x == y do nothing. If x != y, heappush(y-x). While len(stones) > 1.
+
+stones = [-stone for stone in stones]
+heapq.heapify(stones)
+while len(stones) > 1:
+	y = -heapq.heappop(stones)
+	x = -heapq.heappop(stones)
+	if y > x:
+		heapq.heappush(stones, -(y-x))
+return -stones[0] if stones else 0
+
+**703 Kth Largest Element in a Stream**
+My implementaion from mem: 
+
+class KthLargest:
+
+    def __init__(self, k: int, nums: List[int]):
+        self.minHeap = heapq.heapify(nums)
+        self.k = k
+        while len(self.minHeap) > k:
+            heapq.heappop(self.minHeap)
+
+    def add(self, val: int) -> int:
+        heapq.heappush(self.minHeap, val)
+        if len(self.minHeap) > k:
+            heapq.heappop(self.minHeap)
+            
+Design a class to find kth largest elem. We have to maintain the Kth largest elem. 
+
+class Kthlargest:
+	def __init__(self, k, nums):
+		self.minHeap = nums
+		self.k = k 
+		heap.heapify(self.minHeap)
+		while len(self.minHeap) > k:
+			heapq.heappop(self.minHeap)
+
+	def add(self, val):
+		heapq.heappush(self.minHeap, val)
+		if len(self.minHeap) > self.k:
+			heap.heappop(self.minHeap)
+		return self.minHeap[0]
+
+In this case, the lib we use it 0 indexed. 
+
+We maintain a min heap. Only keep the kth largest, because we keep popping the smallest. 
+		
+Note for most heap problems, you would be using heapq. The methods are:
+
+1) hepq.heapify(my_list)
+2) heapq.heappush(my_list, elem)
+3) smallest = heapq.heappop(my_list) 
+
+Q: How would you implement a max heap? You just insert and -heapq.pop()
+
+def pop(self):
+	if len(self.heap) == 1:
+		return None
+	if len(self.heap) == 2:
+		return self.heap.pop() #I guess that this would return the parent elem? Or in this case self.heap[0]
+
+	res = self.heap[1] #This is just the first left child node... 
+
+Nope, heaps normally start off at 1 index. 
+
+	res = self.heap[0] actually starts off at the 1st index
+	i = 1
+
+	#Percolate down
+	while 2 * i < len(self.heap): #while left child
+		if (2 * i + 1 < len(self.heap)) and #there is no right child
+
+While there is a left child: 
+	1) right child < heap
+	2) if val of right child < val of left child
+	3) if cur > right child
+
+Here are the cases: 1) no children 2) 1 left child 3) two children. 
+
+When popping, you want to bubble up the smaller of the left or right child. So we have to check both:
+
+def pop(self):
+	if len(self.heap) == 1:
+		return None
+	if len(self.heap) == 2: #this is the first elem
+		return self.heap.pop()
+
+	i = 1
+	while 2 * i <= len(self.heap):
+		smaller_child_index = self.getSmallerChildIndex(i)
+		if self.heap[i] > self.heap[smaller_child_index]:
+			self.heap[i], self.heap[smaller_child_index] = self.heap[smaller_child_index], self.heap[i]
+			i = smaller_child_index
+		else:
+			break
+
+if current index is smaller than the child, you do the swap:
+
+def getSmallerChildIndex(self, i): #This finds the lower index of the left and right bounds 
+	left_child_index = 2 * i
+	right_child_index = 2 * i + 1
+	if right_child_index > len(self.heap): #right child out of bounds
+		return left_child_index
+	else:
+		return left_child_index if self.heap[left_child_index] < self.heap[right_child_index] else right_child_index
 
 //May 3 2024
 Learn abouts Heap and Queues. Backtracking (Tree Maze). A heap is always a full binary tree. We normally store heaps using arrays. There are generally two types of heaps 1) Min Heap 2) Max Heap. Min heap root = smallest. When deleting root = highest priority. The opp for max heap. 
