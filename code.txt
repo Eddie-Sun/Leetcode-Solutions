@@ -1,7 +1,233 @@
+//May 8 2024
+**93 Restore IP Addresses**
+Ok this mis-conception that you have is that you are passing in a substring as candidate!
+
+def restoreIPAddresses(s):
+	
+	def isVald(segment):
+		if not 0 <= int(segment) <= 255:
+			return False
+		return True
+
+Ooops. This cannot have leading zeros either.
+
+This is a subset(?) problem? The subfunction isValid must: 1) contain 4 dots (we must partition the s in 4 ways) 2) each int is between 0-255
+
+def restoreIpAddresses(s):
+	
+	def isValid(s):
+		if len(s) != 3:
+			return False
+		for num in nums:
+			if int(num) > 255 or int(num) < 0:
+				return False
+		return True
+
+	def backtrack(start, path):
+		if start == len(s)
+			res.append(path[:])
+			return
+
+		for i in range(start, len(s)):
+			candidate = s[start:i+1]
+			if isValid(candidate):
+				path.append('.'join(candidate))
+				backtrack(i+1, path)
+				path.pop()
+
+	res = []
+	backtrack(0, [])
+	return res
+
+**506 Relative Ranks**
+At the fastest this is O(n) time. Sort. Then do index of + 1. 
+
+sorted_score = sorted(score)
+res = []
+for placement in score:
+	output = sorted_score.indexof(placement) + 1
+	if output == 1:
+		res.append('Gold Metal')
+	elif output == 2:
+		res.append('Silver Metal')
+	elif output == 3:
+		res.append('Bronze Metal')
+	else:
+		res.append(str(ouput))
+return res
+
+**76 Minimum Window Subtring**
+GPT Solution:
+
+def minWindow(s, t) -> str: 
+	m, n = len(s), len(t)
+
+	t_hash = {}
+	for char in t:
+		t_hash[char] = t_hash.get(char, 0) + 1
+
+	L = 0
+	window_hash = {}
+	min_len = float('inf')
+	min_subtr = ''
+
+	def valid_window(t_hash, window_hash):
+		for char, count in t_hash.items():
+			if window_hash.get(char, 0) < count:
+				return False
+		return True
+
+	for R in range(m):
+		char = s[R]
+		if char in t_hash:
+			window_hash[char] = window_hash.get(char, 0) + 1
+
+		while valid_window(t_hash, window_hash):
+			if R - L + 1 < min_len:
+				min_len = R - L + 1
+				min_substr = s[L:R+1]
+
+			left_char = s[L]
+			if window_hash[left_char] == 1:
+				del window_hash[left_char]
+			else:
+				window_hash[left_char] -= 1
+			L += 1
+
+	return min_substr
+
+def minWindow(s, t) -> str:
+	m, n = len(s), len(t)
+	
+	t_hash = {}
+	for char in t:
+		if char not in t_hash:
+			t_hash[char] = 1
+		else:
+			t_hash[char] += 1
+
+	L = 0
+	window_hash = {}
+	min_substr = ''
+
+	def valid_window(t_hash, window_hash):
+		for char, count in t_hash.items():
+			if window_hash.get(char, 0) < count:
+				return False
+		return True
+
+	for R in range(m):
+		char = s[R]
+		if char not in t_hash:
+			window_hash[char] = 1
+		else:
+			window_hash[char] += 1
+
+		if valid_window(t_hash, window_hash):
+			if len(min_substr) >  R - L + 1:
+				min_substr = s[L:R]
+			if window_hash[s[L]] == 1:
+				del window_hash[s[L]]
+			else:
+				window_hash[s[L]] -= 1 
+			L += 1
+
+	return min_subtr
+
 //May 7 2024
+**76 Minimum Window Substring**
+
+Boiler plate code for variable sliding window:
+
+def sliding_window(arr, check_condition):
+	L = 0
+	res = float('inf')
+	window_data = 0
+
+	for R in range(len(arr)):
+		window_data += arr[R]
+
+		while something
+
+		window_data -= arr[L]
+		L += 1
+
+Find the min substr. 
+
+len(s) = m, len(t) = n
+
+return so the window includes every char t (including dups)
+
+for t, we prob would want a hashmap to track the total num of each char: 
+
+t_hash = {}
+for char in t:
+	if char not in t_hash:
+		t_hash[char] = 1
+	else:
+		t_hash[char] += 1
+
+Another sub problem we want to solve is if the string in the window meets the requirment of all the letters in t is in window.
+
+window_hash = {}
+for char in window_hash:
+	if window_hash[char] < t_hash.get(char, 0):
+		return False
+
+So if we return false, we want to move R without moving L.
+
+**131 Palindrome Partitioning**
+Ok you dummy. Misread the question again. 
+
+def isPalindrome(sub) -> bool:
+	return sub == sub[::-1]
+
+def backtrack(start, path):
+	if start == len(s):
+		res.append(path[:])
+		return
+
+	for i in range(start, len(s)):
+		candidate = s[start:i+1]
+		path.append(candidate)
+		backtrack(i+1, path)
+		path.pop()
+	
+res = []
+backtrack(0, [])
+return res
+
+Given string s, partition s in a way that every substring is a palindrome. This is a subset problem. You add path if s + path[:] is palindrome.
+
+1) create isPalindrome func:
+
+	def isPalindrome(s):
+		mid = len(s) // 2
+		return s[:m] == s[m:][::-1]
+
+	def isPalindrome(s):
+		return s == s[::-1]
+
+2nd method is more efficent
+
+2) calculate subsets: 
+
+def partition(s):
+	res = []
+	def backtrack(start, path):
+		if isPalindrome(s + path):
+			res.append(path[:])
+
+		for i in range(start, len(nums)):
+			path.append(nums[i])
+			backtrack(i+1, path)
+			path.pop()
+
+	backtrack(0, [])
+	return res
+
 **79 Word Search**
 Additional optimizations and writing it in a diff recursive method: 
-
 def exist(board, word) -> bool:
 	if not board or not word:
 		return False
@@ -46,7 +272,6 @@ def exist(board, word) -> bool:
 				return True 
 
 	return False
-
 
 GPT refined version of the code: 
 
