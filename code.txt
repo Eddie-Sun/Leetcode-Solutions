@@ -1,7 +1,105 @@
+//May 10 2024
+**786. K-th Smallest Prime Fraction**
+All of my runtimes were 1000ms +. There are some folks that did it with a approx 60 ms runtime. How? You can actually use binary Search with this quetsion. 
+
+def kthSmallestPrimeFraction(arr, k):
+	n = len(arr)
+	low, high = 0, 1
+
+	#0 and 1 are not the possible vals of the fractions. arr[i] could > arr[j]
+
+The best way to determine the min and max val are:
+
+min_val, max_val = min(arr), max(arr)
+
+or since it is sorted we could just do: 
+
+min_val, max_val = arr[1], arr[-1]
+
+low = min_val/max_val
+high = max_vla/min_val
+
+We are given a sorted array - that should scream binary search. Q1: how do we define the mid point for the search?
+
+[small -> large], we know that the abs min and max = 0 and 1 respectivly.
+
+
+
+
+
+The core reason that using a min heap is efficent is because we only have to maintain O(k) space. The complexity is O(n^2 logk). 
+
+max_heap = []
+for i in range(len(arr)):
+	for j in range(i+1, len(arr)):
+		heapq.heappush(max_heap, (-(arr[i]/arr[j]), arr[i], arr[j]))
+		if len(max_heap) >= k:
+			heapq.heappop(max_heap)
+return [max_heap[0][1], max_heap[0][2]]
+
+If you want to keep the kth smallest, you're looking at a maxheap. 
+
+Brute force method without using a heap: 
+
+fractions = []
+for i in range(len(arr)): 
+	for j in range(i + 1, len(arr)):
+		fractions.append((arr[i] / arr[j], arr[i], arr[j]))
+sorted_fractions = sorted(fractions)
+return [sorted_fractions[k-1][1], sorted_fractions[k-1][2]]
+
+Why would we need to use a heap for this? Because we have to return the kth smallest fraction. 
+
+1) We generate every possible fraction O(n^2)
+2) Min heap, and pop k times
+
+def kthSamllestPrimeFraction(arr, k):
+	arr2 = []
+	for i in range(len(arr)):
+		for j in range(i+1, len(arr)):
+			res.append(arr[i] // arr[j])
+
+	return sorted(arr2)[k]
+
+**Clone Graph**
+class Solution:
+	def cloneGraph(node)-> Node:
+		oldToNew = {}
+		if node in oldToNew:
+			return oldToNew[node]
+
+		copy = Node(node.val)
+		oldToNew[node] = copy
+
+		for nei in node.neighbors:
+			copy.neighbors.append(dfs(nei))
+		return copy
+
+		return dfs(node) if node else None
+
+1) We want to make a copy of the node
+2) We connect the copy to the neighbors
+
 //May 9 2024
 **1849 Splitting a String Into Descending Consecutive Values**
+def splitString(s) -> bool:
+	def canAppend(path, segment):
+		if not path or int(path[-1] - int(segment) == 1:
+			return True
+		return False
 
-def splitString
+	def backtrack(start, path):
+		if start == len(s):
+			return len(path) > 1
+		
+		for i in range(start, len(s)):
+			segment = s[start:i+1]
+			if canAppend(path, segment):
+				path.append(segment)
+				if backtrack(i+1, path):
+					return True
+				path.pop()
+	return backtrack(0, [])
 
 New GPT response:
 
@@ -26,7 +124,6 @@ def splitString(s) -> bool:
 
 		for i in range(len(s) - 1):
 			
-
 Given a string that consists of only digits. This question is very similar to 131 Palindrome Partitioning.
 
 def splitString(s) -> bool:
