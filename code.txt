@@ -1,6 +1,283 @@
+//May 12 2024
+**N-Queens II**
+
+class Solution:
+    def totalNQueens(self, n: int) -> int:
+        col, posDiag, negDiag = set(), set(), set()
+        res = [0]
+
+        def backtrack(r):
+            nonlocal res
+            if r == n:
+                res[0] += 1
+                return
+            for c in range(n):
+                if c not in col and (r + c) not in posDiag and (r - c) not in negDiag:
+                    col.add(c)
+                    posDiag.add(r + c)
+                    negDiag.add(r - c)
+                    backtrack(r + 1)
+                    col.remove(c)
+                    posDiag.remove(r + c)
+                    negDiag.remove(r - c)
+
+        backtrack(0)
+        return res[0]
+
+**51 N-Queens**
+Convo:
+Why is it necessary to only place one queen per row? Because you know there is only one queen in a row. That's a part of the constraints. You can't have the same queen in the same diagonal, row, or column. So we only have to do it row by row. Explain the sets for columns, positive diagonals, and negative diagonals. For columns, during the backtracking process, we loop through every column. What we do is for columns, we add the row column to the set, or essentially the columns to the set, as well as positive diagonal which is R plus C, negative diagonal which is R minus C. Because one diagonal has a constant value due to the geometric properties of the 2D matrix. Essentially, we check to see if the column positive diagonals or the negative diagonals are in the set. If they are, that means that there's already an attackable queen there, so we can't place there. That's where we would pop. And that's where the backtracking would occur. What is the process or the purpose of using .join in the context of recording solutions to the in-queue problem? In the context of the problem, simply it wants to answer back the entire solution in the string format. So we have to join the multiple elements together. It's question specific. If it wanted a list of solutions, then we would just do normal append of the shallow copy. 
+
+Okay, let's tackle question four, deeper understanding. So in the backtracking function for the end queen, why must you remove a queen after the recursive call returns? Well, I mean, that's just very standard backtracking. After all the recursive calls return, that means you've explored all the possible paths in that direction. So you just simply pop and that's the only way to explore other paths. Question five, discuss implications of forgetting to remove the column and diagonal markers from their sets. Well, if we do that, you end up with ghost queens, where in the board, the queen isn't there, but the set still maintains the queen being there. And eventually you end up unable to further progress in the backtracking algorithm. And you miss out on potential solutions that exist, or you could have no solutions when there are solutions that exist.
+
+Okay, let's talk about how we can leverage symmetry to optimize this solution. So if we look across the middle columns or column for a even n, the solution to the left half mirror the solution to the right half. And there is also a rotational symmetry where after finding a valid config, you can rotate the board by 90, 270, and 180 degrees.
+
+Okay so it's not necessarily the case and this is just an attempt at potential solutions. It doesn't mean the solutions are all valid depending on the placement and the rotation of the boards. This is a shortcut that could potentially have invalid configurations. So we wouldn't know how many solutions there are in an 8x8 unless we actually do it.
+
+def solveNQueens(n):
+	col, posDiag, negDiag = set(), set(), set()
+	res, board = [], []
+	
+	for _ in range(n):
+		board.append(['.'] * n)
+
+	def backtrack(r):
+		if r == n:
+			solution = []
+			for row in board:
+				solution.append(''.join(row[:])
+			res.append(solution)
+
+		for c in range(n):
+			if c in col or (r+c) in posDiag or (r-c) in negDiag:
+				continue
+			col.add(c)
+			posDiag.add(r+c)
+			negDiag.add(r-c)
+			board[r][c] = 'Q
+	
+			backtrack(r+1)
+		
+			col.remove(c)
+			posDiag.remove(r+c)
+			negDiag.remove(r-c)
+			board[r][c] = '.'
+
+
+	backtrack(0)
+	return res
+
+Watched some parts of the neet code vid. The key thing to realize is that the vals for r+c and r-c for the diagnals are the same, and we can maintain 'taken' spots via a set. 
+
+Placing n queens on a nxn board where no two queens can attack eachother. Return all solutions to the n-queen puzzle. We can rep the board with a 2d matrix where Q == queen and . = empty space.
+
+We have to make sure that:
+1) Row clear
+2) Col clear
+3) Diagonal clear
+
+R, C = len(n), len(n[0]) -> This can be our matrix
+
+1) if r > 2 Q, pop(), backtrack
+2) if c > 2 Q, pop, backtrack - we can check that by for c index in every row.
+3) Diagnal: if (r + 1, c + 1), (r - 1, c - 1), (r + 1, c -1), (r - 1, c + 1) has another queen, backtrack
+
+Q: How do we place a qeen? 1) start off w/ empty board. Done. To place a queen, we have to simply set [r][c] = Q. To backtrack, board[r][c] = '.'
+
+The first idea was to check every grid cell repeatedly during backtracking. This is super inefficent. How about we use lists or sets?
+
+For each queen, we only place 1 per row. 
+
+def solveNQueens(n):
+	board = []
+	for _ in range(n):
+		board.append(['.']*n)
+
+	def validboard(board):
+		for row in board:
+			if row.count('Q') > 1:
+				return False	
+		for 
+			
+	def backtrack(r, c, board):
+		
+		board[r][c] = 'Q'
+
+		if valid board:
+
+		board[r][c] = '.'
+	
+
+**1025 Divisor Game**
+Given n number. Choose x with 0 < x < n and n % x == 0. You replace a number on the chalkboard with n - x. If a player cannot make a move they lose. 
+
+Q: Would you select the largest possible n for each step? 
+
+What is the optimal play for this game? 
+
+You want to force the other player to n = 1 thus, you want n = 2 and the other player auto-loses. This also means the base case is: 
+
+if n == 1:
+	return False
+
+When n == 3, the only move is to - 1, so 3 is losing. n = 4 is winning. 
+
+So the trick is to leave the opponent in losing position after move. 
+
+GPT reponse: 
+
+def is_winning(n, memo={}): 
+	if n in memo: 
+		return memo[n]
+
+	if n == 1:
+		memo[n] == False
+		return False
+
+	divisors = []
+	for i in range(1, n):
+		if n % i == 0:
+			divisors.append(i)
+
+	for x in divisors:
+		if not is_winning(n-x, memo):
+			memo[n] = True
+			return True
+
+	memo[n] = False
+	return False
+
+n = 6 example
+[1, 2, 3]
+
+
+
+//May 11 2024
+**473 Matchsticks to Square**
+Ok I give up, this is the Neetcode solution: 
+
+def makesquare(matchsticks) -> bool:
+	length = sum(matchsticks) // 4
+	sides = [0] * 4
+
+	if sum(matchsticks) / 4 != length:
+		return False
+
+This is a subset problem. Recall to form subsets: 
+
+def subsets(nums):
+	res = []
+	def backtrack(start, path):
+		res.append(path[:])
+		return 
+		for i in range(start, len(nums):
+			path.append(nums[i])
+			backtrack(i + 1, path)
+			path.pop()
+		backtrack(0, [])
+		return res
+
+You can make a matchstick square if you can split the matchsticks into 4 equal lengths. Once again, similar to the palindrome partioning problem. 
+
+class Solution:
+    def makesquare(self, matchsticks: List[int]) -> bool:
+        def lengthCheck(path, segment):
+            if not path or path[-1] == segment:
+                return True
+            return False
+
+        def backtrack(start, path):
+            print("Trying path:", path)
+            if start == len(matchsticks) and len(path) == 4:
+                return True
+            for i in range(start, len(matchsticks)):
+                segment = sum(matchsticks[start:i+1])
+                if lengthCheck(path, segment):
+                    path.append(segment)
+                    if backtrack(i + 1, path):
+                        return True
+                    path.pop()
+                    print("Backtracking path:", path)
+
+        return backtrack(0, [])
+
+This would not work because you only look a clumps of solutions (groups of solutions that are immediate neighbors). 
+
+**786. K-th Smallest Prime Fraction**
+def kthSmallestPrimeFraction(arr, k):
+	n = len(arr)
+	left, right = 0, 1 #these are the range of floating point values (not indices)
+	res = []
+
+	while left <= right:
+		mid = (left + right) / 2
+		j, total , num, den = 1, 0, 0, 0
+		maxFrac = 0
+
+j = denominator index
+total = num of fractions <= cur mid
+num = index of largest fraction found in mid 
+		
+	for i in range(n):
+		while j < n and arr[i] >= arr[j] * mid: 
+			j += 1
+		
+
+You loop through i index, which I assume is the numerator of the fraction and while j < n (if the denominator is in bounds) and the current numerator >= than denomiator * mid, j += 1. 
+
+I'm still not sure why arr[i] >= arr[j] * mid is a condidtion to move j? If we re-arrange:
+
+arr[i]/arr[j] >= mid, ensures that that fraction always needs to be bigger than mid. But why just bigger? Why not keep moving till its smaller than midpoint? It seems like a rather arbitrary decision. 
+
+Is this step still not O(n^2) when going towards the midpoint? Yes
+
+This makes more sense to me: 
+
+arr[i] / arr[j] >= mid. This skips over all the fraction where the fraction val is larger than mid. 
+
+total += n - j
+
+Hmmm that intresting. The total val we end up calculating is the total number of possible vals and we store that as a int (without saving any values). All of this belongs in the for i in range(n) for loop. 
+
+Within that i in range(n) loop: 
+
+	if j < n and maxFrac < arr[i] * 1.0 / arr[j]
+		maxFrac = arr[i] * 1.0 / arr[j]
+		num, den = i, j
+
+Why not just do arr[i] / arr[j] instead of arr[i] * 1.0 / arr[j]. Reason, there is non in python 3. 
+
+	if j < n and maxFrac < arr[i]/arr[j]:
+		maxFrac = arr[i]/arr[j]
+		num, den = i, j
+
+	if total == k:
+		res = [arr[num], arr[den]]
+		break
+
+	if total > k:
+		right = mid
+	else:
+		left = mid
+
+	return res
+
+mid could take on the values of 0.5, 0.25, 0.125 if total keeps > k right. 
+
 //May 10 2024
 **786. K-th Smallest Prime Fraction**
-All of my runtimes were 1000ms +. There are some folks that did it with a approx 60 ms runtime. How? You can actually use binary Search with this quetsion. 
+Binary Serach solution attempt 2: 
+
+def kthSmallestPrimeFraction(arr, k):
+	n = len(arr)
+	left, right = 0, 1 #these are the range of floating point values (not indices)
+	res = []
+
+	while left <= right:
+		mid = (left + right) / 2
+		j, total , num == 1, 0, 0, 0
+
+All of my runtimes were 1000ms +. There are some folks that did it with a approx 60 ms runtime. How? You can actually use binary Search with this question. 
 
 def kthSmallestPrimeFraction(arr, k):
 	n = len(arr)
@@ -21,11 +298,56 @@ high = max_vla/min_val
 
 We are given a sorted array - that should scream binary search. Q1: how do we define the mid point for the search?
 
-[small -> large], we know that the abs min and max = 0 and 1 respectivly.
+[small -> large], we know that the abs min and max = 0 and 1 respectivly. What we want to observe is:
 
+1) The more left i is and right j is, = closer to 0
+2) The more right i is (closer to j), closer to 1
 
+So the basics of how to serach is, if fraction > value, i moves to left search space and or r moves to right search space. But how do we even know what value we are searching for? Would we even need a heap? 
 
+[1,2,3,4,5,6,7,8,9,10]
+ 
+Since we know we can only move i or j, what if we move it only ever finding the kth smallest and stop?
 
+smallest = arr[0] / arr[-1]
+2nd smallest:
+	1) arr[0] / arr[-2] move i += 1
+	2) arr[i] / arr[-1] move j -= 1
+
+We take the min of 1) 2). Store the res in an array. And iterate. For the next compare, we check to see if we move, i, j, or the previous bigger one (res[-1]) produces a smaller value. We iterate on this till we find kth smallest and then simply return arr[i] and arr[j]. 
+
+What I just (assumed) I came up with is a sliding window or greedy selection method. Here we use a min-heap to track + select smallest cur fraction then move all indices. 
+
+The way GPT did it was:
+
+def kthSmallestPrimeFraction(arr, k):
+	n = len(arr)
+	heap = []
+	for j in range(1, n):
+		heap.append((arr[0]/arr[j], 0, j), 0, j)
+	heapq.heapify(heap)
+
+Another way to look at the list is as (fraction_val, numerator_index, denominator_index).
+
+	res = None
+	for _ in range(k):
+		val, i, j = heapq.heappop(heap)	
+		
+In this case, i will (numerator_index) will always be 0. What about a case where k > len(nums)? Or how about if we get a smaller value by moving i + 1 and setting j to -1 instead?
+
+You take the first k fractions set. Lets say k = 3:
+
+(arr[0]/arr[1], 0, 1)
+(arr[0]/arr[2], 0, 2)
+(arr[0]/arr[3], 0, 3)
+
+if i + 1 < j: #this ensures that j is always larger, we push to the heap.
+
+push(arr[1]/arr[1])
+
+Q: Why do you i + 1 when i + 1 < j? Would you want to not keep iterating j?
+
+Ok wait a min, the code if i + 1 < j: heapq.heappush(heap, (arr[i+1]/arr[j], i+1, j))
 
 The core reason that using a min heap is efficent is because we only have to maintain O(k) space. The complexity is O(n^2 logk). 
 
