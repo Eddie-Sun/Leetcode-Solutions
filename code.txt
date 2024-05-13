@@ -1,6 +1,318 @@
-//May 12 2024
-**N-Queens II**
+//May 13 2024
 
+**861 Score After Flipping Matrix**
+Entire code: 
+
+    R, C = len(grid), len(grid[0])
+    for r in range(R):
+        if grid[r][0] == 0:
+            for c in range(C):
+                grid[r][c] = 1 - grid[r][c]
+
+    for c in range(C):
+        oneCount = 0
+        for r in range(R):
+            if grid[r][c] == 1:
+                oneCount += 1
+        if oneCount < R / 2:
+            for r in range(R):
+                grid[r][c] = 1 - grid[r][c]
+
+    res = 0
+    for r in range(R):
+        rowStr = ''
+        for c in range(C):
+            rowStr += str(grid[r][c])
+        res += int(rowStr, 2)
+
+    return res
+
+Given m x n matrix grid. Move = toggle all r/c 1->0 and 0 -> 1. Score = sum of rows (binary #). Return highest possible score after any number of moves. 
+
+First sub problem = int -> bin. We calculate the score - > this comes after we flip all the bits.
+
+R, C = len(gird), len(grid[0])
+
+scores = []
+for r in R:
+	rowStr = '' 
+	for c in C:
+		rowStr += grid[r][c]
+	scores.append(rowStr)
+
+for score in scores:
+	res += int(b, 2)
+
+return res
+
+Due to the nature of the array being binary, we want to ensure that ealier colums = 1. We dont need to calculate the scores before knowing what is optimal.
+
+Start off with row. Rule: ensure 1st bit always 1:
+
+for r in R:
+	if grid[r][0] == 0:
+		#flip bits
+		for c in C:
+			if grid[r][c] == 0:
+				grid[r][c] = 1
+			else:
+				grid[r][c] = 0
+
+To ensure that col is optimal, we simply count the number of 1s and flip if # of 0s > 1s.
+
+for c in C:
+	oneCount = 0
+	for r in R:
+		if grid[r][c] == 1:
+			oneCount += 1
+	if oneCount < len(grid) // 2:
+		for r in R:
+			if grid[r][c] == 0:
+				grid[r][c] = 1
+			else:
+				grid[r][c] = 0
+
+def matrixScore(self, grid: List[List[int]]) -> int:
+
+
+//May 12 2024
+**How Many Numbers Are Smaller Than the Current Number**
+class Solution:
+    def smallerNumbersThanCurrent(self, nums: List[int]) -> List[int]:
+        tmp = sorted(nums)
+        mapping = {}
+        res = []
+        for i in range(len(tmp)):
+            if tmp[i] not in mapping:
+                mapping[tmp[i]] = i
+        for i in range(len(nums)):
+            res.append(mapping[nums[i]])
+        return res
+
+**Find Target Indices After Sorting Array**
+class Solution:
+    def targetIndices(self, nums: List[int], target: int) -> List[int]:
+        nums = sorted(nums)
+        res = []
+        for i, num in enumerate(nums):
+            if num == target:
+                res.append(i)
+        return res
+
+**Score of a String**
+class Solution:
+    def scoreOfString(self, s: str) -> int:
+        res = 0
+        for i in range(1, len(s)):
+            res += abs(ord(s[i]) - ord(s[i - 1]))
+        return res
+
+**Divisible and Non-divisible Sums Difference**
+class Solution:
+    def differenceOfSums(self, n: int, m: int) -> int:
+        num1, num2 = 0, 0
+        for i in range(1, n+1):
+            if i % m == 0:
+                num2 += i
+            else:
+                num1 += i
+        return num1 - num2
+
+**Count Negative Numbers in a Sorted Matrix**
+class Solution:
+    def countNegatives(self, grid: List[List[int]]) -> int:
+        res = 0
+        for row in grid:
+            for num in row:
+                if num < 0:
+                    res += 1
+        return res
+
+**Type of Triangle**
+class Solution:
+    def triangleType(self, nums: List[int]) -> str:
+        if max(nums) < sum(nums) - max(nums): 
+            if len(set(nums)) == 1:
+                return 'equilateral'
+            elif len(set(nums)) == 2:
+                return 'isosceles'
+            return 'scalene'
+        return 'none'
+
+**Number of Students Doing Homework at a Given Time**
+class Solution:
+    def busyStudent(self, startTime: List[int], endTime: List[int], queryTime: int) -> int:
+        res = 0
+        for i in range(len(startTime)):
+            if startTime[i] <= queryTime <= endTime[i]:
+                res += 1
+        return res
+
+**Check If a Word Occurs As a Prefix of Any Word in a Sentence**
+class Solution:
+    def isPrefixOfWord(self, sentence: str, searchWord: str) -> int:
+        wordList = sentence.split(' ')
+        for i, word in enumerate(wordList):
+            if searchWord in word and searchWord == word[:len(searchWord)]:
+                    return i + 1
+        return -1
+
+**Maximum Product of Two Elements in an Array**
+Optimal solution:
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        nums = sorted(nums)
+        return (nums[-1] - 1) * (nums[-2] - 1)
+
+Crappy solution:
+
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        max_val = 0
+        for i in range(len(nums)):
+            for j in range(i+1, len(nums)):
+                max_val = max(max_val, (nums[i]-1)*(nums[j]-1))
+        return max_val
+
+
+	
+**Shuffle the Array** 
+class Solution:
+    def shuffle(self, nums: List[int], n: int) -> List[int]:
+        nums1 = nums[:n]
+        nums2 = nums[n:]
+        res = []
+        for i in range(n):
+            res.append(nums1[i])
+            res.append(nums2[i])
+        return res
+
+**Find Lucky Integer in an Array** 
+
+class Solution:
+    def findLucky(self, arr: List[int]) -> int:
+        hash_map = {}
+        for num in arr:
+            if num in hash_map:
+                hash_map[num] += 1
+            else:
+                hash_map[num] = 1
+
+        max_lucky = 0
+        for key, val in hash_map.items():
+            if key == val:
+                max_lucky = max(key, max_lucky)
+
+        return max_lucky if max_lucky != 0 else -1
+
+**3028. Ant on the Boundary**
+Correct solution: 
+
+class Solution:
+    def returnToBoundaryCount(self, nums: List[int]) -> int:
+        res, cumulative_sum = 0, 0
+        for num in nums:
+            cumulative_sum += num 
+            if cumulative_sum == 0:
+                res += 1
+        return res
+
+I misread the Q- my solution:
+
+from typing import List
+
+class Solution:
+    def returnToBoundaryCount(self, nums: List[int]) -> int:
+        res, cumulative_sum = 0, 0
+        for num in nums:
+            prev = cumulative_sum
+            cumulative_sum += num
+            if (prev < 0 and cumulative_sum > 0) or (prev > 0 and cumulative_sum < 0):
+                res += 1
+        return res
+
+
+**3099. Harshad Number**
+Solution 2: 
+
+def sumOfTheDigitsOfHarshadNumber(x) -> int:
+	sum = 0
+	num = x
+	while num > 0:
+		sum += num % 10
+		num //= 10
+	if x % sum == 0:
+		return sum
+	return -1
+
+Solution 1:
+
+class Solution:
+    def sumOfTheDigitsOfHarshadNumber(self, x: int) -> int:
+	strx = str(x)
+	sum = 0
+	for digit in strx:
+		sum += int(digit)
+	if x % sum == 0:
+		return sum
+	return -1
+
+**1108. Defanging an IP Address**
+def defangIPaddr(self, address: str) -> str:
+	return '[.]'.join(address.split('.'))
+
+**1930 Unique Length-3 Palindromic Subsequences**
+
+The O(n^2) solution uses a hashmap. You have:
+
+def countPalindromicSubsequence(s):
+	count = 0
+	chars = set(s)
+	for char in chars:
+		first, last = s.find(char), s.rfind(char)
+		count += len(set(s[first+1:last]))
+	return count
+
+char: indexes
+
+The pattern to make palindrome is 1) all char are the same 2) first and last char are the same. Since this question requires unique palindromes, it makes the q easier. 
+
+1) Loop through the arr and add char + indicies to hash map
+2) count all the char where len(hash_map[letter]) >= 3
+3) For every char that has len(hash_map[letter]) >= 2 (lets call A) compare with every other item in hashmap (lets call B) and see if you get get indexB < index A < index B. If yes, add that too. 
+
+Corrected code: 
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        res = set()  # Use a set to avoid counting duplicates
+        def isPalindrome(s):
+            return s == s[::-1]
+
+        for i in range(len(s)):
+            for j in range(i + 1, len(s)):
+                for k in range(j + 1, len(s)):
+                    sub = s[i] + s[j] + s[k]
+                    if isPalindrome(sub):
+                        res.add(sub)  # Add the palindromic subsequence to set
+
+        return len(res)
+
+def countPalindromicSubsequence(self, s: str) -> int:
+
+	res = 0
+	
+	def isPalindrome(s1, s2, s3):
+		s = s1 + s2 + s3
+		return s == s[:-1]
+
+	for i in range(len(s)):
+		for j in range(i + 1, len(s))
+			for k in range(j + 1, len(s))
+				if isPalindrome(s[i] + s[j] + s[k]):
+					res += 1
+	return res
+
+**N-Queens II**
 class Solution:
     def totalNQueens(self, n: int) -> int:
         col, posDiag, negDiag = set(), set(), set()
