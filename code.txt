@@ -1,4 +1,359 @@
+//May 14 2024
+**92 Reverse Linked List II**
+
+def reverseBetween(head: ListNode, left: int, right: int) -> ListNode:
+    dummy = ListNode(0)
+    dummy.next = head
+    cur = dummy
+    leftNode, rightNode = None, None
+    prevLeft, rightNext = None, None
+
+    # Traverse to find the positions and nodes
+    position = 0
+    while position <= right:
+        if position == left - 1:
+            prevLeft = cur
+        if position == left:
+            leftNode = cur
+        if position == right:
+            rightNode = cur
+            rightNext = rightNode.next
+            break
+        cur = cur.next
+        position += 1
+
+    # Reverse the sublist from leftNode to rightNode
+    prev = rightNext
+    cur = leftNode
+    while cur != rightNext:
+        cur.next, prev, cur = prev, cur, cur.next
+
+    # Connect the reversed sublist back to the list
+    if prevLeft:
+        prevLeft.next = rightNode
+
+    return dummy.next
+
+dummy = ListNode(0)
+cur = dummy
+leftNode, rightNode = None, None
+prevLeft, rightNext = None, None
+
+while right > 0:
+	left -= 1
+	right -= 1
+
+	if left == 1:
+		prevLeft = cur
+	if left == 0:
+		leftNode = cur
+
+	if right == 0:
+		rightNode = cur
+	if rightNode.next:
+		rightNext = rightNode.next
+	cur = cur.next
+
+cur = prevLeft
+prev = None
+while cur != rightNext:
+	cur.next, prev, cur = prev, cur, cur.next
+
+prevLeft.next = rightNode
+rightNext.next = leftNode
+
+return dummy.next
+
+def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+
+**1219 Path with Maximum Gold**
+
+def getMaxiumnGold(self, grid):
+	dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+	R, C = len(grid), len(grid[0])
+	globalMax
+
+	def backtrack(r, c, pathSum, globalMax):
+		nonlocal globalMax
+		if r < 0 or r >= R  or c < 0 or c >= C or grid[r][c] == 0:
+			return max(globalMax, pathSum)
+
+		tmp = grid[r][c]
+		grid[r][c] = 0
+		for dr, dc in dirs:
+			backtrack(r+dr, c+dc, pathSum + tmp)
+		grid[r][c] = tmp
+
+	for r in range(R):
+		for c in range(C):
+			if grid[r][c] != 0:
+				backtrack(r, c, 0)
+	return globalMax
+
+Given m x n grid. Cell = amount of gold. Return max gold (can't visit same cell more than once). Can't visit with 0 gold. Can start at anywhere with gold.
+
+Grid size under 100 x 100. 
+
+Have a for loop. Locate every single cell as a potential starting point. Pass it in as a start to the backtrack function. This is similar to all paths. 
+
+pathSum = for path in paths: res.append(sum(path)) 
+
+def getMaximumGold(self, grid: List[List[int]]) -> int:
+
+	dirs = [[1,0], [-1,0], [0,1], [0,-1]]
+
+	R, C = len(grid), len(grid[0])
+
+	for r in range(R): 
+		for c in range(C):
+			if grid[r][c] != 0:
+				backtrack(r,c,0,0)
+
+	def backtrack(r, c, pathSum, globalMax):
+		if grid[r][c] == 0 or r < 0 or r > R or c < 0 or c > C:
+			return
+
+		tmp = grid[r][c]
+		grid[r][c] = 0
+	
+		for nr, nc in dirs:
+			curSum = pathSum + grid[r][c]
+			backtrack(r+nr, c+nc, curSum, max(globalMax, curSum))
+		grid[r][c] = tmp #this is == pop() 
+
+	return globalMax
+
 //May 13 2024
+--Review Merge Sort--
+def merge(arr, L, M, R):
+	def merge(arr, L, M, R):
+		left, right = arr[L:M+1], arr[M+1:R+1]
+		i, j, k = L, 0, 0
+		
+		while j < len(left) and k < len(right):
+			if arr[j] < arr[k]:
+				arr[i] = left[j]
+				j += 1
+			else:
+				arr[i] == right[k]
+				k += 1
+			i += 1
+
+		while j < len(left):
+			arr[i] = left[j]
+			j += 1
+			i += 1
+
+		while k < len(right):
+			arr[i] = right[k]
+			k += 1
+			i += 1
+	
+	def mergeSort(arr, L, R):
+		if L < R:
+			M = (L + R) // 2
+			mergeSort(arr, L, M)
+			mergeSort(arr, M + 1, R)
+			merge(arr, L, M, R)
+
+	mergeSort(arr, 0, len(arr))
+	return arr
+
+**148 Sort List**
+Given head, return list after sorting.
+
+arr = []
+cur = head
+while cur:
+	arr.append(cur.val)
+	cur = cur.next
+cur = head
+
+arr = sorted(arr)
+i = 0
+while cur and i < len(arr):
+	cur.val = arr[i]
+	cur = cur.next
+	i += 1
+
+return head
+
+--Review--
+def binarySearch(arr, target):
+	left, right = 0, len(arr) - 1
+
+	while left < right:
+		mid = (left + right) // 2
+		if arr[mid] == target:
+			return mid
+		elif arr[mid] < target:
+			left = mid + 1
+		else:
+			right = mid
+
+	return left
+
+**162 Find Peak Elem**
+nums[left] < nums[mid] and nums[right] < nums[mid]
+
+Q: How do you shrink the bounds? if nums[mid] < nums[left]: left = mid if nums[mid] < nums[right]: right = mid
+
+BS method:
+
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int: 
+        left, right = 0, len(nums) - 1
+
+        while left < right:
+            mid = (left + right) // 2
+            if nums[mid] < nums[mid + 1]:
+                left = mid + 1
+            else:
+                right = mid
+
+        return left
+
+
+A peak elem is an elem greater than neighbors. Find and return peak elem. Algo must be O(logn) time. Most likely a BS.
+
+But lets do the trivial solution first anyways.
+
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        if len(nums) == 1:
+            return 0
+        if len(nums) == 2:
+            return nums.index(max(nums))
+
+        if nums[0] >= nums[1]:
+            return 0
+        if nums[-1] >= nums[-2]:
+            return len(nums) - 1
+
+        for i in range(1, len(nums) - 1):
+            if nums[i - 1] <= nums[i] >= nums[i + 1]:
+                return i
+
+**875 Koko Eating Bananas**
+def canFinish(speed):
+	hours = 0
+	for pile in piles:
+		hours += (pile + speed - 1) // speed
+	return hours <= h
+
+left, right = 1, max(piles)
+while left < right:
+	mid = (left + right) // 2
+	if canFinish(mid):
+		right = mid
+	else:
+		left = mid + 1
+return left
+
+**1011. Capacity To Ship Packages Within D Days**
+Corrections:
+
+def canShipWithinDays(capacity):
+	currentWeight = 0
+	daysNeeded = 1
+
+	for weight in weights:
+		if currentWeight + weight > capacity:
+			daysNeeded += 1
+			currentWeight = weight
+		else:
+			currentWeight += weight
+	
+	if daysNeeded > days:
+		return False
+	
+	return True
+
+left, right = max(weights), sum(weights)
+
+while left < right:
+	mid = (left + right) // 2
+	if canShipWithinDays(mid):
+		right = mid
+	else:
+		left = mid + 1
+
+return left
+
+ith package has weight[i]. May not load more than max capacity. Return least weight that result in all packages shipped within day days. 
+
+In example: 
+
+weights = [1,2,3,4,5,6,7,8,9,10], days = 5
+
+sum (weights) must < days * weight. But I can think of edge case where:
+
+[99,99,1,1,1,1,1] days = 5 so minWeight = max(weights)
+
+In this example, we split the weights like:
+	
+(2, 3, 4, 5), (1, 6, 7), (8), (9), (10)
+
+if we did sum([1,2,3,4,5,6,7,8,9,10]) = 5 * x, which is 11. something which is incorrect.
+
+What if we did binary search on the possible values of maxWeight and just test the value?
+
+left = max(weights)
+right = sum(weights)
+
+def shipCpacity(maxWeight):
+	tmp = maxWeight
+	for weight in weights:
+		if maxWeight < 0:
+			totalDays += 1
+			maxWeight = tmp
+		maxWeight -= weight
+	if totalDays > day:
+		return False
+	return True
+
+while left < right:
+	mid = (lower + upper) // 2
+	
+	if shipCpacity(mid): #decrease the guess val
+		right = mid
+	else:
+		left = mid + 1
+	
+return left
+
+def shipWithinDays(self, weights: List[int], days: int) -> int:
+
+**786 K-th Smallest Prime Fraction**
+Given arr. Return ith biggest fraction where the fraction is calculated as arr[i]/arr[j]. You return the values of the num and den. 
+
+def kthSmallestPrimeFraction(self, arr: List[int], k: int) -> List[int]:
+	left, right, n = 0.0 , 1.0, len(arr)
+
+	while left < right:
+		mid = (left + right) / 2
+		count, maxFrac = 0, 0.0
+		num, den = 0, 1
+		j = 1
+
+		for i in range(n):
+			while j < n and arr[i]/arr[j] < mid:
+				j += 1
+			count += n - j
+			frac = arr[i]/ arr[j]
+	
+		if frac > maxFrac:
+			maxFrac = frac
+			num, den = arr[i], arr[j]
+
+		if count == k:
+			return [num, den]
+		elif count < k:
+			left = mid
+		else:
+			right = mid
+
+Returns wrong answer. Not doing this Q. 
 
 **861 Score After Flipping Matrix**
 Entire code: 
