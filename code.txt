@@ -1,5 +1,118 @@
 //May 15 2024
+**2358 Max Number of Groups Entering a Competition**
+
+        grades.sort()
+        groups = 0
+        i = 0
+        n = len(grades)
+        
+        while i < n:
+            groups += 1
+            group_size = groups
+            i += group_size
+        
+        return groups
+
+I flopped this Q pretty bad.
+
+Reverse sort and a greedy algo?
+
+grades = sorted(grades, reverse=True)
+groupGrades = [grades[0]]
+
+You know that the right group always has to be > left val. 
+
+groupGrade = 0
+for i in range(1, len(grades)):
+	if groupGrade > groupGrades[-1]:
+		groupGrade = 0
+		groupGrades.append(groupGrade)
+
+
+[12, 10, 7, 6, 5, 3]
+
+[12] [10 + 3] [7 + 5 + 6]
+
+So you have a L and R ptr that moves inwards
+
+grades = sorted(grades, reverse=True)
+groupGrades = [grades[0]]
+
+while L < R:
+	newGroupGrade = grades[L]
+	while newGroupGrade < groupGrades[-1]:
+		newGroupGrade += grades[R]
+		R -= 1
+	if newGroupGrade > groupGrades[-1]:
+		groupGrades.append[newGroupGrade]
+	L += 1
+
+return len(newGroupGrade)
+
 2 backtracking problems:
+**916 Word Subsets**
+def countChars(word):
+	hashMap = defaultdict(int)
+	for char in word:
+		hashMap[char] += 1
+	return hashMap
+
+maxWord2hash = defaultdict(int)
+for word in words2:
+	wordHash = countChar(word)
+	for char, count in wordHash.items():
+		maxWord2hash[char] = max(maxWord2hash[char], count)
+
+res = []
+for word in words1:
+	word1hash = countChars(word)
+	for key, val in maxWord2hash.items():
+		if key not in word1hash or word1hash[key] < val:
+			break
+	else:
+		res.append(word)
+
+return res
+
+You have to calculate the max freq of each char in word2
+
+Given words1 and words2. str b is subset of str a if every latter in b occurs in a (multiplicity).
+
+This is not a backtracking problem... 
+
+    def wordSubsets(self, words1: List[str], words2: List[str]) -> List[str]:
+        res = []
+
+        word2hash = {}
+
+        for word in words2:
+		for char in word:
+            	if char in word2hash:
+                		word2hash[char] += 1
+            	else:
+                		word2hash[char] = 1
+
+        for word in words1:
+            word1hash = {}
+            for char in word:
+                if char in word1hash:
+                    word1hash[char] += 1
+                else:
+                    word1hash[char] = 1
+            for key, val in word2hash.items():
+                if val < word1hash[key]:
+                    break
+            else:
+                res.append(word)
+        return res
+
+H2
+	e:2
+
+H1
+	e:3
+
+
 **2044 Count Number of Maximum Bitwise-OR Subsets**
 
 def countMaxOrSubsets(nums):
