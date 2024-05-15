@@ -1,6 +1,205 @@
-//May 14 2024
-**92 Reverse Linked List II**
+//May 15 2024
+**2730 Find the Longest Semi-Repetitive Substring**
 
+GPT's more refined method: 
+
+L = 0
+maxLength = 0
+pairCount = 0
+
+for R in range(1, len(s)):
+	if R > 0 and s[R] == s[R] - 1:
+		pairCount += 1
+
+	while pairCount > 1:
+		if s[L] == s[L+1]:
+			pairCount -= 1
+		L += 1
+
+	maxLength = max(maxLength, R - L + 1) 
+
+return maxLength
+
+Few issues highlighted by GPT:
+	
+pairIndex = - 1
+pair = False
+maxLength = 0
+L = 0
+
+for R in range(len(s) - 1): 
+	if s[R] == s[R + 1]:
+		if not pair:
+			pair = True
+			pairIndex = R
+		else:
+			maxLength = max(R - L + 1, maxLength)
+			while L <= pairIndex:
+				L += 1
+			pair = False
+			pairIndex = R
+
+maxLength = max(len(s) - L, maxLength)
+return maxLength
+
+def for consecutive pair = if there is at most one consecutive pair of same digits. Could not understand the Q
+
+Assume, is pair if palindrome?
+
+Nope this is a trivial sliding window problem. 
+
+1) Make hashmap
+2) move left, when >1 pair, move right by default
+
+hashMap = {}
+maxLength = 0
+for R in range(len(s)):
+	if s[R] not in hashMap: 
+		maxLength = max((R - L + 1), maxLength)
+		hashMap[R] = 1
+	while hashMap[s[R]] > 1:
+		L += 1
+		hashMap[s[R]] -= 1
+		
+Wait no you move by pairs. We dont have to track the val of the pairs? No we do. If s[L] == pair val we remove it? 
+
+pairIndex
+pair = False
+maxLength = 0
+for R in range(len(s)-1):
+	if s[R] == s[R+1]:
+		if not pair: 
+			pair = True
+			pairIndex = R
+		else:
+			maxLength = max(R - L, maxLength)
+			while L < pairIndex:
+				L += 1
+return maxLength
+
+
+**1090 Largest Values From Labels**
+Ok, the goofball mistake I made is to try to manually iterate through labels even if it may be unsorted. We would have to use a ditc: 
+
+value, label = tup[i]
+if label not in label_count:
+	label_count[label] = 1
+if label_count[label] < useLimit:
+	res += value
+	curNum += 1
+	label_count[label] += 1
+i += 1
+
+I don't think you need to sort it, but nowhere in the problem does it say its sorted. 
+
+tup = []
+for i in range(len(values)):
+	tup.append((values[i], labels[i]))
+tup = sorted(tup)
+
+curNum, curUseLimit, i, res = 0, 0, 0, 0
+while curNum < numWanted:
+	curLabel = tup[i][1]
+	if curUseLimit < useLimit:
+		res += values[i]
+		curNum += 1
+		curUseLimit += 1
+		i += 1
+	else:
+		while tup[i][1] == curLabel:
+			i += 1
+return res
+
+
+//May 14 2024
+**1090 Largest Values From Labels**
+Greedy algo. Only choose M items. Only choose L items of same label. 
+
+Gonna store in tuple: 
+
+tup = []
+for val in range(len(values)):
+	tup.append((values[i], labels[i]))
+tup = sorted(tup)
+
+curNum, curUseLimit = 0, 0
+while curNum < numWanted:
+	if curNum < numWanted:
+		#check label
+		curLabel = tup[i][1]
+		if curUseLimit < useLimit:
+			res += values[i]
+			curNum += 1
+			curUseLimit += 1
+			i += 1
+		else:
+			while tup[i][1] == curLabel: #skip the vals of the same label
+				i += 1
+	
+#You have to count the occurance of labels
+
+**3096 Minimum Levels to Gain More Points**
+Given arr possible len n. 
+if possible[i] == 0: impossible
+Point += 1 if clear, -= if fail. Alice starts for x turns. Then bob plays for rest. return min levels Alice plays to gain more points than bob. 
+
+What if you just keep a running sum of the 1s? Or better yet the score?
+
+[1,0,1,0] -> [1,0,1,0], return 1
+[1,1,1,1,1] -> [1,2,3,4,5] return 3
+		        s 
+
+s = selected val. arr[-1] - s < s, return i if i > 0 else return -1 (if not i, return -1 as well)
+
+arr = [possible[0]]
+for i in range(1, len(possible)):
+	if possible[i] == 1:
+		arr.append(possible[-1] + 1)
+	else:
+		arr.append(possible[-1] - 1)
+
+for i in range(len(arr)):
+	if arr[-1] - arr[i] < arr[i]:
+		return i + 1
+
+return -1
+
+**915 Partition Array into Disjoint Intervals**
+Partitioning always exisits. The arr len could be up to 10^5 so at most the run time must be O(n^2). Maybe even not. We len(left) + len(right) = len(arr)
+
+maxLeft = 0
+
+for i in range(len(num)):
+	maxLeft = max(maxLeft, nums[i])
+
+#for all vals after, [M+1:] > maxLeft. We dont want to keep checking right side. What if keep a hashmap of key = val, val = index? Finding things on the hash map would be O(n^2).
+
+Q: What if you go through it and the max occured value for L -> R?
+
+[5,0,3,8,6] then becomes [5, 5, 5, 8, 8] arrA
+
+Then iterate through it again and find the min val from R -> L: 
+
+[5,0,3,8,6] becomes [0, 0, 3, 6, 6] arrB
+
+Then you simply find the index where arrA > arrB
+
+6 6 3 0 0 -> 00366
+
+arrA, arrB = [nums[0]], [nums[-1]]
+
+for i in range(1, len(nums)):
+	arrA.append(max(arrA[-1], nums[i]])
+for j in range(len(nums) - 2, - 1, -1):
+	arrB.append(max(arrA[-1], nums[j])
+	
+arrB = arrB[::-1]
+
+for i in range(len(nums):
+	if arrA[i] >= arrB[i]:
+		return i + 1
+
+**92 Reverse Linked List II**
 def reverseBetween(head: ListNode, left: int, right: int) -> ListNode:
     dummy = ListNode(0)
     dummy.next = head
@@ -22,13 +221,11 @@ def reverseBetween(head: ListNode, left: int, right: int) -> ListNode:
         cur = cur.next
         position += 1
 
-    # Reverse the sublist from leftNode to rightNode
     prev = rightNext
     cur = leftNode
     while cur != rightNext:
         cur.next, prev, cur = prev, cur, cur.next
 
-    # Connect the reversed sublist back to the list
     if prevLeft:
         prevLeft.next = rightNode
 
