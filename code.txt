@@ -1,16 +1,167 @@
+//May 16 2024
+Fun w/ graphs
+
+**743 Network Delay Time**
+
+For Dijkstra's:
+
+def dijkstra(src, dst):
+	min_heap = [(0, src)]
+	distances = {src: 0}
+	visited = set()
+
+	while min_heap:
+		current_dist, cur = heapq.heappop(min_heap)
+
+		if cur in visited:
+			continue
+
+		visited.add(cur)
+
+		if cur == dst:
+			return current_dist
+
+		for neighbor, weight in adjList[cur]:
+			if neighbor not in visited:
+				new_dist = current_dist + weight
+				if neighbor not in distances or new_dist < distances[neighbor]:
+					distances[neighbor]
+
+Recall for BFS:
+
+def bfs(src, dst):
+	visited = set()
+	queue = deque([src])
+	visited.add(src) 
+
+	while queue:
+		cur = queue.popleft()
+		if cur == dst:
+			return distance[cur]
+
+		for neighbor in adjList[cur]:
+			if neighbor not in visted:
+				visited.add(neighbor)
+				queue.append(neighbor)
+				distances[neighbor] = distances[cur] + 1
+
+def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+
+graph = defaultdict(int)
+for u, v, w in times:
+	graph[u].append((v,w))
+
+min_heap = [(0,k)]
+heapq.heapify(min_heap)
+
+dist = {}
+for i in range(1, N + 1):
+	dist[i] = float('inf')
+dist[K] = 0
+
 //May 15 2024
+**1460. Make Two Arrays Equal by Reversing Subarrays**
+Or return sorted(1) == sorted(2)
+
+Assume that as long as all the # are there, through an inf num of swaps
+
+if len(arr) != len(target):
+	return False
+
+arrHash, targetHash = defaultdict(int), defaultdict(int)
+for i in range(len(arr)):
+	if arr[i] in arrHash:
+		arrHash[arr[i]] += 1
+	if target[i] in targetHash:
+		targetHash[target[i]] += 1
+	
+for key, val in arrHash.items():
+	if val != targetHash[key] or key not in targetHash:
+		return False
+
+return True
+
+**1290. Convert Binary Number in a Linked List to Integer**
+binStr = ''
+cur = head
+while cur:
+	binStr += str(cur.val)
+	cur = cur.next
+
+return int(binStr, 2)
+
+**2455. Average Value of Even Numbers That Are Divisible by Three**
+class Solution:
+    def averageValue(self, nums: List[int]) -> int:
+        subarr = []
+        for num in nums:
+            if num % 2 == 0 and num % 3 == 0:
+                subarr.append(num)
+        if len(subarr) == 0:
+            return 0
+        return sum(subarr)//len(subarr)
+
+**3065. Minimum Operations to Exceed Threshold Value I**
+nums.sort()
+count = 0
+for num in nums:
+	if num >= k:
+		return count
+	count += 1
+
+**2733 Neither Minimum nor Maximum**
+return sorted(nums)[1] if len(nums) > 2 else -1
+
+**2413 Smallest Even Mutiple**
+Given int n. Smallest + int that is mutiple of 2 and n
+
+if n % 2 != 0:
+	return n * 2
+
+return n
+
+**1913. Maximum Product Difference Between Two Pairs**
+
+O(n) solution:
+
+l1, l2 = -float('inf'), -float('inf')
+s1, s2 = float('inf'), float('inf')
+
+for num in nums: 
+	if num > l1:
+		l2, l1 = l1, num
+	elif num > l2:
+		l2 = num
+
+	if num < s1:
+		s2, s1 = s1, num
+	elif num < s2:
+		s2 = num
+
+return (l1*l2) - (s1*s2)
+
+sort, take the largest 2, mutiple, subtract by smallest pair. 
+
+nums.sort()
+return (nums[-1] * nums[-2]) - (nums[0] * nums[1])
+
 **2358 Max Number of Groups Entering a Competition**
+	
+Not completeing this problem.
 
         grades.sort()
+	
+	if grades[0] == grades[-1]:
+		return 1
+	
         groups = 0
         i = 0
-        n = len(grades)
         
-        while i < n:
+        while i < len(grades):
             groups += 1
             group_size = groups
             i += group_size
-        
+
         return groups
 
 I flopped this Q pretty bad.
