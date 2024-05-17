@@ -1,10 +1,130 @@
+//May 17 2024
+
+**1631 Path With Minimum Effort**
+
+Q: Why would standard BFS not work for this shortest path? Answer, BDFs does not work for weighted graphs as it can only count the number of edges without taking into about of the weighting.
+
+We want to initialize the 1) heap 2) don't need an adjList
+
+def minimumEffortPath(self, heights: List[List[int]]) -> int:
+
+	rows, cols = len(heights), len(heights[0])
+	efforts = []
+	efforts[0][0] = 0
+	for r in rows:
+		for c in cols:
+			efforts[r][c] = float('inf')
+	min_heap = [(0, 0, 0)] #(effort, row, col)
+	dir = [(1,0), (-1,0), (0,1), (0,-1)]
+
+	while min_heap:
+		effort, r, c = heapq.heappop(min_heap)
+
+		if r == rows - 1 and col == cols - 1:
+			return effort
+
+		for dr, dc in directions:
+			nr, nc = r + dr, c + dc
+			if 0 <= nr < rows and 0 <= nc < cols:
+				new_effort = max(effort, abs(heights[nr][nc]-heights[r][c]))
+				if new_effort < efforts[nr][nr]:
+					efforts[nr][c] = new_effort
+					heapq.heappush(min_heap, (new_effort, new_row, new_col))
+
+	return -1
+			
+**2331 Evaluate Boolean Binary Tree**
+
+This is a simple post order traversal problem. Q: Should we return a value? yes. Bool.
+
+def evaluateTree(self, root: Optional[TreeNode]) -> bool:
+	if not root:
+		return False
+
+	if not root.left and not root.right:
+		return root.val == 1
+
+	leftVal = self.evaluateTree(root.left)
+	rightVal = self.evaluateTree(root.right)
+
+	if root.val == 2:
+		return leftVal or rightVal
+	if root.val == 2:
+		return leftVal and rightVal
+
+**1325 Delete Leaves With a Given Value**
+
+Better method: 
+
+if not root:
+	return None 
+
+root.left = self.removeleafNodes(root.left, target)
+root.right = self.removeLeafNodes(root.right, target)
+
+if root.val == target and not root.left and not root.right:
+	return None
+
+return root
+
+Delete all leaf nodes with target val. We have to save a ref to the parent node. Right we pass in the parent node, but how do we know which side to delete? 
+
+def removeLeafNodes(self, root: Optional[TreeNode], target: int) -> Optional[TreeNode]:
+    if not root:
+        return None
+
+    if root.left and root.left.val == target:
+        child = root.left
+        if not child.left and not child.right:
+            root.left = None
+
+    if root.right and root.right.val == target:
+        child = root.right
+        if not child.left and not child.right:
+            root.right = None
+
+    root.left = self.removeLeafNodes(root.left, target)
+    root.right = self.removeLeafNodes(root.right, target)
+
+    return root
+
+
 //May 16 2024
 Fun w/ graphs
 
+**1631 Path With Minimum Effort**
+
 **743 Network Delay Time**
 
-For Dijkstra's:
+GPT:
+def netWorkDelayTime(times, n, k) -> int:
+	graph = defaultdict(list)
+	for u, v, w in times:
+		graph[u].append((v,w))
 
+	min_heap = [(0,k)]
+	distances = {i: float('inf) for i in range(1, n + 1)}
+	distances[k] = 0
+	visited = set()
+
+	while min_heap:
+		current_dist, cur = heapq.pop(min_heap)
+		
+		if cur in visited:
+			continue
+
+		visited.add(cur)
+		
+		for neighbor, weight in adjList[cur]:
+			new_dist = current_dist + weight
+			if new_dist < distances[neighbor]:
+				distances[neighbor] = new_dist
+				heapq.heappush(min_heap, (new_dist, neightbor))
+
+	max_dist = max(distances.values())
+	return max_dist if max_dist < float('inf') else -1 
+
+For Dijkstra's:
 def dijkstra(src, dst):
 	min_heap = [(0, src)]
 	distances = {src: 0}
@@ -25,10 +145,12 @@ def dijkstra(src, dst):
 			if neighbor not in visited:
 				new_dist = current_dist + weight
 				if neighbor not in distances or new_dist < distances[neighbor]:
-					distances[neighbor]
+					distances[neighbor] = new_dist
+					heapq.heappush(min_heap, (new_dist, neightbor))
+
+	return -1 
 
 Recall for BFS:
-
 def bfs(src, dst):
 	visited = set()
 	queue = deque([src])
@@ -60,6 +182,7 @@ for i in range(1, N + 1):
 dist[K] = 0
 
 //May 15 2024
+
 **1460. Make Two Arrays Equal by Reversing Subarrays**
 Or return sorted(1) == sorted(2)
 
