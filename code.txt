@@ -1,7 +1,7 @@
 //Nov 30 2024
 3162. Find the Number of Good Pairs I
 
-I'm sure there is a solution better than O(n), but its 5am in the morning.
+I'm sure there is a solution better than O(n^2), but its 5am in the morning.
 
 Have a funct called is_good = nums1[i] % nums2[j] * k == 0 in a double for loop
 
