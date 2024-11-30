@@ -1,3 +1,23 @@
+//Nov 30 2024
+3162. Find the Number of Good Pairs I
+
+I'm sure there is a solution better than O(n), but its 5am in the morning.
+
+Have a funct called is_good = nums1[i] % nums2[j] * k == 0 in a double for loop
+
+def numberOfPairs(self, nums1: List[int], nums2: List[int], k: int) -> int:
+	count = 0
+	for i in range len(nums1):
+		for j in range(nums2):
+			if nums1[i] % nums2[j] * k == 0:
+				count += 1
+	return count
+
+
+Ok, since we finished it in 5min lets try the optimized solution. You could pre compute to get O(n*m) runtime.
+
+targets = [num * k for num in nums2]
+
 //June 3 2024
 
 3033. Modify the Matrix
