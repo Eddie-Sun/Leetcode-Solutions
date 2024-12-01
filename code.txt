@@ -1,3 +1,25 @@
+//Dec 1 2024
+1323. Maximum 69 Number
+
+The good python syntax for this is: 
+
+class Solution:
+    def maximum69Number(self, num: int) -> int:
+        return int(str(num).replace('6', '9', 1))
+
+To the get max num, you never want to ever end up changing 9->6. 
+
+class Solution:
+    def maximum69Number (self, num: int) -> int:
+        new_num, first_six = '', False
+        for char in str(num): 
+            if char == '6' and not first_six:
+                first_six = True
+                new_num += '9'
+            else:
+                new_num += char
+        return int(new_num)
+
 //Nov 30 2024
 3162. Find the Number of Good Pairs I
 
