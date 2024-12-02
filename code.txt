@@ -1,3 +1,14 @@
+//Dec 2 2024
+3264. Final Array State After K Multiplication Operations
+
+Lets start off with a brute force solution. 1) find min val 2) relace with 2nd min w/ x*mutiplier
+
+for _ in range(k):
+	min_val, min_index = min((val, idx) for idx, val in enumerate(nums))
+	second_min = min((val for val in nums if val != min_val), default=min_val)
+	nums[min_index] = min_val * multiplier
+return nums
+
 //Dec 1 2024
 1323. Maximum 69 Number
 
