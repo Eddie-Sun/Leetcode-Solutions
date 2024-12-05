@@ -1,3 +1,62 @@
+//Dec 5 2024
+1154 Day of the Year
+I have no idea what the rules of the Gregorian Cal is... guh
+
+1) Look at the first 4 digits. Year = int([:4]). year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)
+	it gets 29 days instead of 28 (feb)
+2) Skip the dash and look at the month. month = int([5:6])
+3) days_in_month = {
+    1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
+    7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+}
+4) Loop through. If leap year +1 to date + final 2 vals
+5) Get the last 2 digits as date. 
+
+class Solution:
+    def dayOfYear(self, date: str) -> int:
+        year = int(date[:4])
+        month = int(date[5:7])
+        day = int(date[8:])
+        
+        days_in_month = {1:31, 2:28, 3:31, 4:30, 5:31, 6:30, 
+                        7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
+        
+        total = day
+        for m in range(1, month):
+            total += days_in_month[m]
+            
+        if month > 2 and (year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)):
+            total += 1
+            
+        return total
+
+1437 Check If All 1's Are at Least Length K Places Away
+class Solution:
+    def kLengthApart(self, nums: List[int], k: int) -> bool:
+        dst = k
+        for num in nums:
+            if num == 1:
+                if dst < k:
+                    return False
+                dst = 0
+            else:
+                dst += 1
+        return True
+
+
+3340 Checking Balanced String
+
+class Solution:
+    def isBalanced(self, num: str) -> bool:
+        sum_even, sum_odd = 0, 0 
+        for i, val in enumerate(num): 
+            if i % 2 == 0:
+                sum_even += int(val)
+            else:
+                sum_odd += int(val)
+        return sum_even == sum_odd
+
+
 // Dec 3 2024
 
 1491. Avg Salary Excluding Min and Max Salary
