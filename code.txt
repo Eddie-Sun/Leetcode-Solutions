@@ -1,3 +1,26 @@
+//Dec 6 2024
+1200 Minimum Abs Difference
+Note that you can make the solution more optimal with a single pass after the sort.
+
+Sort the arr. find the min abs val, if pairs == min abs val, append. 
+
+class Solution:
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        res = []
+        sorted_arr = sorted(arr)
+        min_diff = float('inf')
+        
+        for i in range(len(arr)-1):
+            curr_diff = sorted_arr[i+1] - sorted_arr[i]
+            if curr_diff < min_diff:
+                min_diff = curr_diff
+        
+        for i in range(len(arr)-1):
+            if sorted_arr[i+1] - sorted_arr[i] == min_diff:
+                res.append([sorted_arr[i], sorted_arr[i+1]]) 
+                
+        return res
+
 //Dec 5 2024
 1154 Day of the Year
 I have no idea what the rules of the Gregorian Cal is... guh
