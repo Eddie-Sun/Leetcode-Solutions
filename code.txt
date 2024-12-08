@@ -1,3 +1,62 @@
+//Dec 8 2024
+2529 Max Count of Postive Integer and Neg Integer
+L and R pointers. Count the pairs of +, and -. 
+
+        if not nums or (nums[0] == 0 and nums[-1] == 0):
+	        return 0
+
+        L, R = 0, len(nums) - 1
+        while L < R and nums[L] < 0 and nums[R] > 0:
+                L += 1 
+                R -= 1
+        return min(L, len(nums) - R - 1)
+
+Ooof misread the question. 
+
+class Solution:
+    def maximumCount(self, nums: List[int]) -> int:
+        if not nums or (nums[0] == 0 and nums[-1] == 0):
+            return 0
+            
+        L = 0
+        while L < len(nums) and nums[L] < 0:
+            L += 1
+            
+        R = len(nums) - 1
+        while R >= 0 and nums[R] > 0:
+            R -= 1
+            
+        return max(L, len(nums) - R - 1)
+
+3074 Apple Redistribution into Boxes
+Loop. Only move forward with capacity if apple.val == 0. capactity[j] - apple[i]
+
+i, j = 0, 0
+while apple[-1] > 0 and j < len(apple)-1:
+	if capacity[j] > apple[i]:
+		capacity[j] -= apple[i]
+		i += 1
+	else:
+		capacity[j+1] + capacity[j] -= apple[i]
+		j + 1
+	return j
+
+wait, you could just sort this. Since the box ordering does not matter.
+
+capacity.sort(reverse=True)
+total_apples = sum(apples)
+
+boxes_needed = 0
+cur_capacity = 0
+
+for i in range(len(capacity)): 
+	cur_capacity += capacity[i]
+	box_needed += 1
+	if cur_capacity >= total_apples:
+		return boxes_needed
+
+return -1
+
 //Dec 6 2024
 1200 Minimum Abs Difference
 Note that you can make the solution more optimal with a single pass after the sort.
