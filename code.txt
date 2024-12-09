@@ -1,3 +1,45 @@
+//Dec 9 2024
+3038 Max Num of Operations With the Same Score I
+The wording for the problem is really bad :(
+
+The score val = first 2 val summed. And you do sliding window till you find another grouping that == score? 
+
+count = 0
+L, R = 0, 1
+score = nums[0] + nums[1]
+
+while R < len(nums): 
+	if nums[L] + nums[R] == score:
+		count += 1
+		L = R + 1
+		R = L + 1
+	else:
+        L += 1
+        R = L + 1
+
+return count
+	
+Since we're returning the max num of operations, find the max num.
+max_num = max(nums)
+
+You do want to sort it.
+
+sorted_nums = sorted(nums)
+Then you want to count the max num of sub arrays you can make.
+
+class Solution:
+    def maxOperations(self, nums: List[int]) -> int:
+        nums.sort()
+        count, subsum = 0, 0
+        for i in range(len(nums) - 1):
+            if subsum + nums[i] >= nums[-1]:
+                subsum = nums[i]
+                count += 1
+            else:
+                subsum += nums[i]
+        return count
+
+
 //Dec 8 2024
 2529 Max Count of Postive Integer and Neg Integer
 L and R pointers. Count the pairs of +, and -. 
