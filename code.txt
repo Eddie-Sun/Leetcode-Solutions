@@ -1,3 +1,31 @@
+//Dec 10 2024
+2124 Check if All A's Appears Before All B's
+This is a simple flag question.
+
+class Solution:
+    def checkString(self, s: str) -> bool:
+        b_occurred = False
+        for letter in s:
+            if letter == 'b':
+                b_occurred = True
+            if b_occurred and letter == 'a':
+                return False
+        return True
+
+2148 Count Elements With Strictly Smaller and Greater Elements
+Count the numb of elem within the range of min, max?
+
+if num < max and num > min, count += 1
+
+class Solution:
+	def countElements(self, nums: List[int]) -> int:
+		min_val, max_val = min(nums), max(nums)
+		count = 0
+		for num in nums:
+			if min_val < num and max_val > num:
+				count += 1
+		return count
+
 //Dec 9 2024
 3038 Max Num of Operations With the Same Score I
 The wording for the problem is really bad :(
