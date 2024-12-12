@@ -1,3 +1,50 @@
+//Dec 12 2024
+1869 Longer Contiguous Segments of Ones than Zeros
+
+Code cleanup (forgor to reset 0s and 1s counter): 
+
+    longest_zeros = longest_ones = 0
+    cur_zeros = cur_ones = 0
+    
+    for char in s:
+        if char == '0':
+            cur_zeros += 1
+            cur_ones = 0
+            longest_zeros = max(longest_zeros, cur_zeros)
+        else:
+            cur_ones += 1
+            cur_zeros = 0
+            longest_ones = max(longest_ones, cur_ones)
+            
+    return longest_ones > longest_zeros
+
+longest_zeros, longest_ones = 0, 0
+for i, num in enumerate(1, len(s)):
+	cur_zeros, cur_ones = 0, 0
+	if s[i-1] == s[i]:
+		if s[i] == 0:
+			cur_zeros += 1
+			if cur_zeros > longest_zeros:
+				longest_zeros = cur_zeros
+		else:
+			cur_ones += 1
+			if cur_ones > longest_ones:
+				longest_ones = cur_ones
+return longest_ones > longest_zeros
+
+3069 Distribute Elements Into Two Arrays
+class Solution:
+    def resultArray(self, nums: List[int]) -> List[int]:
+        arr1, arr2 = [nums[0]], [nums[1]]
+        
+        for num in nums[2:]:
+            if arr1[-1] > arr2[-1]:
+                arr1.append(num)
+            else:
+                arr2.append(num)
+                
+        return arr1 + arr2
+
 //Dec 11 2024
 1952 Three Divisors
 if n < 4:
@@ -13,7 +60,7 @@ for i in range(2, int(root ** 0.5) + 1):
 
 return True
 
-What the hek, this is kinda hard if you dont know the rules. 
+What the hek, this is kinda hard if you dont know the rules.
 
 //Dec 10 2024
 2124 Check if All A's Appears Before All B's
