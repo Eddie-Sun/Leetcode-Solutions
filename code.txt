@@ -1,3 +1,44 @@
+//Dec 13 2024
+985 Sum of Even Numbers After Queries
+
+class Solution:
+    def sumEvenAfterQueries(self, nums: List[int], queries: List[List[int]]) -> List[int]:
+		even_sum = sum(x for x in nums if x % 2 == 0)
+		answer = []
+
+		for val, i in queries:
+			if nums[i] % 2 == 0:
+				even_sum -= nums[i]
+
+			nums[i] += val
+
+			if nums[i] % 2 == 0:
+				even_sum += nums[i]
+
+			answer.append(even_sum)
+
+	return answer
+
+Misread the question. Attempt two:
+
+answer = []
+for val, index in queries:
+	nums[index] += val
+	even_sum = sum(x for x in nums if x % 2 == 0)
+	answer.append(even_sum)
+return answers
+
+The above is a brute force solution. Can use memo. 
+
+for the 1st index of every 2d array in queries, num[ith index] = nums[ith index] += val at ith index. Return answer arr.
+
+answer = empty array len(nums)
+for val, index in queries:
+	if statement to only sum even val of nums
+	answer[index] = nums[index] + val
+
+return answer
+
 //Dec 12 2024
 1869 Longer Contiguous Segments of Ones than Zeros
 
