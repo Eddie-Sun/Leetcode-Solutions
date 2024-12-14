@@ -1,3 +1,27 @@
+//Dec 14 2024
+2367 Number of Arithmetic Triplets
+The brute force solution is to us i,j,k triple forloop. Or you can create a set:
+
+Proof:
+
+nums[k] - nums[j] = diff
+Thus nums[k] = nums[j] + diff
+nums[k] = (x + diff) + diff
+nums[k] = x + 2*diff
+
+nums_set = set(nums)
+count = 0
+
+for num in nums:
+	if num + diff in nums_set and num + 2 * diff in nums_set:
+		count += 1
+return count
+
+1688 Count of Matches in Tournament
+class Solution:
+    def numberOfMatches(self, n: int) -> int:
+        return n-1
+
 //Dec 13 2024
 985 Sum of Even Numbers After Queries
 
