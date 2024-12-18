@@ -1,3 +1,38 @@
+//Dec 18 2024
+1784 Check if Binary String Has at Most One Segment of Ones
+Loop through, if 1 occures, there cannot be a 0, and a one again.
+
+class Solution:
+    def checkOnesSegment(self, s: str) -> bool:
+        seeing_ones = False
+        prev = '0'
+        
+        for bit in s:
+            if bit == '1' and prev == '0' and seeing_ones:
+                return False
+                
+            if bit == '1':
+                seeing_ones = True
+                
+            prev = bit
+        
+        return True
+
+2595 Number of Even and Odd Bits
+Conver to bin. Loop through it, if bit == 1 and i % 2 == 0, [even, odd+=1]
+
+    res = [0, 0]
+    binary = bin(n)[2:]
+    
+    for i, bit in enumerate(binary[::-1]):
+        if bit == '1':
+            if i % 2 == 0:
+                res[0] += 1
+            else:
+                res[1] += 1
+                
+    return res
+
 //Dec 17 2024
 3280 Convert Date to Binary
 Loop through everything. Split @ '-', convert to bin, convert back to string, return append.
