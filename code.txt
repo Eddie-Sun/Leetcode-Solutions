@@ -1,3 +1,21 @@
+//Dec 19 2024
+1160 Find Words That Can Be Formed by Characters
+
+Attempt two (use hashmap)
+    char_count = Counter(chars)
+    total = 0
+    for word in words:
+        word_count = Counter(word)
+        for c in word:
+            if word_count[c] > char_count[c]:
+                break
+        else:
+            total += len(word)
+    return total
+
+Attempt one (one line)
+return sum(1 for word in words if set(word).issubset(set(chars)))
+
 //Dec 18 2024
 1784 Check if Binary String Has at Most One Segment of Ones
 Loop through, if 1 occures, there cannot be a 0, and a one again.
