@@ -1,3 +1,43 @@
+//Dec 20 2024
+2574 Left and Right Sum Differences
+Putting everything together:
+
+n = len(array)
+prefix_sum, suffix_sum = [0] * n, [0] * n
+prefix_sum[0], suffix_sum[-1] = nums[0], nums[-1]
+for i in range(1, n):
+	prefix_sum[i] = prefix_sum[i-1]
+
+for i in range(n-2, -1, -1):
+	suffix_sum[i] = suffix_sum[i+1]
+
+answer = []
+for i in n:
+	answer.appned(abs(prefix_sum[i] - suffix_sum[i]))
+return answer
+
+Seems like you're creating an array for this problem.
+Make a prefix sum.
+leftsum = [nums[1]] 
+for num in range(1, len(nums)):
+	leftsum.append(left_sum[-1] + num)
+
+The relationship to suffix sum = total_sum - prefix[i-1]
+total_sum = prefix_sum[i-1]
+
+Or we can be lazy and create a suffix sum manually:
+
+n = len(array)
+suffix_sum = [0] * n
+
+suffix_sum[-1] = array[-1]
+for i in range(n-2, -1, -1):
+	suffix_sum[i] = suffix_sum[i+1]
+
+answer = array len (nums) # empty array
+for i, num in enumerate(nums):
+	answer[i] = 
+
 //Dec 19 2024
 1160 Find Words That Can Be Formed by Characters
 
