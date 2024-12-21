@@ -1,3 +1,29 @@
+//Dec 21 2024
+2706 Buy Two Chocolates
+You just return the money - sum of the 2 smallest vals and if that greater than money, return money?
+
+class Solution:
+    def buyChoco(self, prices: List[int], money: int) -> int:
+        sorted_prices = sorted(prices)
+        total = sorted_prices[0] + sorted_prices[1]
+        return money if total > money else money - total
+
+1704 Dettermine if String Halves Are Alike
+Split strings in half (a,b). Create hash map of lowercase and upper case vowels. If len(vowels(a)) == len(vowels(b)), return true.
+
+class Solution:
+    def halvesAreAlike(self, s: str) -> bool:
+        all_vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        a, b = s[:len(s)//2], s[len(s)//2:]
+        a_count, b_count = 0, 0
+        for char in a:
+            if char in all_vowels:
+                a_count += 1
+        for char in b:
+            if char in all_vowels:
+                b_count += 1 
+        return a_count == b_count
+
 //Dec 20 2024
 2574 Left and Right Sum Differences
 Putting everything together:
