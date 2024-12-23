@@ -1,3 +1,55 @@
+//Dec 23 2024
+2176 Count Equal and Divisible Pairs in an Array
+
+Parse method groups indices:
+res = 0
+grouped_indices = {}
+for idx, num in enumerate(nums):
+	if num not in grouped_indices:
+		ground_indices[num] = []
+	grouped_indicies[num].append(idx)
+
+for indices in grouped_indicies.values():
+	for in in range(len(incides)):
+		for j in range(i+1, len(indicies)):
+			if (indices[i] * indices[j]) % k == 0:
+				res += 1
+return res
+
+More optimal hash map:
+res = 0
+hash_map = {}
+
+for i in range(len(nums)):
+	for j in range(i+1, len(nums)):
+		pair = (i,j)
+		if pair not in hash_map:
+			if nums[i] == nums[j] and (i * j) % k == 0:
+				res += 1
+			hash_map[pair] = True
+
+Hash map (O(n)):
+You want a quick lookup to see if nums[i] == nums[j] and and (i * j) % k == 0. You can only really skip this calculation.
+
+res = 0
+hash_map = {}
+
+for i in range(len(nums)):
+    for j in range(i + 1, len(nums)):
+        if nums[i] == nums[j] and (i * j) % k == 0:
+            pair = (i, j)
+            if pair not in hash_map:
+                res += 1
+                hash_map[pair] = True
+
+Brute force
+res = 0
+for i in range(len(nums) - 1):
+    for j in range(i + 1, len(nums)):
+        if nums[i] == nums[j] and (i * j) % k == 0:
+            res += 1
+return res
+
 //Dec 22 2024
 1389 Create Target Array in the Given Order
 In example 2, you can see that:
