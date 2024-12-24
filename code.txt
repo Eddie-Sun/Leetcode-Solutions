@@ -1,3 +1,14 @@
+Dec 24 2024
+1413 Minimum Value to Get Postive Step by Step Sum
+min_running_total = 0
+running_total = 0
+
+for num in nums:
+	running_total += num
+	min_running_total = min(min_running_total, running_total) 
+
+return 1 - min_running_total if min_running_total < 0 else 1
+
 //Dec 23 2024
 2176 Count Equal and Divisible Pairs in an Array
 
