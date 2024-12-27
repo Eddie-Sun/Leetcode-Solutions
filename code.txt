@@ -1,3 +1,14 @@
+Dec 27 2024
+2442 Count Number of Dist Integers After Reverse Operations
+Or if you want a 1 line: return len(set(nums + [int(str(x)[::-1]) for x in nums]))
+
+Loop through num in nums. reverse. return count set.
+
+    reversed_digits = []
+    for num in nums:
+        reversed_digits.append(int(str(num)[::-1]))
+    return len(set(reversed_digits + nums))
+
 Dec 25 2024
 1475 Final Prices With a Special Discount in a Shop
 O(n): Mono Stack
