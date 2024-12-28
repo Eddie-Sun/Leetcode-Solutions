@@ -1,3 +1,21 @@
+Dec 28 2024
+3042 Count Prefix and Suffix Pairs I
+res = 0
+for i in range(len(words)):
+	for j in range(i+1, len(words)):
+		str1, str2 = words[i], words[j]
+		if str2.startswith(str1) and str2.endswith(str1):
+ 			res += 1
+return res
+
+1848 Minimum Distance to the Target Element
+min_dist = float('inf')
+for i in range(len(nums):
+	if nums[i] == target:
+		if abs(i-start) < min_dist:
+			min_dist = abs(i-start)
+return min_dist
+
 Dec 27 2024
 2442 Count Number of Dist Integers After Reverse Operations
 Or if you want a 1 line: return len(set(nums + [int(str(x)[::-1]) for x in nums]))
