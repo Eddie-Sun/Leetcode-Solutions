@@ -1,3 +1,59 @@
+Dec 30 2024
+2859 Sum of Values at Indicies with K Set Bits
+
+There is a cool algo called hamming_weight. Where subtracting 1 flips the rightmost 1 -> 0.
+
+   1101  (n = 13)
+-  0001  (1 in binary)
+=  1100  (n - 1 = 12)
+
+This allows you to only do k operations (numb of 1s there are in bin rep)
+
+n &= n - 1: O(k), where k is the number of 1s in n.
+
+def_haming_weight:
+	count = 0
+		while n:
+			n &= n - 1
+			count += 1
+		return count
+
+res = 0
+for i in range(len(nums)):
+	if haming_weights(i) == k:
+		res += nums[i]
+return res
+
+This is O(m*n) where O(m), where  M  is the total number of bits.
+res = 0
+for i in range(len(nums)):
+        if bin(i).count('1') == k:
+		res += nums[i]
+return res
+
+1662 Check If Two Strings Arrays are Equivalent
+return ''.join(word1) == ''.join(word2)
+
+3105 Longest Strictly Increasing or Decreasing Subarray
+
++ else for flat elems
+
+prev, asc, desc = nums[0], 0, 0
+cur_asc, cur_desc = 1, 1
+
+for i in range(1, len(nums)):
+    if nums[i] > prev:
+        cur_asc += 1
+        cur_desc = 1
+        asc = max(asc, cur_asc)
+    elif nums[i] < prev:
+        cur_desc += 1
+        cur_asc = 1
+        desc = max(desc, cur_desc)
+    prev = nums[i]
+
+return max(asc, desc)
+
 Dec 28 2024
 3042 Count Prefix and Suffix Pairs I
 res = 0
