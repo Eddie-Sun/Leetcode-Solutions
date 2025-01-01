@@ -1,3 +1,13 @@
+Jan 1 2025
+3206 Alternating Groups I
+colors[i-1] != colors[i] and colors[i+1] != colors[i]
+
+n = len(colors)
+for i in range(n)
+	if colors[i - 1] != colors[i] and colors[(i + 1) % n] != colors[i]:
+		count += 1
+	return count
+
 Dec 31 2024
 2414 Length of the Longest Alphabetical Continuous Substring
 L, R = 0, 1
