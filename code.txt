@@ -1,3 +1,46 @@
+Jan 2 2025
+1935 Maximum Number of Words You Can Type
+broken_letters = set(brokenLetters)
+return sum(not any(c in broken_letters for c in word) for word in text)
+
+1748 Sum of Unique Elements
+Let do it in one pass:
+hashmap = defaultditc(int)
+res = 0
+for num in nums:
+	hashmap[num] += 1
+	if hashmap[num] == 1:
+		res += num
+	elif hashmpa[num] == 2:
+		res -= num
+return res
+
+Make a hash map. If count = 1, add to sum.
+hashmap = defaultdict(int)
+for num in nums:
+    hashmap[num] += 1
+
+res = 0
+for key, val in hashmap.items():
+	if val == 1:
+		res += key
+return res
+
+917 Reverse Only Letters
+loop. cases for odd/even? if s[i] = isalpha(), s[i], s[i-1] = s[-i-1], s[i]
+
+s = list(s)
+L, R = 0, len(s) - 1
+while L < R:
+	while L < R and not s[L].isalpha():
+		L += 1
+	while L < R and not s[R].isalpha():
+		R -= 1
+
+	s[L], s[R] = s[R], s[L]
+
+return ''.join(s)
+
 Jan 1 2025
 3206 Alternating Groups I
 colors[i-1] != colors[i] and colors[i+1] != colors[i]
