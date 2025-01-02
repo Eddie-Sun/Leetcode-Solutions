@@ -1,7 +1,11 @@
 Jan 2 2025
 1935 Maximum Number of Words You Can Type
 broken_letters = set(brokenLetters)
-return sum(not any(c in broken_letters for c in word) for word in text)
+res = 0
+for word in text.split():
+   if not any(c in broken_letters for c in word):
+       res += 1
+return res
 
 1748 Sum of Unique Elements
 Let do it in one pass:
