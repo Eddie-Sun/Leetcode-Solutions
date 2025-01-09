@@ -1,3 +1,8 @@
+Jan 9 202
+2729 Check if The Number is Fascinating
+res = set(str(n) + str(2*n) + str(3*n))
+return len(res) == 9 and '0' not in res
+
 Jan 7 2025
 2206 Divide Array Into Equal Pairs
 n = len(nums)
