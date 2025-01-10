@@ -1,4 +1,16 @@
-Jan 9 202
+Jan 10 2025
+1492 The kth Factor of n
+class Solution:
+    def kthFactor(self, n: int, k: int) -> int:
+        res = [1]
+        for i in range(2, n):
+            if n % i == 0:
+                res.append(i)
+        res.append(n)
+        
+        return res[k-1] if k <= len(res) else -1
+
+Jan 9 2025
 2729 Check if The Number is Fascinating
 res = set(str(n) + str(2*n) + str(3*n))
 return len(res) == 9 and '0' not in res
