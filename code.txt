@@ -1,3 +1,21 @@
+Jan 14 2025
+1967 Number of Strings That Appear as Substrings in Word
+Brute force:
+class Solution:
+    def numOfStrings(self, patterns: List[str], word: str) -> int:
+        res = 0
+        for substring in patterns:
+            for i in range(len(word) - len(substring) + 1):
+                match = True
+                for j in range(len(substring)):
+                    if word[i+j] != substring[j]:
+                        match = False
+                        break
+                if match:
+                    res += 1
+                    break
+        return res
+
 Jan 10 2025
 1492 The kth Factor of n
 class Solution:
