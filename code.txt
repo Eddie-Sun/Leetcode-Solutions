@@ -1,3 +1,50 @@
+Jan 17 2025
+1184 Dist Between Bus Stops
+Misread the problem:
+if start > destination:
+	start, destination = destination, start
+
+clockwise_dist = 0
+for i in range(start, destination):
+	clockwise_dist += distance[i]
+
+total_dist = sum(dist)
+
+counterclockwise_dist = total_dist - clockwise_dist
+
+return min(clockwise_dist, counterclockwise_dist)
+
+
+Just iterate it and find the min dist frmo len(stops)?
+
+Dist = 1 -> 2 -> 3 -> 4 -> 3 -> 2 -> 1 -> 0, bin search?
+
+if dist[i] == 1: return min path (CW or CCW). The arr dist is only ascending.
+
+return min(destination, len(distance) - destination)
+
+1961 Check If String Is a Prefix of Array
+
+going to use the cheat method:
+
+class Solution:
+    def isPrefixString(self, s: str, words: List[str]) -> bool:
+        prefix = ""
+        for word in words:
+            prefix += word
+            if prefix == s:
+                return True
+            if len(prefix) > len(s):
+                return False
+        return False
+
+i = 0
+for word in words:
+	if word != s[i:i+len(word)]:
+		return False
+	i += len(word)
+return True
+
 Jan 14 2025
 
 1967 Number of Strings That Appear as Substrings in Word
