@@ -1,3 +1,20 @@
+Jan 18 2025
+1385 Find the Distance Value Between Two Arrays
+d = 0
+for num1 in arr1:
+	is_valid = True
+	for num2 in arr2:
+		diff = abs(num1 - num2)
+
+		if diff <= d:
+			is_valid = False
+			break
+
+	if is_valid:
+		d += 1 
+	
+return d
+
 Jan 17 2025
 1184 Dist Between Bus Stops
 Misread the problem:
