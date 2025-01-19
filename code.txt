@@ -1,3 +1,27 @@
+Jan 19 2025
+2299 Strong Passowrd Checker II
+return len(password) >= 8 and any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password) and any(c in password.punctuation for c in password) and all(string[i] != string[i+1] for i in range(len(string)-1)
+
+To majke this RT optimal: 
+
+if len(password) < 8:
+	return False
+
+has_lower = has_upper = has_digit = has_special = False
+for i, c in enumerate(password):
+	if c.islower():
+        	has_lower = True
+	if c.isupper():
+        	has_upper = True
+        if c.isdigit():
+            	has_digit = True
+        if c in string.punctuation:
+            	has_special = True
+        if i > 0 and password[i] == password[i - 1]:
+            	return False
+
+return has_lower and has_upper and has_digit and has_special
+
 Jan 18 2025
 1385 Find the Distance Value Between Two Arrays
 d = 0
@@ -30,7 +54,6 @@ total_dist = sum(dist)
 counterclockwise_dist = total_dist - clockwise_dist
 
 return min(clockwise_dist, counterclockwise_dist)
-
 
 Just iterate it and find the min dist frmo len(stops)?
 
