@@ -1,3 +1,31 @@
+Jan 20 2025
+989 Add to Array-Form of Integer
+class Solution:
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        res_str = str(int(''.join(map(str, num))) + k)
+        res = [int(digit) for digit in res_str]
+        return res
+
+You get run time err when len(num) > 4300
+
+Q: What is the optimal solution? Iterate form the back of the arr and build res = O(n)
+
+class Solution:
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        carry = k
+        res = []
+        
+        for i in range(len(num) - 1, -1, -1):
+            total = num[i] + carry
+            carry = total // 10
+            res.append(total % 10)
+        
+        while carry > 0:
+            res.append(carry % 10)
+            carry //= 10
+        
+        return res[::-1]
+
 Jan 19 2025
 2299 Strong Passowrd Checker II
 return len(password) >= 8 and any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password) and any(c in password.punctuation for c in password) and all(string[i] != string[i+1] for i in range(len(string)-1)
