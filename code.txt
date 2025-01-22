@@ -1,4 +1,57 @@
+Jan 22 2025
+921 Minimum Add to Make Parentheses Valid
+Count open_needed and close_needed
+
+class Solution:
+    def minAddToMakeValid(self, s: str) -> int:
+        open_needed , close_needed = 0, 0
+        for char in s:
+            if char == "(":
+                close_needed += 1
+            elif close_needed > 0:
+                close_needed -= 1
+            else:
+                open_needed += 1
+        
+        return open_needed + close_needed
+
+1941 Check if All Characters Have Equal Number of Occurrences
+val of every char in dict == same. 
+
+class Solution:
+    def areOccurrencesEqual(self, s: str) -> bool:
+        first_count = s.count(s[0])
+        chars = set(s)
+        return all(s.count(c) == first_count for c in chars)
+
+3216 Lexicographically Smallest String After a Swap
+You iterate through the arr, first arr[i] > arr[i+1], swap
+
+class Solution:
+    def getSmallestString(self, s: str) -> str:
+        s = list(s)
+        for i in range(len(s)-1):
+            if ord(s[i]) % 2 == ord(s[i+1]) % 2 and ord(s[i]) > ord(s[i+1]):
+                s[i], s[i+1] = s[i+1], s[i]
+                return ''.join(s)
+        return ''.join(s)
+
 Jan 20 2025
+2347 Best Poker Hand
+class Solution:
+    def bestHand(self, ranks: List[int], suits: List[str]) -> str:
+        if len(set(suits)) == 1:
+            return "Flush"
+
+        rank_counts = [ranks.count(rank) for rank in set(ranks)]
+                
+        if max(rank_counts) >= 3:
+            return "Three of a Kind"
+        elif max(rank_counts) == 2:
+            return "Pair"
+        else:
+            return "High Card"
+
 989 Add to Array-Form of Integer
 class Solution:
     def addToArrayForm(self, num: List[int], k: int) -> List[int]:
