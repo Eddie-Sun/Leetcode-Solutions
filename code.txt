@@ -1,3 +1,16 @@
+Jan 23 2025
+2078 Two Furthest Houses With Different Colors
+Look for max dist between two diff colors:
+
+n = len(colors)
+max_dist = 0
+for i in range(n):
+	if colors[i] != colors[-1]:
+		max_dist = max(max_dist, n-1-i)
+	if colors[i] != colors[0]:
+		max_dist = max(max_dist, i)
+return max_dist
+
 Jan 22 2025
 921 Minimum Add to Make Parentheses Valid
 Count open_needed and close_needed
