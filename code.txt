@@ -1,3 +1,31 @@
+Jan 24 205
+1417 Reformat The String
+1) no adj letters + num 2) no adj same char type. Permute str.
+
+Brute force: 
+
+def get_permutations(s):
+
+	if len(s) <= 1:
+		return [s] 
+
+	letters = sum(c.isalpha() for c in s)
+	if letters > len(s) or (len(s) - letters) > len(s)/2:
+		return []
+
+	perms = []
+	for i, char in enumerate(s):
+		for perm in get_permutations(s[:i] + s[i+1]:
+			candidate = char + perm
+			valid = True
+		for j in range(len(candidate) - 1):
+			if candidate[j].isalpha() == candidate[j+1].isalpha():
+				valid = False
+				break
+			if valid:
+				return [candidate]
+	return []
+
 Jan 23 2025
 2078 Two Furthest Houses With Different Colors
 Look for max dist between two diff colors:
