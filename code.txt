@@ -1,6 +1,19 @@
 Jan 28 2025
 3326 Number of Bit Changes to Make Two Integers Equal
 
+class Solution:
+    def minChanges(self, n: int, k: int) -> int:
+        bits_n = bin(n)[2:]
+        bits_k = bin(k)[2:].zfill(len(bits_n))
+        
+        bits_changed = 0
+        for a, b in zip(bits_k, bits_n):
+            if a != b:
+                if b == '0':
+                    return -1
+                bits_changed += 1
+        return bits_changed
+
 bin(n) -> bin(k)
 If len(bin2(k)) > len(bin2(n)) return -1.
 Loop through the bin rep. If the diff > 1, return -1. You'd want to iterate through the back because there is the chance that 
