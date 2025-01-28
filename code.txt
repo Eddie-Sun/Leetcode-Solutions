@@ -1,3 +1,24 @@
+Jan 28 2025
+3326 Number of Bit Changes to Make Two Integers Equal
+
+bin(n) -> bin(k)
+If len(bin2(k)) > len(bin2(n)) return -1.
+Loop through the bin rep. If the diff > 1, return -1. You'd want to iterate through the back because there is the chance that 
+
+bin_n, bin_k = bin(n)[2:], bin(k)[2:]
+if len(bin_k) > len(bin_n):
+	return -1
+
+bits_changed = 0
+bin_n = bin_n.zfill(len(bin_k))
+
+for a, b in zip(reversed(bin_k), reversed(bin_n)):
+	if a != b: 
+		return -1
+	bits_changed += 1
+
+return bits_changed
+
 Jan 26 2025
 1232 Check If It Is a Straight Line
 
