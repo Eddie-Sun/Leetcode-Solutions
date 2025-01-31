@@ -1,3 +1,51 @@
+Jan 31 2025
+2481 Minimum Cuts to Divide a Circle
+
+n = 1 = no cuts
+n even = n/2 cuts
+n odd = n cuts
+
+2016 Maximum Difference Between Increasing Elements
+To not brute force this, you can track the max/min val encoutered so far
+
+maxVal, maxDiff = nums[0], -1
+for num in nums[1:]:
+	if num > minVal:
+		maxDiff = max(maxDiff, num - minVal)
+	else:
+		minVal = num
+return maxDiff
+
+This is pretty much the stock market q. 
+
+maxDiff = 0
+for i in range(len(nums)):
+	for j in range(i, len(nums)):
+		if nums[i] < nums[j]:
+			maxDiff = max(maxDiff, nums[j] - nums[i])
+return maxDiff if maxDiff > 0 else -1
+
+1518 Water Bottles
+def numWaterBottles(self, numBottles: int, numExchange: int) -> int:
+	fullBottlees, emptyBottles = numBottles, 0
+	res = 0
+	while (fullBottles + emptyBottles) >= exhange rate:
+		emptyBottles += fullBottles
+		res += fullBottles
+		fullBottles = emptyBottles // numExchange
+		emptyBottles %= numExchange
+	return res
+
+Cleaned up code: 
+
+def numWaterBottles(self, numBottles: int, numExchange: int) -> int:
+    total = numBottles
+    while numBottles >= numExchange:
+        numBottles, remainder = divmod(numBottles, numExchange)
+        total += numBottles
+        numBottles += remainder
+    return total
+
 Jan 30 2025
 2395 Find Subarrays With Equal Sum
 The size 2 contraint makes it easy to use a set.
