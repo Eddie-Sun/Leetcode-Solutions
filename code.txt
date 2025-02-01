@@ -1,3 +1,51 @@
+Feb 1 2025
+1903 Largest Odd Number in String
+Return largest substring thats odd. Sliding window var len. 
+
+res = ""
+L = 0
+for R in range(1, len(num) + 1):
+        substr = num[L:R]
+        if substr and int(substr[-1]) % 2 == 1:
+        res = substr
+return res
+
+1876 Substring of Size Three with Distinct Characters
+sliding window of 3. 
+
+res = 0
+for i in range(len(s)-2):
+	if s[i] != s[i+1] and s[i] != s[i+2] and s[i+1] != s[i+2]:
+		res += 1
+return res
+
+2932 Maximum Strong Pair XOR I
+More optimal solution:
+
+1) Sort 2) two pointer sliding window 3) compute XOR within window
+
+Q: Would sorting work? 
+
+6  (110)
+3  (011)
+XOR = 5 (101)
+Sorting doesn’t guarantee that adjacent numbers will maximize XOR.
+
+strong pair if abs(x-y) <= min(x,y), select 2 that forms 1) strong pair 2) XOR = max
+
+class Solution:
+    def maximumStrongPairXor(self, nums: List[int]) -> int:   
+        def strongpair(num1, num2):
+            return abs(num1-num2) <= min(num1,num2)
+
+        max_XOR = 0
+        for i in range(len(nums)-1):
+            for j in range(i, len(nums)):
+                if strongpair(nums[i], nums[j]):
+                    max_XOR = max(max_XOR, nums[i] ^ nums[j])
+
+        return max_XOR
+
 Jan 31 2025
 2481 Minimum Cuts to Divide a Circle
 
