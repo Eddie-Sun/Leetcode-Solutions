@@ -1,3 +1,37 @@
+Feb 2 2025
+1833 Maximum Ice Cream Bars
+n ice cream bars, cost arr. Inital coins = int. Buy in any order. Max icecreambars. Greedy algo.
+
+1) sort
+2) count coins <= 0
+
+res = 0
+sorted_costs = sorted(costs)
+for cost in sorted_costs:
+	if coins - cost >= 0:
+		res += 1
+		coins -= cost
+return res
+
+2315 Count Asterisks
+consider = True
+res = 0
+for char in s:
+	if consider:
+		if char == "*":
+			res += 1
+	if char == "|":
+		consider = not consider
+return res
+
+2465 Number of Distinct Averages
+sorted_nums = sorted(nums)
+dist_set = set()
+for i in range(len(nums)//2):
+	avg = sorted_nums[i] + sorted_nums[-i-1]
+	dist_set.add(avg)
+return len(dist_set)
+
 Feb 1 2025
 1903 Largest Odd Number in String
 Return largest substring thats odd. Sliding window var len. 
