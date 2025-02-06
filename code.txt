@@ -1,3 +1,39 @@
+Feb 5 2025
+3136 Valid Word
+class Solution:
+    def isValid(self, word: str) -> bool:
+        vowels = set("aeiou")
+        consonants = set("bcdfghjklmnpqrstvwxyz")
+        word_lower = set(word.lower())
+        return word.isalnum() and len(word) >= 3 and not vowels.isdisjoint(word_lower) and not consonants.isdisjoint(word_lower)
+
+2279 Maximum Bags With Full Capacity of Rocks
+spaces_open = []
+for i in range(len(rocks)):
+	spaces_open.append(capacity[i] - rocks[i])
+sorted_spaces = sorted(spaces_open)
+res = 0
+for space in sorted_spaces:
+	if additionalRocks >= space:
+		res += 1
+		additionalRocks -= space
+return res
+
+2605 Form Smallest Number From Two Digit Arrays
+class Solution:
+    def minNumber(self, nums1: List[int], nums2: List[int]) -> int:
+        min1, min2 = float('inf'), float('inf')
+        min_set, lowest_digit = set(), float('inf')
+        for num in nums1:
+            min_set.add(num)
+            min1 = min(num, min1)
+        for num in nums2:
+            if num in min_set:
+                lowest_digit = min(num, lowest_digit)
+            min2 = min(num, min2)
+
+        return min(lowest_digit, int(str(min(min1, min2)) + str(max(min1, min2))))
+
 Feb 2 2025
 1833 Maximum Ice Cream Bars
 n ice cream bars, cost arr. Inital coins = int. Buy in any order. Max icecreambars. Greedy algo.
