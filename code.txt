@@ -1,3 +1,23 @@
+Feb 6 2025
+2965 Find Missing and Repeated Values
+class Solution:
+    def findMissingAndRepeatedValues(self, grid: List[List[int]]) -> List[int]:
+       n = len(grid)
+       max_val = n * n
+       val_set = set()
+       res = []
+       
+       for row in grid:
+           for val in row:
+               if val in val_set:
+                   res.append(val)
+               else:
+                   val_set.add(val)
+                   
+       full_range = set(range(1, max_val + 1))
+       res.append(list(full_range - val_set)[0])
+       return res
+
 Feb 5 2025
 3136 Valid Word
 class Solution:
