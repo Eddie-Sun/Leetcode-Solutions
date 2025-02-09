@@ -1,3 +1,24 @@
+Feb 9 2025
+3000 Maximum Area of Longest Diagonal Rectangle
+class Solution:
+    def areaOfMaxDiagonal(self, dimensions: List[List[int]]) -> int:
+        target_area, target_dimension = 0, [0, 0]
+        target_diagonals = []
+        target_diag = sqrt(target_dimension[0]**2 + target_dimension[1]**2)
+        for dimension in dimensions:
+            l, w = dimension[0], dimension[1]
+            diag = sqrt(l*l + w*w)
+            if diag == target_diag:
+                target_diagonals.append(dimension)
+            elif diag > target_diag:
+                target_diag = diag
+                target_diagonals.clear()
+                target_diagonals.append(dimension)
+        for d in target_diagonals:
+            l, w = d[0], d[1]
+            target_area = max(target_area, l * w)
+        return target_area
+
 Feb 6 2025
 2965 Find Missing and Repeated Values
 class Solution:
