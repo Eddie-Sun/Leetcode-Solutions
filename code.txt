@@ -1,3 +1,28 @@
+Feb 12 2025
+2283 Check if Number Has Equal Digit Count and Digit Value
+class Solution:
+    def digitCount(self, num: str) -> bool:
+        count_dict = Counter(num)
+        for i in range(len(num)):
+            if count_dict.get(str(i), 0) != int(num[i]):
+                return False
+        return True
+
+Feb 11 2025
+2908 Minimum Sum of Mountain Tripletss
+Constant size sliding window
+class Solution:
+    def minimumSum(self, nums: List[int]) -> int:
+        min_sum = float('inf')
+        for j in range(1, len(nums)-1):
+            for i in range(j):
+                if nums[i] < nums[j]:
+                    for k in range(j+1, len(nums)):
+                        if nums[k] < nums[j]:
+                            current_sum = nums[i] + nums[j] + nums[k]
+                            min_sum = min(min_sum, current_sum)
+        return min_sum if min_sum != float('inf') else -1
+
 Feb 9 2025
 3000 Maximum Area of Longest Diagonal Rectangle
 class Solution:
