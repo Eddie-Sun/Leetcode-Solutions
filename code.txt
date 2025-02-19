@@ -1,3 +1,12 @@
+Feb 19 2025
+2180 Count Integers With Even Digit Sum
+class Solution:
+    def countEven(self, num: int) -> int:
+        if num % 2:
+            return num // 2
+        s = sum(map(int, str(num)))
+        return num // 2 if s % 2 == 0 else num // 2 - 1
+
 Feb 12 2025
 2283 Check if Number Has Equal Digit Count and Digit Value
 class Solution:
