@@ -1,3 +1,17 @@
+Feb 20 2025
+Make a hashmap: key == char, val == dist. return dist == index. Ideally you can make a hashmap with two keys (num and char: a,b,c). Wait, no you can just use ord(char)
+
+class Solution:
+    def checkDistances(self, s: str, distance: List[int]) -> bool:
+        seen = {}
+        for i, char in enumerate(s):
+            if char in seen:
+                if i - seen[char] - 1 != distance[ord(char) - ord('a')]:
+                    return False
+            else:
+                seen[char] = i
+        return True
+
 Feb 19 2025
 2180 Count Integers With Even Digit Sum
 class Solution:
