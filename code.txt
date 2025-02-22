@@ -1,3 +1,17 @@
+Feb 22 2025
+3178 Find the Child Who Has the Ball After K Seconds
+There is a O(1) solution where you dont have to for loop and count arr[i].
+
+class Solution:
+    def numberOfChild(self, n: int, k: int) -> int:
+        if (k // (n - 1)) % 2 == 0:
+            return k % (n - 1)
+        else:
+            return (n - 1) - (k % (n - 1))
+        #if k % n == even 
+        #k // n == 2, R = 2, so 2nd index from L, if odd, 2nd index from R
+        #@ n = 3, k = 5, @ time 5, n ends up @ 0. So there is a cyclic pattern. @ t = 6, return 1
+
 Feb 21 2025
 1309 Decrypt String from Alphabet to Integer Mapping
 Hashmap dict? Nah. you Can just use ord.
