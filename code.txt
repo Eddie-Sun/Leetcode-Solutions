@@ -1,3 +1,17 @@
+Feb 23 2025
+3386 Button with Longest Push Time
+class Solution:
+    def buttonWithLongestTime(self, events: List[List[int]]) -> int:
+        max_duration = events[0][1]
+        res = events[0][0]
+        prev = events[0][1]
+        for index, time in events[1:]:
+            d = time - prev
+            if d > max_duration or (d == max_duration and index < res):
+                max_duration, res = d, index
+            prev = time
+        return res
+
 Feb 22 2025
 3178 Find the Child Who Has the Ball After K Seconds
 There is a O(1) solution where you dont have to for loop and count arr[i].
