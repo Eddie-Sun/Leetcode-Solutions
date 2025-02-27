@@ -1,3 +1,14 @@
+Feb 27 2025
+2239 Find Closest Number to Zero
+closest = float('inf')
+res = 0
+for num in nums:
+	if abs(num) < abs(closest):
+		closest = num
+	elif abs(num) == abs(closest):
+		closest = max(closest, num)
+return closest
+
 Feb 23 2025
 3386 Button with Longest Push Time
 class Solution:
