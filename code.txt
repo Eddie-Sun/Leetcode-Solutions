@@ -1,3 +1,38 @@
+Mar 12 2025
+3159 Find Occurrences of an Element in an Array
+Cleaner imp: 
+
+    indices_of_x = [idx for idx, num in enumerate(nums) if num == x]
+    result = []
+
+    for q in queries:
+        if q <= len(indices_of_x):
+            result.append(indices_of_x[q - 1])
+        else:
+            result.append(-1)
+
+    return result
+
+1) Save the index in which x occures:
+[1,3,1,7] -> [0,2]
+Or better yet, count total occ @ O(n)
+Best way is prob dict
+
+matching_indices = []
+for index, val in enumerate(nums):
+	if val == x:
+		matching_indices.append(index)
+
+total_occurences = len(matching_indices)
+
+res = []
+for index,query in enumerate(queries):
+	if query > total_occurences:
+		res.append(-1)
+	else:
+		res.append(matching_indices[i-1])
+return res	
+
 Feb 28 2025
 896 Monotonic Array
 Const larger or smaller.
